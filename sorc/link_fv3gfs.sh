@@ -36,7 +36,7 @@ elif [ $machine = "dell" ]; then
     FIX_DIR="/gpfs/dell2/emc/modeling/noscrub/emc.glopara/git/fv3gfs/fix"
 elif [ $machine = "hera" ]; then
     FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix"
-elif [ $machine = "linux.gnu" -a $machine = "linux.inel" ]; then
+elif [ $machine = "linux.gnu" ] || [ $machine = "linux.intel" ]; then
     FIX_DIR="/fix"
 fi
 cd ${pwd}/../fix                ||exit 8

@@ -128,9 +128,3 @@ export PATH="/opt/NCEPLIBS-prod_util/ush":${PATH}
 export PATH="/opt/rocoto/bin":${PATH}
 export COMDATEROOT='N/A on LINUX'
 
-##
-## Fake some paths
-##
-ln -sf /bin/echo /usr/bin/module
-ln -sf /bin/bash /bin/sh
-ln -sf /bin/bash /usr/bin/sbatch
