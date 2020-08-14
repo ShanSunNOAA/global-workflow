@@ -1,8 +1,8 @@
 diff --git CMakeLists.txt CMakeLists.txt
-index bfeb9438b..2c48c40bb 100644
+index d35ae3e18..738ac1c4c 100644
 --- CMakeLists.txt
 +++ CMakeLists.txt
-@@ -268,7 +268,7 @@ project(GSI)
+@@ -270,7 +270,7 @@ project(GSI)
      add_subdirectory(src/enkf)
    endif(BUILD_ENKF) 
    if(BUILD_UTIL)
@@ -43,8 +43,21 @@ index 337a5378c..007b76ff0 100644
    FILE(GLOB FV3GFS_NCIO_SRC ${CMAKE_CURRENT_SOURCE_DIR}/module_fv3gfs_ncio.f90 )
    set_source_files_properties( ${FV3GFS_NCIO_SRC} PROPERTIES COMPILE_FLAGS ${FV3GFS_NCIO_Fortran_FLAGS} )
    add_library(fv3gfs_ncio STATIC ${FV3GFS_NCIO_SRC})
+diff --git src/gsi/phil2.f90 src/gsi/phil2.f90
+index e17c43f17..4f503bd31 100644
+--- src/gsi/phil2.f90
++++ src/gsi/phil2.f90
+@@ -299,7 +299,7 @@ integer(i_kind),parameter         :: ngen=14
+ real(dp),       dimension(3,nob)  :: xob
+ real(dp),       dimension(nob)    :: rob,sob,latobc
+ real(dp),       dimension(0:3)    :: qset
+-real(dp),       dimension(0:3,3)  :: qset3
++real(dp),       dimension(0:3,5)  :: qset3
+ real(dp),       dimension(0:3,5)  :: qset5
+ real(dp),       dimension(0:3,7)  :: qset7
+ real(dp),       dimension(0:3,13) :: qset13
 diff --git src/ncdiag/CMakeLists.txt src/ncdiag/CMakeLists.txt
-index 154a098ed..0f0a412be 100644
+index a3166d7b0..078a6a3a9 100644
 --- src/ncdiag/CMakeLists.txt
 +++ src/ncdiag/CMakeLists.txt
 @@ -8,6 +8,7 @@ if(BUILD_NCDIAG)
@@ -75,7 +88,7 @@ index ceaf91d9c..9931ac12a 100755
      echo "unknown target = $target"
      exit 9
 diff --git util/EnKF/gfs/src/getsigensmeanp_smooth.fd/CMakeLists.txt util/EnKF/gfs/src/getsigensmeanp_smooth.fd/CMakeLists.txt
-index 0e41e9a84..9cdcafe0d 100644
+index ed6d9e1f1..53903210b 100644
 --- util/EnKF/gfs/src/getsigensmeanp_smooth.fd/CMakeLists.txt
 +++ util/EnKF/gfs/src/getsigensmeanp_smooth.fd/CMakeLists.txt
 @@ -1,7 +1,8 @@
@@ -89,7 +102,7 @@ index 0e41e9a84..9cdcafe0d 100644
    set_source_files_properties( ${LOCAL_SRC} PROPERTIES COMPILE_FLAGS ${LOCAL_Fortran_FLAGS} )
    add_executable(getsigensmeanp_smooth.x  ${LOCAL_SRC} )
 diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/CMakeLists.txt util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/CMakeLists.txt
-index fd434a4da..146ca1e16 100644
+index aa468e55e..d3162ce46 100644
 --- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/CMakeLists.txt
 +++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -101,11 +114,11 @@ index fd434a4da..146ca1e16 100644
    set_source_files_properties( ${OZNMON_HORIZ_SRC} PROPERTIES COMPILE_FLAGS ${OZNMON_HORIZ_Fortran_FLAGS} )
    set(Util_MODULE_DIR ${PROJECT_BINARY_DIR}/include/oznmon_horiz )
    add_executable(oznmon_horiz.x  ${OZNMON_HORIZ_SRC} )
-diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/read_diag.f90 util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/read_diag.f90
-index 7e592d3a5..774d0a05e 100644
---- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/read_diag.f90
-+++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/read_diag.f90
-@@ -649,7 +649,7 @@ module read_diag
+diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/oznmon_read_diag.f90 util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/oznmon_read_diag.f90
+index b2c59e9bb..75f90942c 100644
+--- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/oznmon_read_diag.f90
++++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_horiz.fd/oznmon_read_diag.f90
+@@ -642,7 +642,7 @@ module oznmon_read_diag
    
      nlevs = header_fix%nlevs 
  
@@ -114,7 +127,7 @@ index 7e592d3a5..774d0a05e 100644
         iflag = -1  
      else  
         iflag = 0
-@@ -663,7 +663,8 @@ module read_diag
+@@ -656,7 +656,8 @@ module oznmon_read_diag
            ntobs = nrecords
         end if
  
@@ -124,7 +137,7 @@ index 7e592d3a5..774d0a05e 100644
  
         !------------------------------------
         !  allocate the returned structures
-@@ -954,7 +955,7 @@ module read_diag
+@@ -950,7 +951,7 @@ module oznmon_read_diag
          end if 
       end do 
  
@@ -134,7 +147,7 @@ index 7e592d3a5..774d0a05e 100644
             if( test_name == var_names(k) ) then
                verify_var_name_nc = .true.
 diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/CMakeLists.txt util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/CMakeLists.txt
-index 5a6c15b41..5864e31e4 100644
+index a9f9a575e..ffc252d66 100644
 --- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/CMakeLists.txt
 +++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -146,11 +159,11 @@ index 5a6c15b41..5864e31e4 100644
    set(Util_MODULE_DIR ${PROJECT_BINARY_DIR}/include/oznmon_time )
    set_source_files_properties( ${OZNMON_TIME_SRC} PROPERTIES COMPILE_FLAGS ${OZNMON_TIME_Fortran_FLAGS} )
    add_executable(oznmon_time.x  ${OZNMON_TIME_SRC} )
-diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/read_diag.f90 util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/read_diag.f90
-index 7e592d3a5..774d0a05e 100644
---- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/read_diag.f90
-+++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/read_diag.f90
-@@ -649,7 +649,7 @@ module read_diag
+diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/oznmon_read_diag.f90 util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/oznmon_read_diag.f90
+index b2c59e9bb..75f90942c 100644
+--- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/oznmon_read_diag.f90
++++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/oznmon_read_diag.f90
+@@ -642,7 +642,7 @@ module oznmon_read_diag
    
      nlevs = header_fix%nlevs 
  
@@ -159,7 +172,7 @@ index 7e592d3a5..774d0a05e 100644
         iflag = -1  
      else  
         iflag = 0
-@@ -663,7 +663,8 @@ module read_diag
+@@ -656,7 +656,8 @@ module oznmon_read_diag
            ntobs = nrecords
         end if
  
@@ -169,7 +182,7 @@ index 7e592d3a5..774d0a05e 100644
  
         !------------------------------------
         !  allocate the returned structures
-@@ -954,7 +955,7 @@ module read_diag
+@@ -950,7 +951,7 @@ module oznmon_read_diag
          end if 
       end do 
  
@@ -179,7 +192,7 @@ index 7e592d3a5..774d0a05e 100644
             if( test_name == var_names(k) ) then
                verify_var_name_nc = .true.
 diff --git util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/time.f90 util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/time.f90
-index d6402196a..8ee11d325 100755
+index d9010cdbd..6f865ed44 100755
 --- util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/time.f90
 +++ util/Ozone_Monitor/nwprod/oznmon_shared.v2.0.0/sorc/oznmon_time.fd/time.f90
 @@ -330,7 +330,7 @@ program main
@@ -210,7 +223,7 @@ index d6402196a..8ee11d325 100755
        close( lucnt )
     endif
 diff --git util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radang.fd/CMakeLists.txt util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radang.fd/CMakeLists.txt
-index b60da32a7..681725863 100644
+index acb5d28cb..59ca34074 100644
 --- util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radang.fd/CMakeLists.txt
 +++ util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radang.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -223,7 +236,7 @@ index b60da32a7..681725863 100644
    set_source_files_properties( ${RADMON_ANGLE_SRC} PROPERTIES COMPILE_FLAGS ${RADMON_ANGLE_Fortran_FLAGS} )
    add_executable(radmon_angle.x  ${RADMON_ANGLE_SRC} )
 diff --git util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcoef.fd/CMakeLists.txt util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcoef.fd/CMakeLists.txt
-index 4a9474927..612d56946 100644
+index b9837ce62..19c864bee 100644
 --- util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcoef.fd/CMakeLists.txt
 +++ util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcoef.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -236,7 +249,7 @@ index 4a9474927..612d56946 100644
    set_source_files_properties( ${RADMON_BCOEF_SRC} PROPERTIES COMPILE_FLAGS ${RADMON_BCOEF_Fortran_FLAGS} )
    add_executable(radmon_bcoef.x  ${RADMON_BCOEF_SRC} )
 diff --git util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcor.fd/CMakeLists.txt util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcor.fd/CMakeLists.txt
-index 607d841e0..652ac3cf6 100644
+index 3bbd6bdb6..d8fb08d12 100644
 --- util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcor.fd/CMakeLists.txt
 +++ util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radbcor.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -249,7 +262,7 @@ index 607d841e0..652ac3cf6 100644
    set_source_files_properties( ${RADMON_BCOR_SRC} PROPERTIES COMPILE_FLAGS ${RADMON_BCOR_Fortran_FLAGS} )
    add_executable(radmon_bcor.x  ${RADMON_BCOR_SRC} )
 diff --git util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radtime.fd/CMakeLists.txt util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radtime.fd/CMakeLists.txt
-index 8c59a6349..996524893 100644
+index 15f885b2b..24f585114 100644
 --- util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radtime.fd/CMakeLists.txt
 +++ util/Radiance_Monitor/nwprod/radmon_shared.v3.0.0/sorc/verf_radtime.fd/CMakeLists.txt
 @@ -1,6 +1,7 @@
@@ -262,13 +275,13 @@ index 8c59a6349..996524893 100644
    set_source_files_properties( ${RADMON_TIME_SRC} PROPERTIES COMPILE_FLAGS ${RADMON_TIME_Fortran_FLAGS} )
    add_executable(radmon_time.x  ${RADMON_TIME_SRC} )
 diff --git util/netcdf_io/calc_analysis.fd/CMakeLists.txt util/netcdf_io/calc_analysis.fd/CMakeLists.txt
-index 06927e8e7..68be1b6be 100644
+index 5476502fb..fcdaca02e 100644
 --- util/netcdf_io/calc_analysis.fd/CMakeLists.txt
 +++ util/netcdf_io/calc_analysis.fd/CMakeLists.txt
 @@ -9,5 +9,5 @@ if(BUILD_NCIO_UTIL)
    set_target_properties( calc_analysis.x PROPERTIES Fortran_MODULE_DIRECTORY ${Util_MODULE_DIRECTORY} )
    SET( CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_Fortran_FLAGS}" )
    include_directories( ${UTIL_INC} ${NEMSIOINC} ${NETCDF_INCLUDES} ${MPI_Fortran_INCLUDE_PATH} ${FV3GFS_NCIO_INCS}) 
--  target_link_libraries( calc_analysis.x ${NEMSIO_LIBRARY} ${BACIO_LIBRARY} ${W3NCO_4_LIBRARY} ${NETCDF_LIBRARIES_F90} ${NETCDF_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${HDF5_Fortran_HL_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${FV3GFS_NCIO_LIBRARIES})
-+  target_link_libraries( calc_analysis.x ${NEMSIO_LIBRARY} ${BACIO_LIBRARY} ${W3NCO_4_LIBRARY} ${MPI_Fortran_LIBRARIES} ${HDF5_Fortran_HL_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${FV3GFS_NCIO_LIBRARIES} ${NETCDF_LIBRARIES_F90} ${NETCDF_LIBRARIES} )
+-  target_link_libraries( calc_analysis.x ${FV3GFS_NCIO_LIBRARIES} ${NEMSIO_LIBRARY} ${BACIO_LIBRARY} ${W3NCO_4_LIBRARY} ${NETCDF_LIBRARIES} ${MPI_Fortran_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES})
++  target_link_libraries( calc_analysis.x ${FV3GFS_NCIO_LIBRARIES} ${NEMSIO_LIBRARY} ${BACIO_LIBRARY} ${W3NCO_4_LIBRARY} ${MPI_Fortran_LIBRARIES} ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${NETCDF_LIBRARIES})
  endif()

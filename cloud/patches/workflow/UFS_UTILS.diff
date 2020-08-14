@@ -383,7 +383,7 @@ index 3f2f1498..0ce28933 100755
  
  exit
 diff --git sorc/build_orog.sh sorc/build_orog.sh
-index c1cc33a8..23f56f7c 100755
+index ba0832ec..85623639 100755
 --- sorc/build_orog.sh
 +++ sorc/build_orog.sh
 @@ -1,4 +1,4 @@
@@ -392,12 +392,16 @@ index c1cc33a8..23f56f7c 100755
  #####################################################################################
  # orog using module compile standard
  # 10/10/2016 Fanglin.Yang@noaa.gov:    Create module load version
-@@ -43,20 +43,32 @@ elif [ $target = jet ]; then
+@@ -43,7 +43,7 @@ elif [ $target = jet ]; then
   INCS="-I${NETCDF}/include"
   export LIBSM="${BACIO_LIB4} ${W3NCO_LIBd} ${IP_LIBd} ${SP_LIBd} -L${NETCDF}/lib -lnetcdff -lnetcdf"
   export FFLAGSM="-O3 -g -traceback -r8  -convert big_endian -fp-model precise  -assume byterecl ${INCS}"
 -elif [ $target = hera ]; then
 +elif [ $target = hera -o "$target" = "linux.intel" ]; then
+  INCS="-I${NETCDF}/include"
+  export LIBSM="${BACIO_LIB4} ${W3NCO_LIBd} ${IP_LIBd} ${SP_LIBd} -L${NETCDF}/lib -lnetcdff -lnetcdf"
+  export FFLAGSM="-O3 -g -traceback -r8  -convert big_endian -fp-model precise  -assume byterecl ${INCS}"
+@@ -51,16 +51,28 @@ elif [ $target = orion ]; then
   INCS="-I${NETCDF}/include"
   export LIBSM="${BACIO_LIB4} ${W3NCO_LIBd} ${IP_LIBd} ${SP_LIBd} -L${NETCDF}/lib -lnetcdff -lnetcdf"
   export FFLAGSM="-O3 -g -traceback -r8  -convert big_endian -fp-model precise  -assume byterecl ${INCS}"
@@ -534,37 +538,35 @@ index 00000000..5aaeba50
 +make -f Makefile install
 +make -f Makefile clean
 diff --git sorc/link_fixdirs.sh sorc/link_fixdirs.sh
-index d5fbc1cd..f60dfba7 100755
+index 283019d6..e4434b3e 100755
 --- sorc/link_fixdirs.sh
 +++ sorc/link_fixdirs.sh
 @@ -19,7 +19,7 @@ if [ $RUN_ENVIR != emc -a $RUN_ENVIR != nco ]; then
-     echo 'Syntax: link_fv3gfs.sh ( nco | emc ) ( cray | dell | hera | jet )'
+     echo 'Syntax: link_fv3gfs.sh ( nco | emc ) ( cray | dell | hera | jet | orion )'
      exit 1
  fi
--if [ $machine != cray -a $machine != hera -a $machine != dell -a $machine != jet ]; then
-+if [ $machine != cray -a $machine != hera -a $machine != dell -a $machine != jet -a $machine != linux.gnu -a $machine != linux.intel ]; then
+-if [ $machine != cray -a $machine != hera -a $machine != dell -a $machine != jet -a $machine != orion ]; then
++if [ $machine != cray -a $machine != hera -a $machine != dell -a $machine != jet -a $machine != orion -a $machine != linux.gnu -a $machine != linux.intel ]; then
      set +x
      echo '***ERROR*** unsupported machine'
-     echo 'Syntax: link_fv3gfs.sh ( nco | emc ) ( cray | dell | hera | jet )'
-@@ -43,6 +43,8 @@ elif [ $machine = "hera" ]; then
-     FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix"
- elif [ $machine = "jet" ]; then
-     FIX_DIR="/lfs3/projects/hfv3gfs/glopara/git/fv3gfs/fix"
+     echo 'Syntax: link_fv3gfs.sh ( nco | emc ) ( cray | dell | hera | jet | orion )'
+@@ -45,6 +45,8 @@ elif [ $machine = "jet" ]; then
+     FIX_DIR="/lfs4/HFIP/hfv3gfs/glopara/git/fv3gfs/fix"
+ elif [ $machine = "orion" ]; then
+     FIX_DIR="/work/noaa/global/glopara/fix"
 +elif [ $machine = "linux.gnu" ] || [ $machine = "linux.intel" ]; then
 +    FIX_DIR="/fix"
  fi
  cd ${pwd}/../fix                ||exit 8
  for dir in fix_am fix_fv3 fix_orog fix_fv3_gmted2010 fix_sfc_climo; do
 diff --git sorc/machine-setup.sh sorc/machine-setup.sh
-index 48b2ee1b..379ef4e0 100644
+index e4bbfda6..eb961b91 100644
 --- sorc/machine-setup.sh
 +++ sorc/machine-setup.sh
-@@ -109,8 +109,14 @@ elif [[ -d /lustre && -d /ncrc ]] ; then
-     fi
-     target=gaea
+@@ -114,6 +114,14 @@ elif [[ "$(hostname)" =~ "Orion" ]]; then
      module purge
--elif [[ "$(hostname)" =~ "odin" ]]; then
--    target="odin"
+ elif [[ "$(hostname)" =~ "odin" ]]; then
+     target="odin"
 +elif [[ -d /dev ]] ; then
 +    if [[ -d /opt/intel ]]; then
 +        target=linux.intel
