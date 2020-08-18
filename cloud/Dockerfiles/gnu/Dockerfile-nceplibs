@@ -20,6 +20,13 @@ RUN apt-get update -y && \
         libcairo2-dev \
         libpixman-1-dev \
         xbitmaps  \
+        libaec-dev \
+        zlib1g-dev \
+        libboost-dev \
+        curl \
+        zip \
+        unzip \
+        bzip2 \
         file \
         flex  \
         byacc  \

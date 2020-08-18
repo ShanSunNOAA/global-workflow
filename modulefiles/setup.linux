@@ -107,6 +107,8 @@ export CURL_LIBRARY=/usr/lib/x86_64-linux-gnu
 export CURL_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/curl
 
 export WRFIO_LIB=/usr/local/NCEPlibs-20190820/lib/libwrfio.a
+export WGRIB2API_INC=/usr/local/grib2/grib2/lib
+export WGRIB2_LIB=/usr/local/grib2/grib2/lib/libwgrib2.a
 
 ##
 ## CRTM

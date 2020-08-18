@@ -23,6 +23,13 @@ RUN dnf update -y && \
         cairo-devel \
         pixman-devel \
         xorg-x11-xbitmaps  \
+        libaec-devel \
+        zlib-devel \
+        libboost-devel \
+        curl \
+        zip \
+        unzip \
+        bzip2 \
         file \
         flex  \
         byacc  \

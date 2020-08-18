@@ -26,6 +26,19 @@ else
 fi
 
 #################################
+## wgrib2
+#################################
+cd $SRC_DIR && rm -rf /usr/local/grib2 && \
+   mkdir -p /usr/local/grib2 && \
+   wget ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib2/wgrib2.tgz.v2.0.8 -O wgrib2.tgz && \
+   tar -xf wgrib2.tgz && \
+   mv grib2/ /usr/local/grib2 && \
+   cd /usr/local/grib2/grib2 && \
+   FC=$FC CC=$CC make && FC=$FC CC=$CC make lib && rm -rf /usr/local/bin/wgrib2 && \
+   ln -s /usr/local/grib2/grib2/wgrib2/wgrib2 /usr/local/bin/wgrib2 && \
+   rm -rf wgrib2.tgz
+
+#################################
 ## libjasper
 #################################
 cd $SRC_DIR && git clone https://github.com/mdadams/jasper.git && \
@@ -128,6 +141,19 @@ cd ${SRC_DIR}/NCEPLIBS-prod_util/sorc && \
 ##############
 # CRTM
 ##############
+#CRTM
+git clone https://github.com/NOAA-EMC/JCSDA_CRTM.git
+cd JCSDA_CRTM; git checkout release/REL-2.3.0; cd -
+mv JCSDA_CRTM CRTM-2.3.0
+
+#VER=2.3.0
+#PP=crtm_v${VER}.tar.gz
+#LNK="https://ftp.emc.ncep.noaa.gov/jcsda/CRTM/REL-${VER}/crtm_v${VER}.tar.gz"
+#wget ${LNK}
+#tar -xvf ${PP}
+#mv REL-${VER} CRTM-${VER}
+#rm -rf ${PP}
+
 cd ${SRC_DIR}/CRTM-2.3.0 && \
     /bin/bash -c "source config-setup/${FC}.setup" && \
     ./configure \

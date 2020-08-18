@@ -85,15 +85,3 @@ git checkout de699056db15a49e39bc82fd -b temp
 patch -p0 -i ../patches/nceplibs/prod_util.diff 
 cd -
 
-#CRTM
-git clone https://github.com/NOAA-EMC/JCSDA_CRTM.git
-cd JCSDA_CRTM; git checkout release/REL-2.3.0; cd -
-mv JCSDA_CRTM CRTM-2.3.0
-
-#VER=2.3.0
-#PP=crtm_v${VER}.tar.gz
-#LNK="https://ftp.emc.ncep.noaa.gov/jcsda/CRTM/REL-${VER}/crtm_v${VER}.tar.gz"
-#wget ${LNK}
-#tar -xvf ${PP}
-#mv REL-${VER} CRTM-${VER}
-#rm -rf ${PP}
