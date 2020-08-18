@@ -25,9 +25,9 @@ else
    FCOMP=mpif90
 fi
 
-################################
-# libjasper
-################################
+#################################
+## libjasper
+#################################
 cd $SRC_DIR && git clone https://github.com/mdadams/jasper.git && \
     cd jasper && \
     mkdir -p mybuild && \
@@ -36,10 +36,31 @@ cd $SRC_DIR && git clone https://github.com/mdadams/jasper.git && \
     cd ../.. && \
     rm -fr jasper
 
+#######################################
+## Old nceplibs
+#######################################
+VER=NCEPlibs-20190820
+export JASPER_INC=/usr/local/include/jasper
+export PNG_INC=/usr/include/x86_64-linux-gnu
+export NETCDF=/usr/local
+export NETCDF_INC=/usr/local/include
+cd $SRC_DIR && \
+    git clone https://github.com/NCAR/NCEPlibs.git && \
+    mv NCEPlibs $VER && \
+    cd $VER && \
+    git checkout 500fa50e234fa34c7336b61ea41 -b nov5 && \
+    mkdir $INSTALL_DIR/$VER && \
+    yes | ./make_ncep_libs.sh -s linux -c ${COMP} -d ${INSTALL_DIR}/${VER} -a upp -o 0 && \
+    cd .. && \
+    rm -fr ${VER}
+
 #############################################################
 # Compile NCEP libraries needed for gfs. Clone the required 
 # reposistories from https://vlab.ncep.noaa.gov
 #############################################################
+
+# gfsio
+cd ${SRC_DIR}/NCEPLIBS-gfsio && bash ./build_gfsio.sh gnu_general build prefix=${PWD} && cd ../..
 
 # g2tmpl
 cd $SRC_DIR && git clone https://github.com/Hang-Lei-NOAA/NCEPLIBS-g2tmpl.git && \
@@ -103,19 +124,6 @@ cd ${SRC_DIR}/NCEPLIBS-prod_util/sorc && \
    cd nhour.fd && FC=${FC} W3NCO_LIB4=${SRC_DIR}/NCEPLIBS-w3nco/libw3nco_v2.0.6_4.a make && cd .. && \
    cd ../../
 
-######################################
-# Old nceplibs
-######################################
-VER=NCEPlibs-20190820
-cd $SRC_DIR && \
-    git clone https://github.com/NCAR/NCEPlibs.git && \
-    mv NCEPlibs $VER && \
-    cd $VER && \
-    git checkout 4fc8335c42a54db77b6586189 -b temp
-    mkdir $INSTALL_DIR/$VER && \
-    yes | ./make_ncep_libs.sh -s linux -c ${COMP} -d ${INSTALL_DIR}/${VER} -o 0 && \
-    cd .. && \
-    rm -fr ${VER}
 
 ##############
 # CRTM

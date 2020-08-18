@@ -2,6 +2,10 @@
 
 set -ex
 
+#gfsio
+git clone https://github.com/NOAA-EMC/NCEPLIBS-gfsio.git
+cd NCEPLIBS-gfsio; git checkout 6cdaff1c441f58d2a8b5c9 -b temp; cd -
+
 #bacio
 git clone https://github.com/NOAA-EMC/NCEPLIBS-bacio.git
 cd NCEPLIBS-bacio; git checkout 13cff73cf82aa45bbb8158 -b temp; cd -

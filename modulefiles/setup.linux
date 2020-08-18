@@ -67,6 +67,8 @@ export SIGIO_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-sigio/sigio_v2.1.0/libsigio_v2.1.0.a
 export SFCIO_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-sfcio/sfcio_v1.1.0/libsfcio_v1.1.0.a
 export G2_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/libg2_v3.1.0_4.a
 export G2_LIBd=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/libg2_v3.1.0_d.a
+export G2TMPL_LIB=${GFS_LIBS_DIR}/NCEPLIBS-g2tmpl/src/libg2tmpl_v1.5.0.a
+export GFSIO_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-gfsio/src/libgfsio_v1.1.0_4.a
 export LANDSFCUTIL_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-landsfcutil/landsfcutil/v2.1.0/liblandsfcutil_v2.1.0_4.a
 export LANDSFCUTIL_LIBd=${GFS_LIBS_DIR}/NCEPLIBS-landsfcutil/landsfcutil/v2.1.0/liblandsfcutil_v2.1.0_d.a
 
@@ -84,6 +86,8 @@ export SIGIO_INC4=${GFS_LIBS_DIR}/NCEPLIBS-sigio/sigio_v2.1.0/incmod/sigio_v2.1.
 export SFCIO_INC4=${GFS_LIBS_DIR}/NCEPLIBS-sfcio/sfcio_v1.1.0/incmod/sfcio_v1.1.0
 export G2_INC4=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/include/g2_v3.1.0_4
 export G2_INCd=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/include/g2_v3.1.0_d
+export G2TMPL_INC=${GFS_LIBS_DIR}/NCEPLIBS-g2tmpl/src/g2tmpl_v1.5.0
+export GFSIO_INC4=${GFS_LIBS_DIR}/NCEPLIBS-gfsio/src/gfsio_v1.1.0_4
 export LANDSFCUTIL_INC4=${GFS_LIBS_DIR}/NCEPLIBS-landsfcutil/landsfcutil/v2.1.0/include/landsfcutil_v2.1.0_4
 export LANDSFCUTIL_INCd=${GFS_LIBS_DIR}/NCEPLIBS-landsfcutil/landsfcutil/v2.1.0/include/landsfcutil_v2.1.0_d
 
@@ -93,11 +97,16 @@ export W3NCO_DIR=${GFS_LIBS_DIR}/NCEPlibs-w3nco/src
 ## Other libs
 ##
 
+export JASPER_INC=/usr/local/include/jasper
 export JASPER_LIB=-ljasper
+export PNG_INC=/usr/include/x86_64-linux-gnu
 export PNG_LIB=-lpng
 export Z_LIB=-lz
+export Z_INC=/usr/local/include
 export CURL_LIBRARY=/usr/lib/x86_64-linux-gnu
 export CURL_INCLUDE_DIR=/usr/include/x86_64-linux-gnu/curl
+
+export WRFIO_LIB=/usr/local/NCEPlibs-20190820/lib/libwrfio.a
 
 ##
 ## CRTM

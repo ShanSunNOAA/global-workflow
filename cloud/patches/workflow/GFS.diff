@@ -2,15 +2,6 @@ diff --git sorc/build_all.sh sorc/build_all.sh
 index ebcef191..0f2efab5 100755
 --- sorc/build_all.sh
 +++ sorc/build_all.sh
-@@ -88,7 +88,7 @@ fi
- #------------------------------------
- $Build_ncep_post && {
- echo " .... Building ncep_post .... "
--./build_ncep_post.sh > $logs_dir/build_ncep_post.log 2>&1
-+#./build_ncep_post.sh > $logs_dir/build_ncep_post.log 2>&1
- rc=$?
- if [[ $rc -ne 0 ]] ; then
-     echo "Fatal error in building ncep_post."
 @@ -116,7 +116,7 @@ fi
  #------------------------------------
  $Build_gldas && {
