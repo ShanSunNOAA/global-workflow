@@ -25,3 +25,7 @@ cd -
 cd ${GFSDIR}/sorc/gfs_post.fd
 patch -p0 -i ${CWD}/patches/workflow/GFS_POST.diff
 cd -
+
+cd ${GFSDIR}/sorc/gldas.fd
+patch -p0 -i ${CWD}/patches/workflow/GLDAS.diff
+cd -

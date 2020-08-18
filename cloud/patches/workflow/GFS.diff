@@ -1,16 +1,3 @@
-diff --git sorc/build_all.sh sorc/build_all.sh
-index ebcef191..0f2efab5 100755
---- sorc/build_all.sh
-+++ sorc/build_all.sh
-@@ -116,7 +116,7 @@ fi
- #------------------------------------
- $Build_gldas && {
- echo " .... Building gldas .... "
--./build_gldas.sh > $logs_dir/build_gldas.log 2>&1
-+#./build_gldas.sh > $logs_dir/build_gldas.log 2>&1
- rc=$?
- if [[ $rc -ne 0 ]] ; then
-     echo "Fatal error in building gldas."
 diff --git sorc/build_fv3.sh sorc/build_fv3.sh
 index 5659b533..b5f3283f 100755
 --- sorc/build_fv3.sh
