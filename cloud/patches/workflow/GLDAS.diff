@@ -53,17 +53,25 @@ index e69de29..ef52b3c 100644
 +export FC=ifort
 +export FOPTS="-O0 -FR"
 diff --git modulefiles/gldas_model.linux.gnu modulefiles/gldas_model.linux.gnu
-index e69de29..a9bf588 100644
+index e69de29..05b86a8 100644
 --- modulefiles/gldas_model.linux.gnu
 +++ modulefiles/gldas_model.linux.gnu
-@@ -0,0 +1 @@
+@@ -0,0 +1,5 @@
 +#!/bin/bash
++
++export FC=gfortran
++export FOPTS="-O0 -ffree-form"
++export CC=gcc
 diff --git modulefiles/gldas_model.linux.intel modulefiles/gldas_model.linux.intel
-index e69de29..a9bf588 100644
+index e69de29..696bd68 100644
 --- modulefiles/gldas_model.linux.intel
 +++ modulefiles/gldas_model.linux.intel
-@@ -0,0 +1 @@
+@@ -0,0 +1,5 @@
 +#!/bin/bash
++
++export FC=ifort
++export FOPTS="-O0 -FR"
++export CC=icc
 diff --git modulefiles/gldas_post.linux.gnu modulefiles/gldas_post.linux.gnu
 index e69de29..21e7890 100644
 --- modulefiles/gldas_post.linux.gnu
@@ -101,19 +109,6 @@ index e69de29..aaddd06 100644
 +#
 +export FC=ifort
 +export FOPTS='-O -FR -I$(NEMSIO_INC) -convert big_endian'
-diff --git sorc/build_all_gldas.sh sorc/build_all_gldas.sh
-index 285d487..3bc74ef 100755
---- sorc/build_all_gldas.sh
-+++ sorc/build_all_gldas.sh
-@@ -60,7 +60,7 @@ echo " .... Building gldas_rst .... "
- # build gldas_model
- #------------------------------------
- echo " .... Building gldas_model .... "
--./build_gldas_model.sh > $logs_dir/build_gldas_model.log 2>&1
-+#./build_gldas_model.sh > $logs_dir/build_gldas_model.log 2>&1
- echo;echo " .... Build system finished .... "
- 
- exit 0
 diff --git sorc/gdas2gldas.fd/driver.F90 sorc/gdas2gldas.fd/driver.F90
 index 3ccd731..4f54bde 100644
 --- sorc/gdas2gldas.fd/driver.F90
@@ -3695,6 +3690,75 @@ index e7e616c..03705ff 100644
       call error_handler("IN FieldGather", error)
  
     if (localpet == 0) then
+diff --git sorc/gldas_model.fd/lsms/noah.igbp/gfs_sfc_diff.f sorc/gldas_model.fd/lsms/noah.igbp/gfs_sfc_diff.f
+index bb9e4bd..dbf2ce4 100755
+--- sorc/gldas_model.fd/lsms/noah.igbp/gfs_sfc_diff.f
++++ sorc/gldas_model.fd/lsms/noah.igbp/gfs_sfc_diff.f
+@@ -19,7 +19,7 @@
+      &     STRESS,FM,FH,
+      &     WIND(1),DDVEL,FM10,FH2,
+      &     tsurf,z0pert(1),ztpert(1),u10m(1),v10m(1),
+-     &     shdfac,shdmax,sigmaf(1),snwdph
++     &     shdfac,shdmax(1),sigmaf(1),snwdph
+ ! 1 - land, 2 - ice, 3 - water
+       real(kind=kind_phys):: tskin3(3), tsurf3(3), snwdph3(3),
+      &     z0rl3(3), ustar3(3),cm3(3), ch3(3),
+diff --git sorc/gldas_model.fd/lsms/noah.igbp/noah_tileout.F sorc/gldas_model.fd/lsms/noah.igbp/noah_tileout.F
+index 6228181..9b4f46d 100755
+--- sorc/gldas_model.fd/lsms/noah.igbp/noah_tileout.F
++++ sorc/gldas_model.fd/lsms/noah.igbp/noah_tileout.F
+@@ -22,7 +22,7 @@ subroutine noah_tileout(ld,tile,ftn,ftn_stats)
+   implicit none
+   
+   type(lisdec) :: ld
+-  type(tiledec) :: tile
++  type(tiledec),dimension(:) :: tile
+   integer :: ftn,ftn_stats
+ !EOP
+   real :: gtmp (ld%d%glbngrid)
+diff --git sorc/gldas_model.fd/make/MAKDEP/Makefile sorc/gldas_model.fd/make/MAKDEP/Makefile
+index fc12d49..d373f83 100755
+--- sorc/gldas_model.fd/make/MAKDEP/Makefile
++++ sorc/gldas_model.fd/make/MAKDEP/Makefile
+@@ -18,7 +18,7 @@ CFLAGS := -O
+ #------------------------------------------------------------------------
+ 
+ #CC = /usr/vacpp/bin/cc_r
+-CC = icc
++#CC = icc
+ $(EXEDIR)/$(EXENAME):	main.o
+ 	$(CC) -o $@ main.o 
+ 
+diff --git sorc/gldas_model.fd/make/Makefile.noah sorc/gldas_model.fd/make/Makefile.noah
+index 83d1396..4d1bbac 100755
+--- sorc/gldas_model.fd/make/Makefile.noah
++++ sorc/gldas_model.fd/make/Makefile.noah
+@@ -68,6 +68,9 @@ debug: $(OBJS)
+ ifeq ($(target),wcoss_cray)
+   FC           = ftn
+   CC           = cc
++else ifeq ($(target),linux.gnu)
++  FC           = mpif90
++  CC           = mpicc
+ else
+   FC           = mpiifort
+   CC           = mpiicc
+@@ -83,9 +86,15 @@ CFLAGS       = -DIRIX64 -c -O
+ ##FFLAGS       = -fp-model strict -free -c -O0 -convert big_endian
+ 
+ ## Dell standard flags
++ifeq ($(target),linux.gnu)
++FFLAGS       = -I. -ffree-form -c -O3 -fconvert=big-endian -cpp
++FFLAGS1      = -c -O3 -fconvert=big-endian
++LDFLAGS      = ${BACIO_LIB4} ${IP_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} ${SP_LIB4} -fopenmp
++else
+ FFLAGS       = -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align array64byte -free -c -O3 -convert big_endian
+ FFLAGS1       = -fp-model precise -ftz -fast-transcendentals -no-prec-div -no-prec-sqrt -align array64byte -c -O3 -convert big_endian
+ LDFLAGS      = ${BACIO_LIB4} ${IP_LIB4} ${W3EMC_LIB4} ${W3NCO_LIB4} ${SP_LIB4} -qopenmp
++endif
+ 
+ ifeq ($(SPMD),TRUE)
+ #  FFLAGS  -= -mp
 diff --git sorc/machine-setup.sh sorc/machine-setup.sh
 index d54235b..a36eaf4 100644
 --- sorc/machine-setup.sh
