@@ -2,6 +2,20 @@
 
 set -ex
 
+#grib_util
+git clone https://github.com/NOAA-EMC/NCEPLIBS-grib_util.git
+cd NCEPLIBS-grib_util
+git checkout grib_util_v1.1.1 -b temp
+patch -p0 -i ../patches/nceplibs/grib_util.diff 
+cd -
+
+#g2tmpl
+git clone https://github.com/NOAA-EMC/NCEPLIBS-g2tmpl.git
+cd NCEPLIBS-g2tmpl
+git checkout g2tmpl_v1.6.0 -b temp
+patch -p0 -i ../patches/nceplibs/g2tmpl.diff 
+cd -
+
 #gfsio
 git clone https://github.com/NOAA-EMC/NCEPLIBS-gfsio.git
 cd NCEPLIBS-gfsio; git checkout 6cdaff1c441f58d2a8b5c9 -b temp; cd -

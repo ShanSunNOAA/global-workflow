@@ -72,17 +72,11 @@ cd $SRC_DIR && \
 # reposistories from https://vlab.ncep.noaa.gov
 #############################################################
 
+# g2tmpl
+cd $SRC_DIR/NCEPLIBS-g2tmpl && libver='g2tmpl_v1.6.0' bash ./build_g2tmpl.sh gnu_general build && cd ../..
+
 # gfsio
 cd ${SRC_DIR}/NCEPLIBS-gfsio && bash ./build_gfsio.sh gnu_general build prefix=${PWD} && cd ../..
-
-# g2tmpl
-cd $SRC_DIR && git clone https://github.com/Hang-Lei-NOAA/NCEPLIBS-g2tmpl.git && \
-    cd NCEPLIBS-g2tmpl && \
-    git checkout master && \
-    mkdir -p ${INSTALL_DIR}/g2tmpl/v1.5.0 && \
-    ./build_g2tmpl.sh gnu_general prefix=${INSTALL_DIR}/g2tmpl/v1.5.0 build install && \
-    cd .. && \
-    rm -fr NCEPLIBS-g2tmpl
 
 #bufr
 cd ${SRC_DIR}/NCEPLIBS-bufr/src && COMP=${COMP} ./makebufrlib.sh && cd ../..
@@ -137,6 +131,23 @@ cd ${SRC_DIR}/NCEPLIBS-prod_util/sorc && \
    cd nhour.fd && FC=${FC} W3NCO_LIB4=${SRC_DIR}/NCEPLIBS-w3nco/libw3nco_v2.0.6_4.a make && cd .. && \
    cd ../../
 
+# grib_util
+(
+GFS_LIBS_DIR=/opt
+COMP=gnu
+export W3NCO_LIBd=${GFS_LIBS_DIR}/NCEPLIBS-w3nco/libw3nco_v2.0.6_d.a
+export IP_LIBd=${GFS_LIBS_DIR}/NCEPLIBS-ip/ip/v3.0.1/libip_v3.0.1_d.a
+export SP_LIBd=${GFS_LIBS_DIR}/NCEPLIBS-sp/libsp_v2.0.2_d.a
+export BACIO_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-bacio/bacio_v2.1.0_4/libbacio_v2.1.0_4.a
+export W3NCO_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-w3nco/libw3nco_v2.0.6_4.a
+export BUFR_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-bufr/libbufr_v11.3.0_4_64.a
+export G2_LIB4=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/libg2_v3.1.0_4.a
+export G2_INC4=${GFS_LIBS_DIR}/NCEPLIBS-g2/${COMP}/include/g2_v3.1.0_4
+export JASPER_LIB=-ljasper
+export PNG_LIB=-lpng
+export Z_LIB=-lz
+cd /opt/NCEPLIBS-grib_util/sorc && bash ./install_all_grib_util_linux.sh  && cd ../..
+)
 
 ##############
 # CRTM
