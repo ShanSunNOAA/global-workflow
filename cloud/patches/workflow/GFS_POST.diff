@@ -1,7 +1,6 @@
 diff --git modulefiles/post/gfs_post.linux.gnu modulefiles/post/gfs_post.linux.gnu
-new file mode 100644
-index 0000000..4ab9290
---- /dev/null
+index e69de29..4ab9290 100644
+--- modulefiles/post/gfs_post.linux.gnu
 +++ modulefiles/post/gfs_post.linux.gnu
 @@ -0,0 +1,13 @@
 +#!/bin/bash
@@ -18,9 +17,8 @@ index 0000000..4ab9290
 +export myCPPFLAGS="-P"
 +export mySFC=gfortran
 diff --git modulefiles/post/gfs_post.linux.intel modulefiles/post/gfs_post.linux.intel
-new file mode 100644
-index 0000000..f4e0899
---- /dev/null
+index e69de29..f4e0899 100644
+--- modulefiles/post/gfs_post.linux.intel
 +++ modulefiles/post/gfs_post.linux.intel
 @@ -0,0 +1,13 @@
 +#!/bin/bash
@@ -118,3 +116,46 @@ index 099f802..951c908 100755
  
  .SUFFIXES: .F .f .o .f90 .c
  
+diff --git ush/gfs_nceppost.sh ush/gfs_nceppost.sh
+index 7e8bc36..82e8b1b 100755
+--- ush/gfs_nceppost.sh
++++ ush/gfs_nceppost.sh
+@@ -345,7 +345,37 @@ export CTL=`basename $CTLFILE`
+ ln -sf griddef.out fort.110
+ cp ${PARMpost}/nam_micro_lookup.dat ./eta_micro_lookup.dat
+ 
+-${APRUN:-mpirun.lsf} $POSTGPEXEC < itag > outpost_gfs_${VDATE}_${CTL}
++#launch job
++if [ -z $GFS_SING_CMD ]; then
++   ${APRUN:-mpirun.lsf} $POSTGPEXEC < itag > outpost_gfs_${VDATE}_${CTL}
++else
++   set +x
++   cat /dev/null >$PWD/.envr;
++   IFS=$'\n'
++   for i in `printenv`; do
++      if [[ "$i" = *=* ]] && [[ ! "$i" = *\(* ]] && [[ ! "$i" = *\"* ]] &&  \
++         [[ ! "$i" = *PATH=* ]] && [[ ! "$i" = *LD_LIBRARY_PATH* ]]; then
++         j=`echo $i | awk -F'=' '{print $1"=\""$2"\""}'`
++         echo export $j >>$PWD/.envr
++      fi
++   done
++   set -x
++
++   echo "cd $PWD; source $PWD/.envr; ${APRUN:-mpirun.lsf} $POSTGPEXEC < itag > outpost_gfs_${VDATE}_${CTL}"
++
++   if [ $VERBOSE = "YES" ] ; then
++       echo "Waiting for job to finish."
++       set +x
++   fi
++
++   while [ -s ${HOME}/.servinp ]; do sleep 1; done
++
++   if [ $VERBOSE = "YES" ] ; then
++       cat ${HOME}/.output.log
++       echo "Job finished."
++       set -x
++   fi
++fi
+ 
+ export ERR=$?
+ export err=$ERR

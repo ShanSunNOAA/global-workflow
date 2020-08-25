@@ -1,3 +1,58 @@
+diff --git scripts/exgfs_postsnd.sh.ecf scripts/exgfs_postsnd.sh.ecf
+index c59c9130..30af408e 100755
+--- scripts/exgfs_postsnd.sh.ecf
++++ scripts/exgfs_postsnd.sh.ecf
+@@ -165,7 +165,19 @@ chmod +x cmdfile
+ if [ -z $GFS_SING_CMD ]; then
+    ${APRUN_POSTSNDCFP} cmdfile
+ else
+-   echo "cd $DATA; export OMP_NUM_THREADS=$NTHREADS_POSTSNDCFP; $APRUN_POSTSNDCFP cmdfile" >${HOME}/.servinp
++   set +x
++   cat /dev/null >$PWD/.envr;
++   IFS=$'\n'
++   for i in `printenv`; do
++      if [[ "$i" = *=* ]] && [[ ! "$i" = *\(* ]] && [[ ! "$i" = *\"* ]] &&  \
++         [[ ! "$i" = *PATH=* ]] && [[ ! "$i" = *LD_LIBRARY_PATH* ]]; then
++         j=`echo $i | awk -F'=' '{print $1"=\""$2"\""}'`
++         echo export $j >>$PWD/.envr
++      fi
++   done
++   set -x
++
++   echo "cd $PWD; source $PWD/.envr; $APRUN_POSTSNDCFP cmdfile" >${HOME}/.servinp
+    
+    if [ $VERBOSE = "YES" ] ; then
+        echo "Waiting for job to finish."
+diff --git scripts/exglobal_fcst_nemsfv3gfs.sh scripts/exglobal_fcst_nemsfv3gfs.sh
+index c09e16b5..ae9a1d39 100755
+--- scripts/exglobal_fcst_nemsfv3gfs.sh
++++ scripts/exglobal_fcst_nemsfv3gfs.sh
+@@ -1304,11 +1304,23 @@ fi
+ 
+ $NCP $FCSTEXECDIR/$FCSTEXEC $DATA/.
+ #launch job
++export OMP_NUM_THREADS=$NTHREADS_FV3
+ if [ -z $GFS_SING_CMD ]; then
+-   export OMP_NUM_THREADS=$NTHREADS_FV3
+    $APRUN_FV3 $DATA/$FCSTEXEC 1>&1 2>&2
+ else
+-   echo "cd $DATA; export OMP_NUM_THREADS=$NTHREADS_FV3; $APRUN_FV3 $DATA/$FCSTEXEC 1>&1 2>&2" >${HOME}/.servinp
++   set +x
++   cat /dev/null >$PWD/.envr;
++   IFS=$'\n'
++   for i in `printenv`; do
++      if [[ "$i" = *=* ]] && [[ ! "$i" = *\(* ]] && [[ ! "$i" = *\"* ]] &&  \
++         [[ ! "$i" = *PATH=* ]] && [[ ! "$i" = *LD_LIBRARY_PATH* ]]; then
++         j=`echo $i | awk -F'=' '{print $1"=\""$2"\""}'`
++         echo export $j >>$PWD/.envr
++      fi
++   done
++   set -x
++
++   echo "cd $PWD; source $PWD/.envr; $APRUN_FV3 $DATA/$FCSTEXEC 1>&1 2>&2" >${HOME}/.servinp
+    
+    if [ $VERBOSE = "YES" ] ; then
+        echo "Waiting for job to finish."
 diff --git sorc/build_fv3.sh sorc/build_fv3.sh
 index 5659b533..b5f3283f 100755
 --- sorc/build_fv3.sh
