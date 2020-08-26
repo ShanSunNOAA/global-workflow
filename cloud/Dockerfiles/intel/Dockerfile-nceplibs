@@ -36,6 +36,8 @@ RUN dnf update -y && \
         python3-devel \
     && rm -rf /var/lib/apt/lists/*
 
+COPY scripts/build_crtm_gempak.sh /opt
+
 COPY scripts/checkout_nceplibs.sh /opt
 COPY scripts/build_nceplibs.sh /opt
-COPY patches /opt/patches
+COPY patches/nceplibs /opt/patches/nceplibs
