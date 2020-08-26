@@ -116,8 +116,14 @@ export NHOUR=${GFS_LIBS_DIR}/NCEPLIBS-prod_util/sorc/ndate.fd/nhour
 export MDATE=${GFS_LIBS_DIR}/NCEPLIBS-prod_util/sorc/mdate.fd/mdate
 export CNVGRIB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/cnvgrib
 export COPYGB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/copygb
+export COPYGB2=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/copygb2
 export DEGRIB2=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/degrib2
+export GRB2INDEX=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/grb2index
+export GRBINDEX=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/grbindex
+export GRIB2GRIB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/grib2grib
 export TOCGRIB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/tocgrib
+export TOCGRIB2=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/tocgrib2
+export TOCGRIB2SUPER=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/tocgrib2super
 export WGRIB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/wgrib
 
 

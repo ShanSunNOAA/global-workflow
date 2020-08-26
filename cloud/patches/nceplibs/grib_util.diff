@@ -229,18 +229,62 @@ index 0000000..cf9e3c9
 +make -f $makefile install
 +make -f $makefile clean
 +
+diff --git sorc/copygb2.fd/copygb2.f sorc/copygb2.fd/copygb2.f
+index 5a85617..f07982c 100755
+--- sorc/copygb2.fd/copygb2.f
++++ sorc/copygb2.fd/copygb2.f
+@@ -553,7 +553,11 @@ C  GO
+         CALL W3TAGE('COPYGB2 ')
+       ENDIF
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
++#ifdef __GFORTRAN__
++      CONTAINS
++#else
+       END
++#endif
+ C-----------------------------------------------------------------------
+       SUBROUTINE EUSAGE
+ C$$$  SUBPROGRAM DOCUMENTATION BLOCK
+@@ -942,6 +946,7 @@ C$$$
+       REAL,ALLOCATABLE,TARGET :: G1I(:)
+       REAL,POINTER :: FBI(:),GBI(:)
+       TYPE( GRIBFIELD ) :: GFLD1,GFLDV,GFLDM,GFLDMV
++      INTEGER ISDUMMY,IADUMMY(200)
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ C  GET FIELD FROM FILE 1
+       JDISC=-1
+@@ -1069,9 +1074,9 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ C  INTERPOLATE MAP FIELD
+         IF(IRET.EQ.0) THEN
+           IBB=MOD(KPDSB(4)/64,2)
+-          CALL INTGRIB2(0,IP,IPOPT,d,nopt,opt,KGDSB,
+-     &                  KB,IBB,LR,FR,GR,d,KGDTI,MI,
+-     &                 IBBI,LBI,FBI,GBI,IRET)
++          CALL INTGRIB2(0,IP,IPOPT,ISDUMMY,IADUMMY,SIZE(KGDSB),KGDSB,
++     &                  KB,IBB,LR,FR,GR,ISDUMMY,KGDTI,MI,
++     &                  IBBI,LBI,FBI,GBI,IRET)
+           IF(LXX.GT.0) THEN
+             IF(IRET.EQ.0) THEN
+               PRINT *,'       interpolated to grid template 3.',IGDTN
+@@ -1681,3 +1686,6 @@ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+       END SELECT
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+       END
++#ifdef __GFORTRAN__
++      END PROGRAM
++#endif
 diff --git sorc/copygb2.fd/makefile_linux.gnu sorc/copygb2.fd/makefile_linux.gnu
 new file mode 100755
-index 0000000..743ee71
+index 0000000..1395d23
 --- /dev/null
 +++ sorc/copygb2.fd/makefile_linux.gnu
 @@ -0,0 +1,61 @@
 +################################################################################
 +# This makefile was produced by fmjif at 17:21:11 on 97/02/24.
 +SHELL=	/bin/sh
-+FC =f77
++FC =gfortran
 +CMD=	copygb2
-+FOPTS=  -O3 -g -fdefault-real-8 -fconvert=big-endian #-auto -mkl
++FOPTS=  -O3 -g -fdefault-real-8 -fconvert=big-endian -cpp #-auto -mkl
 +LOPTS=  -fopenmp #-static-intel -mkl -qopenmp
 +INCS= -I${G2_INCd} -I${IP_INCd}
 +OBJS  = copygb2.o \
@@ -527,9 +571,43 @@ index 0000000..cf9e3c9
 +make -f $makefile install
 +make -f $makefile clean
 +
+diff --git sorc/grb2index.fd/grb2index.f sorc/grb2index.fd/grb2index.f
+index 332571a..b797fc4 100755
+--- sorc/grb2index.fd/grb2index.f
++++ sorc/grb2index.fd/grb2index.f
+@@ -180,7 +180,12 @@ C   LANGUAGE: FORTRAN
+ C
+ C$$$
+       CHARACTER CGB*(*)
++#ifdef __GFORTRAN__
++      CHARACTER CD8*8,CT10*10,HOSTNAME*15
++      INTEGER ISTAT
++#else
+       CHARACTER CD8*8,CT10*10,HOSTNAM*15
++#endif
+       CHARACTER CHEAD(2)*81
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ C  FILL FIRST 81-BYTE HEADER
+@@ -197,7 +202,16 @@ C  FILL FIRST 81-BYTE HEADER
+       CHEAD(1)(42:47)='GB2IX1'
+       !CHEAD(1)(49:54)=CGB(NCGB2:NCGB1-2)
+       CHEAD(1)(49:54)='      '
++#ifdef __GFORTRAN__
++      ISTAT=HOSTNM(HOSTNAME)
++      IF(ISTAT.eq.0) THEN
++        CHEAD(1)(56:70)='0000'
++      ELSE
++        CHEAD(1)(56:70)='0001'
++      ENDIF
++#else
+       CHEAD(1)(56:70)=HOSTNAM(HOSTNAME)
++#endif
+       CHEAD(1)(72:80)='grb2index'
+       CHEAD(1)(81:81)=CHAR(10)
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 diff --git sorc/grb2index.fd/makefile_linux.gnu sorc/grb2index.fd/makefile_linux.gnu
 new file mode 100755
-index 0000000..aae203a
+index 0000000..40905c5
 --- /dev/null
 +++ sorc/grb2index.fd/makefile_linux.gnu
 @@ -0,0 +1,21 @@
@@ -537,7 +615,7 @@ index 0000000..aae203a
 +# This makefile was produced by fmjif at 17:21:11 on 97/02/24.
 +SHELL=	/bin/sh
 +CMD=	grb2index
-+FOPTS=  -g -O3 -fconvert=big-endian
++FOPTS=  -g -O3 -fconvert=big-endian -cpp
 +LOPTS=	
 +INCS=	
 +OBJS=	grb2index.o
@@ -545,10 +623,10 @@ index 0000000..aae203a
 +################################################################################
 +$(phony all):	$(CMD)
 +$(CMD):	$(OBJS)
-+	f77 $(LOPTS) $(OBJS) $(LIBS) -o $(CMD)
++	gfortran $(LOPTS) $(OBJS) $(LIBS) -o $(CMD)
 +$(OBJS):	makefile $(INCS)
 +grb2index.o:	grb2index.f
-+	f77 -c $(FOPTS) $*.f
++	gfortran -c $(FOPTS) $*.f
 +install:
 +	mkdir -p ../../exec
 +	cp -p $(CMD) ../../exec
@@ -596,9 +674,43 @@ index 0000000..cf9e3c9
 +make -f $makefile install
 +make -f $makefile clean
 +
+diff --git sorc/grbindex.fd/grbindex.f sorc/grbindex.fd/grbindex.f
+index be81b66..4d7f4a2 100755
+--- sorc/grbindex.fd/grbindex.f
++++ sorc/grbindex.fd/grbindex.f
+@@ -172,7 +172,12 @@ C   LANGUAGE: FORTRAN
+ C
+ C$$$
+       CHARACTER CGB*(*)
++#ifdef __GFORTRAN__
++      CHARACTER CD8*8,CT10*10,HOSTNAME*15
++      INTEGER ISTAT
++#else
+       CHARACTER CD8*8,CT10*10,HOSTNAM*15
++#endif
+       CHARACTER CHEAD(2)*81
+ C - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ C  FILL FIRST 81-BYTE HEADER
+@@ -188,7 +193,16 @@ C  FILL FIRST 81-BYTE HEADER
+       CHEAD(1)(33:40)=CT10(1:2)//':'//CT10(3:4)//':'//CT10(5:6)
+       CHEAD(1)(42:47)='GB1IX1'
+       CHEAD(1)(49:54)=CGB(NCGB2:NCGB1-2)
++#ifdef __GFORTRAN__
++      ISTAT=HOSTNM(HOSTNAME)
++      IF(ISTAT.eq.0) THEN
++        CHEAD(1)(56:70)='0000'
++      ELSE
++        CHEAD(1)(56:70)='0001'
++      ENDIF
++#else
+       CHEAD(1)(56:70)=HOSTNAM(hostname)
++#endif
+ C     print*,' CHEAD(1)(56:70) = ', CHEAD(1)(56:70)
+       CHEAD(1)(72:80)='grbindex '
+       CHEAD(1)(81:81)=CHAR(10)
 diff --git sorc/grbindex.fd/makefile_linux.gnu sorc/grbindex.fd/makefile_linux.gnu
 new file mode 100755
-index 0000000..d40daa9
+index 0000000..e32deaf
 --- /dev/null
 +++ sorc/grbindex.fd/makefile_linux.gnu
 @@ -0,0 +1,21 @@
@@ -606,7 +718,7 @@ index 0000000..d40daa9
 +# This makefile was produced by fmjif at 17:21:11 on 97/02/24.
 +SHELL=  /bin/sh
 +CMD=    grbindex
-+FOPTS=  -g -O3 -fconvert=big-endian 
++FOPTS=  -g -O3 -fconvert=big-endian -cpp 
 +LOPTS=
 +INCS=
 +OBJS=   grbindex.o
@@ -665,9 +777,35 @@ index 0000000..cf9e3c9
 +make -f $makefile install
 +make -f $makefile clean
 +
+diff --git sorc/grib2grib.fd/grib2grib.f sorc/grib2grib.fd/grib2grib.f
+index 301a986..6a46e4e 100755
+--- sorc/grib2grib.fd/grib2grib.f
++++ sorc/grib2grib.fd/grib2grib.f
+@@ -114,7 +114,9 @@ C   LANGUAGE: F90 FORTRAN
+ C
+ C$$$
+ C
++#ifdef __INTEL__
+       USE IFPORT
++#endif
+       PARAMETER          (MXSIZE=300000)
+       PARAMETER          (MSIZE=MXSIZE*3)
+       PARAMETER          (IBUFSIZE=35000000)
+@@ -134,7 +136,11 @@ C
+       INTEGER            RCBYTE(900)
+       INTEGER            ISTART(900)
+       INTEGER            IUNPK(900)
++#ifdef __GFORTRAN__
++      INTEGER*8          JSTAT(13)
++#else
+       INTEGER*4          JSTAT(12)
++#endif
+       INTEGER            TYPEGRID
+ C
+       LOGICAL            IW3PDS
 diff --git sorc/grib2grib.fd/makefile_linux.gnu sorc/grib2grib.fd/makefile_linux.gnu
 new file mode 100755
-index 0000000..871f52a
+index 0000000..827337f
 --- /dev/null
 +++ sorc/grib2grib.fd/makefile_linux.gnu
 @@ -0,0 +1,83 @@
@@ -724,7 +862,7 @@ index 0000000..871f52a
 +# To compile with flowtracing turned on, use the second line
 +# To compile giving profile additonal information, use the third line
 +# WARNING:  SIMULTANEOUSLY PROFILING AND FLOWTRACING IS NOT RECOMMENDED 
-+FFLAGS =        -g -O3 -fdefault-real-8 -fdefault-integer-8
++FFLAGS =        -g -O3 -fdefault-real-8 -fdefault-integer-8 -cpp
 +#FFLAGS =	 -F
 +#FFLAGS =	 -Wf"-ez"
 +
@@ -845,19 +983,18 @@ index 0000000..851bf5a
 +	-rm -f $(SRCS) makefile
 diff --git sorc/install_all_grib_util_linux.sh sorc/install_all_grib_util_linux.sh
 new file mode 100755
-index 0000000..8a84b73
+index 0000000..e0e7345
 --- /dev/null
 +++ sorc/install_all_grib_util_linux.sh
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,32 @@
 +#!/bin/sh
 +set -x
 +
 +wgrib2_ver=2.0.7
 +start_dir=$PWD
 +
-+for dirr in cnvgrib  copygb  degrib2  tocgrib
-+#for dirr in copygb2 degrib2 grbindex tocgrib2 tocgrib \
-+#            cnvgrib copygb  grb2index grib2grib tocgrib2super
++for dirr in copygb2 degrib2 grbindex tocgrib2 tocgrib \
++            cnvgrib copygb  grb2index grib2grib tocgrib2super
 +do
 +    echo "starting $dirr"
 +    cd $start_dir/${dirr}.fd
@@ -1160,6 +1297,28 @@ index 0000000..74a8624
 +
 +void:	clobber
 +	-rm -f $(SRCS) makefile
+diff --git sorc/tocgrib2.fd/tocgrib2.f sorc/tocgrib2.fd/tocgrib2.f
+index 96d7ede..c0b36ba 100755
+--- sorc/tocgrib2.fd/tocgrib2.f
++++ sorc/tocgrib2.fd/tocgrib2.f
+@@ -168,14 +168,14 @@ C
+          write(6,'(11A)') ' WMOHEAD=',WMOHEAD(1:11)
+          write(6,'(A,I0)') ' GRIB2 DISCIPLINE= ',DSCPL
+          write(6,'(A,20(1x,I0))')' Section 1=',
+-     &            (IDS(J),j=1,13)
++     &            (IDS(j2),j2=1,13)
+          if ( GDTN .ne. -1 ) then
+             write(6,'(A,I0,A,100(1x,I0))') ' GDT 3. ',GDTN,' =',
+-     &            (GDT(j),j=1,getgdtlen(GDTN))
++     &            (GDT(j2),j2=1,getgdtlen(GDTN))
+          endif
+          if ( PDTN .ne. -1 ) then
+             write(6,'(A,I0,A,100(1x,I0))') ' PDT 4. ',PDTN,' =',
+-     &            (PDT(j),j=1,getpdtlen(PDTN))
++     &            (PDT(j2),j2=1,getpdtlen(PDTN))
+          endif
+ C
+ C        Read and return packed GRIB field
 diff --git sorc/tocgrib2super.fd/compile_tocgrib2super_linux.sh sorc/tocgrib2super.fd/compile_tocgrib2super_linux.sh
 new file mode 100755
 index 0000000..cf9e3c9
@@ -1297,6 +1456,28 @@ index 0000000..d912796
 +
 +void:	clobber
 +	-rm -f $(SRCS) makefile
+diff --git sorc/tocgrib2super.fd/tocgrib2super.f sorc/tocgrib2super.fd/tocgrib2super.f
+index de88dac..6dbbb4b 100755
+--- sorc/tocgrib2super.fd/tocgrib2super.f
++++ sorc/tocgrib2super.fd/tocgrib2super.f
+@@ -232,14 +232,14 @@ C
+          write(6,'(11A)') ' WMOHEAD=',WMOHEAD(1:11)
+          write(6,'(A,I0)') ' GRIB2 DISCIPLINE= ',DSCPL
+          write(6,'(A,20(1x,I0))')' Section 1=',
+-     &            (IDS(J),j=1,13)
++     &            (IDS(j2),j2=1,13)
+          if ( GDTN .ne. -1 ) then
+             write(6,'(A,I0,A,100(1x,I0))') ' GDT 3. ',GDTN,' =',
+-     &            (GDT(j),j=1,getgdtlen(GDTN))
++     &            (GDT(j2),j2=1,getgdtlen(GDTN))
+          endif
+          if ( PDTN .ne. -1 ) then
+             write(6,'(A,I0,A,100(1x,I0))') ' PDT 4. ',PDTN,' =',
+-     &            (PDT(j),j=1,getpdtlen(PDTN))
++     &            (PDT(j2),j2=1,getpdtlen(PDTN))
+          endif
+ C
+ C        Read and return packed GRIB field
 diff --git sorc/wgrib.cd/compile_wgrib_linux.sh sorc/wgrib.cd/compile_wgrib_linux.sh
 new file mode 100755
 index 0000000..7d03b2a
@@ -1341,6 +1522,3 @@ index 0000000..4f57028
 +	mkdir -p ../../exec
 +	cp -p $(CMD) ../../exec
 +
-diff --git sorc/wgrib2_v2.0.7/compile_wgrib2_linux.sh sorc/wgrib2_v2.0.7/compile_wgrib2_linux.sh
-new file mode 100755
-index 0000000..e69de29
