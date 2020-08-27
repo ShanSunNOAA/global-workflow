@@ -1,17 +1,15 @@
 #!/bin/bash
 
-IPC_FILE=~/.servinp
-OUT_FILE=~/.output.log
-WDIR="$( dirname "${BASH_SOURCE[0]}" )"
+IPC_FILE=$HOME/.servinp
+OUT_FILE=$HOME/.output.log
 
 rm -rf $IPC_FILE $OUT_FILE
 touch $IPC_FILE
 
-#read and execute one command
-tail -f $IPC_FILE 2>/dev/null | {
-  read line
-  echo "" &>$OUT_FILE
-  echo "[HOST] Executing command: $line" &>$OUT_FILE
-  bash -c "$line" &>$OUT_FILE
-  cat /dev/null >$IPC_FILE
-} &
+#read and execute commands
+tail -f $IPC_FILE 2>/dev/null |
+while read line; do
+   cat /dev/null >$OUT_FILE
+   bash -c "$line" &>$OUT_FILE
+   cat /dev/null >$IPC_FILE
+done &
