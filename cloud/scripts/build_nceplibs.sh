@@ -128,6 +128,10 @@ cd ${SRC_DIR}/NCEPLIBS-prod_util/sorc && \
    cd nhour.fd && FC=${FC} W3NCO_LIB4=${SRC_DIR}/NCEPLIBS-w3nco/libw3nco_v2.0.6_4.a make && cd .. && \
    cd ../../
 
+#graphics
+cd ${SRC_DIR}/NCEPLIBS-graphics/v2.0.0/src && \
+   GFS_LIBS_DIR=/opt COMP=${COMP} ./compile_all_graphics_lib_wcoss.sh linux && cd ../../../
+
 # grib_util
 (
 GFS_LIBS_DIR=/opt

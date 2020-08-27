@@ -33,6 +33,7 @@ RUN apt-get update -y && \
         python-dev \
     && rm -rf /var/lib/apt/lists/*
 
+COPY patches/nceplibs/crtm.diff /opt/patches/nceplibs/crtm.diff
 COPY scripts/build_crtm_gempak.sh /opt
 RUN cd /opt && ./build_crtm_gempak.sh
 

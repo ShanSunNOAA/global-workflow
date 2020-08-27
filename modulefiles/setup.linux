@@ -132,8 +132,10 @@ export WGRIB=${GFS_LIBS_DIR}/NCEPLIBS-grib_util/exec/wgrib
 ##
 
 export CRTM_VER=2.3.0
-export CRTM_INC=${GFS_LIBS_DIR}/CRTM-${CRTM_VER}/crtm_v${CRTM_VER}/include
-export CRTM_LIB=${GFS_LIBS_DIR}/CRTM-${CRTM_VER}/crtm_v${CRTM_VER}/lib/libcrtm.a
+export HOMECRTM=${GFS_LIBS_DIR}/CRTM-${CRTM_VER}
+export CRTM_INC=${HOMECRTM}/crtm_v${CRTM_VER}/include
+export CRTM_LIB=${HOMECRTM}/crtm_v${CRTM_VER}/lib/libcrtm.a
+export CRTM_FIX=${HOMECRTM}/fix
 
 ##
 ## ESMF
