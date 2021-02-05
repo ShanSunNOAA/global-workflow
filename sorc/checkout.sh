@@ -7,7 +7,7 @@ echo $topdir
 echo fv3gfs_ccpp_chem checkout ...
 if [[ ! -d fv3gfs_ccpp_chem.fd ]] ; then
     rm -f ${topdir}/checkout-fv3gfs_ccpp_chem.log
-   git clone --recursive --branch gsd/develop-chem https://github.com/shansun6/ufs-weather-model  fv3gfs_ccpp_chem.fd >> ${topdir}/checkout-fv3gfs_ccpp_chem.log 2>&1
+   git clone --recursive --branch chem_20210205 https://github.com/shansun6/ufs-weather-model  fv3gfs_ccpp_chem.fd >> ${topdir}/checkout-fv3gfs_ccpp_chem.log 2>&1
    cd fv3gfs_ccpp_chem.fd
    git checkout 7c648ec36b67a22bb67f22a9c928e7735948f074
    git submodule sync
