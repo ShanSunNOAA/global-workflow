@@ -40,9 +40,9 @@ if [ ${COUPLED:-"NO"} = "NO" ]; then
   fi 
 else 
   if [[ ! -d ufs_coupled.fd ]] ; then
-    git clone https://github.com/ufs-community/ufs-weather-model ufs_coupled.fd >> ${topdir}/checkout-ufs_coupled.log 2>&1
+    git clone https://github.com/NOAA-GSL/ufs-weather-model ufs_coupled.fd >> ${topdir}/checkout-ufs_coupled.log 2>&1
     cd ufs_coupled.fd
-    git checkout 3e46f5b7050e18884a0bed13691823ad88d443c3 
+    git checkout f445799830220c921602c6cb7d0bac69826b4fd8
     git submodule update --init --recursive
     cd ${topdir} 
   else 
