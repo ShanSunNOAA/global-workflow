@@ -20,4 +20,5 @@ module use $MOD_PATH
 module load fv3 
 cd ufs_coupled.fd/
 if [[ -d build ]]; then rm -Rf build; fi
-CMAKE_FLAGS="-DAPP=S2SW -DDEBUG=Y" CCPP_SUITES="FV3_GFS_v16_coupled_chem" ./build.sh 
+##CMAKE_FLAGS="-DAPP=S2SW -DDEBUG=Y" CCPP_SUITES="FV3_GFS_v16_coupled_gsd_chem" ./build.sh 
+CMAKE_FLAGS="-DAPP=S2SW" CCPP_SUITES="FV3_GFS_v16_coupled,FV3_GFS_v16_coupled_gsd_chem" ./build.sh 

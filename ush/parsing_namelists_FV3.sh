@@ -10,10 +10,10 @@
 
 FV3_namelists(){
 
-# copy over the tables
-DIAG_TABLE=${DIAG_TABLE:-$PARM_FV3DIAG/diag_table}
+# copy over the tables  #ssun
+DIAG_TABLE=${DIAG_TABLE:-$PARM_FV3DIAG/diag_table_cpl_chem}
 DATA_TABLE=${DATA_TABLE:-$PARM_FV3DIAG/data_table}
-FIELD_TABLE=${FIELD_TABLE:-$PARM_FV3DIAG/field_table}
+FIELD_TABLE=${FIELD_TABLE:-$PARM_FV3DIAG/chm_field_table_gfdl}
 
 # build the diag_table with the experiment name and date stamp
 if [ $DOIAU = "YES" ]; then
@@ -215,7 +215,7 @@ elif [ $CCPP_SUITE = "FV3_GSD_v0" ]; then
   min_lakeice  = ${min_lakeice:-"0.15"}
   min_seaice   = ${min_seaice:-"0.15"}
 EOF
-elif [ $CCPP_SUITE = "FV3_GFS_v16_coupled" ] || [ $CCPP_SUITE = "FV3_GFS_v16_coupled_chem" ] ; then
+elif [ $CCPP_SUITE = "FV3_GFS_v16_coupled" ] ; then
   cat >> input.nml << EOF
   iovr         = ${iovr:-"3"}
   ltaerosol    = ${ltaerosol:-".false."}
@@ -231,7 +231,57 @@ elif [ $CCPP_SUITE = "FV3_GFS_v16_coupled" ] || [ $CCPP_SUITE = "FV3_GFS_v16_cou
   bl_mynn_tkeadvect = ${bl_mynn_tkeadvect:-".true."}
   bl_mynn_edmf_mom = ${bl_mynn_edmf_mom:-"1"}
   min_lakeice  = ${min_lakeice:-"0.15"}
-  min_seaice   = ${min_seaice:-"0.15"}
+  min_seaice   = ${min_seaice:-"0.000001"}
+EOF
+elif [ $CCPP_SUITE = "FV3_GFS_v16_coupled_gsd_chem" ] ; then
+  cat >> input.nml << EOF
+  iovr         = ${iovr:-"3"}
+  ltaerosol    = ${ltaerosol:-".false."}
+  lradar       = ${lradar:-".false."}
+  ttendlim     = ${ttendlim:-"0.005"}
+  oz_phys      = ${oz_phys:-".false."}
+  oz_phys_2015 = ${oz_phys_2015:-".true."}
+  lsoil_lsm    = ${lsoil_lsm:-"4"}
+  do_mynnedmf  = ${do_mynnedmf:-".false."}
+  do_mynnsfclay = ${do_mynnsfclay:-".false."}
+  icloud_bl    = ${icloud_bl:-"1"}
+  bl_mynn_edmf = ${bl_mynn_edmf:-"1"}
+  bl_mynn_tkeadvect = ${bl_mynn_tkeadvect:-".true."}
+  bl_mynn_edmf_mom = ${bl_mynn_edmf_mom:-"1"}
+  min_lakeice  = ${min_lakeice:-"0.15"}
+  min_seaice   = ${min_seaice:-"0.000001"}
+  cplchm       = .T.
+  fscav_aero   = "sulf:0.2", "bc1:0.2","bc2:0.2","oc1:0.2","oc2:0.2",
+  cplchm_rad_opt= ${cplchm_rad_opt:-"F"}
+  aer_bc_opt       = 1
+  aer_ic_opt       = 1
+  aer_ra_feedback  = 2
+  aerchem_onoff = 1
+  bio_emiss_opt = 0
+  biomass_burn_opt = 2
+  chem_conv_tr   = 0
+  chem_in_opt    = 1
+  chem_opt       = 300
+  chemdt = 3
+  cldchem_onoff = 0
+  dmsemis_opt    = 1
+  dust_opt       = 5
+  dust_alpha     = 2.2
+  dust_gamma     = 1.0
+  dust_calcdrag  = 1
+  emiss_inpt_opt = 1
+  emiss_opt = 5
+  gas_bc_opt = 1
+  gas_ic_opt = 1
+  gaschem_onoff = 1
+  kemit          = 1
+  plumerisefire_frq = 60
+  plumerise_flag  = $EMITYPE
+  seas_opt        = 2
+  aer_ra_frq      = 60
+  wetdep_ls_opt   = 1
+  restart_inname  = "$DATA/INPUT/"
+  restart_outname =  "$RSTDIR_TMP/"
 EOF
 else
   cat >> input.nml << EOF

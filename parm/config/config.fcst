@@ -58,7 +58,10 @@ export do_ugwp=".false."
 export do_tofd=".true."
 export launch_level=$(echo "$LEVS/2.35" |bc)
 
-export  n_sponge=42
+# turn on aerosol feedback
+export  cplchm_rad_opt=T
+
+export  n_sponge=24
 export  d2_bg_k1=0.20
 export  d2_bg_k2=0.04
 
@@ -103,7 +106,8 @@ export random_clds=".true."
 
 if [ $imp_physics -eq 99 ]; then # ZhaoCarr
     export ncld=1
-    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_zhaocarr${tbf}"
+   #export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_zhaocarr${tbf}" !lzhang
+    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/chm_field_table_gfdl"
     export nwat=2
 
 elif [ $imp_physics -eq 6 ]; then # WSM6
@@ -118,7 +122,8 @@ elif [ $imp_physics -eq 8 ]; then # Thompson
 
 elif [ $imp_physics -eq 11 ]; then # GFDL
     export ncld=5
-    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_gfdl${tbf}"
+   #export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/field_table_gfdl${tbf}" !lzhang
+    export FIELD_TABLE="$HOMEgfs/parm/parm_fv3diag/chm_field_table_gfdl"
     export nwat=6
     export dnats=1
     export cal_pre=".false."
@@ -216,10 +221,11 @@ elif [[ "$CDUMP" == "gfs" ]] ; then # GFS cycle specific parameters
 
     # Write more variables to output
     if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
-        export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table"
+       #export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table" #lzhang
     else
-        export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table_orig"
+       #export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table_orig"  !lzhang
     fi
+    export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table_cpl_chem"  !ssun
 
     # Write gfs restart files to rerun fcst from any break point         
     export restart_interval_gfs=${restart_interval_gfs:-0}
