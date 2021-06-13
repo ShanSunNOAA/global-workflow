@@ -50,7 +50,7 @@ elif [ $machine = "hera" ]; then
     if [ $model = "coupled" ]; then
        FIX_DIR="/scratch2/NCEPDEV/climate/climpara/S2S/FIX/fix_UFSp6"
     else
-       FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix_nco_gfsv16"
+       FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix"
     fi
 elif [ $machine = "orion" ]; then
     if [ $model = "coupled" ]; then
@@ -67,7 +67,7 @@ if [ ! -z $FIX_DIR ]; then
 fi
 cd ${pwd}/../fix                ||exit 8
 if [ $model = "coupled" ] ; then
-  for dir in fix_am fix_fv3_gmted2010 fix_fv3_fracoro fix_gldas fix_orog fix_verif fix_cice fix_mom6 fix_cpl fix_wave fix_reg2grb2 ; do 
+  for dir in fix_am fix_aer fix_lut fix_fv3_gmted2010 fix_fv3_fracoro fix_gldas fix_orog fix_verif fix_cice fix_mom6 fix_cpl fix_wave fix_reg2grb2 ; do 
     if [ -d $dir ]; then
       [[ $RUN_ENVIR = nco ]] && chmod -R 755 $dir
       rm -rf $dir
@@ -75,7 +75,7 @@ if [ $model = "coupled" ] ; then
     $LINK $FIX_DIR/$dir .
   done
 else 
-  for dir in fix_am fix_fv3_gmted2010 fix_gldas fix_orog fix_verif fix_wave_gfs ; do
+  for dir in fix_am fix_aer fix_lut fix_fv3_gmted2010 fix_gldas fix_orog fix_verif fix_wave_gfs ; do
     if [ -d $dir ]; then
       [[ $RUN_ENVIR = nco ]] && chmod -R 755 $dir
       rm -rf $dir

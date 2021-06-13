@@ -65,6 +65,10 @@ FV3_GFS_predet(){
 	HOMEgfs=${HOMEgfs:-$NWPROD}
 	FIX_DIR=${FIX_DIR:-$HOMEgfs/fix}
 	FIX_AM=${FIX_AM:-$FIX_DIR/fix_am}
+      # FIX_AER=${FIX_AER:-$FIX_DIR/fix_aer} #ssun not working for cplflx
+      # FIX_LUT=${FIX_LUT:-$FIX_DIR/fix_lut} #ssun not working for cplflx
+        FIX_AER=/scratch1/NCEPDEV/global/glopara/fix/fix_aer  #ssun hardwire for cplflx
+        FIX_LUT=/scratch1/NCEPDEV/global/glopara/fix/fix_lut  #ssun hardwire for cplflx
 	FIXfv3=${FIXfv3:-$FIX_DIR/fix_fv3_gmted2010}
         DATA=${DATA:-$pwd/fv3tmp$$}    # temporary running directory
         ROTDIR=${ROTDIR:-$pwd}         # rotating archive directory

@@ -270,6 +270,13 @@
 "gfs_sfc",     "d_conv",        "dconv",        "fv3_history2d",  "all",  .false.,  "none",  2
 "gfs_sfc",     "qrain",         "qrain",        "fv3_history2d",  "all",  .false.,  "none",  2
 
+# GFS-chem output
+"gfs_phys",        "AOD_550",       "AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",     "DU_AOD_550",    "DU_AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",     "BC_AOD_550",    "BC_AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",     "OC_AOD_550",    "OC_AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",     "SU_AOD_550",    "SU_AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
+"gfs_phys",     "SS_AOD_550",    "SS_AOD_550",   "fv3_history2d",  "all",  .false.,  "none",  2
 
 #=============================================================================================
 #
