@@ -173,7 +173,7 @@ date
   export iproc=1
   while [ $iproc -le $nproc ]; do
     if [ $nset = 1 ]; then
-     cat pgb2file_${fhr3}_${iproc}_0p25 >> pgb2file_${fhr3}_0p25
+#ssun     cat pgb2file_${fhr3}_${iproc}_0p25 >> pgb2file_${fhr3}_0p25
      if [ "$PGBS" = "YES" ]; then
 #BL2018
 #       cat pgb2file_${fhr3}_${iproc}_0p5  >> pgb2file_${fhr3}_0p5
@@ -184,7 +184,7 @@ date
        fi
      fi
     elif [ $nset = 2 ]; then
-     cat pgb2bfile_${fhr3}_${iproc}_0p25 >> pgb2bfile_${fhr3}_0p25
+#ssun     cat pgb2bfile_${fhr3}_${iproc}_0p25 >> pgb2bfile_${fhr3}_0p25
      if [ "$PGBS" = "YES" ]; then
 #BL2018
 #       cat pgb2bfile_${fhr3}_${iproc}_0p5 >> pgb2bfile_${fhr3}_0p5
@@ -223,7 +223,7 @@ date
 
   if [ $nset = 1 ]; then
    if [ $fhr3 = anl ]; then
-    $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
+#ssun    $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
     cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.anl
     if [ "$PGBS" = "YES" ]; then
 #BL2018
@@ -239,8 +239,8 @@ date
       fi
     fi
    else
-    $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}.idx
-    cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}
+#ssun    $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}.idx
+#ssun    cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}
     if [ "$PGBS" = "YES" ]; then
 #BL2018
 #      $WGRIB2 -s pgb2file_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2.0p50.f${fhr3}.idx
@@ -259,8 +259,8 @@ date
   elif [ $nset = 2 ]; then
    
    if [ $fhr3 = anl ]; then
-    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.anl.idx
-    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.anl
+#ssun    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.anl.idx
+#ssun    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.anl
     if [ "$PGBS" = "YES" ]; then
 #BL2018
 #      $WGRIB2 -s pgb2bfile_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.anl.idx
@@ -273,8 +273,8 @@ date
     fi
 
    else
-    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}.idx
-    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}
+#ssun    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}.idx
+#ssun    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}
     if [ "$PGBS" = "YES" ]; then
 #      $WGRIB2 -s pgb2bfile_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.f${fhr3}.idx
       $WGRIB2 -s pgb2bfile_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr3}.idx
@@ -315,15 +315,15 @@ else
   fi
 
    if [ $fhr3 = anl ]; then
-     $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
-     cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.anl
+#ssun     $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
+#ssun     cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.anl
      if [ "$PGBS" = "YES" ]; then
        $WGRIB2 -s pgb2file_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.anl.idx
        cp pgb2file_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.anl
      fi
    else
-     $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}.idx
-     cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}
+#ssun     $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}.idx
+#ssun     cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}
      if [ "$PGBS" = "YES" ]; then
        $WGRIB2 -s pgb2file_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.f${fhr3}.idx
        cp pgb2file_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.f${fhr3}
@@ -333,11 +333,11 @@ else
 #BL2018
   $WGRIB2 tmpfile2_$fhr3  $option1 $option21 $option22 $option23 $option24 \
                           $option25 $option26 $option27 $option28 \
-                                           -new_grid $grid0p25 pgb2bfile_${fhr3}_0p25 \
+#ssun                                      -new_grid $grid0p25 pgb2bfile_${fhr3}_0p25 \
                                            -new_grid $grid1p0  pgb2bfile_${fhr3}_1p0
   export err=$?; err_chk
-    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}.idx
-    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}
+#ssun    $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}.idx
+#ssun    cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}
       $WGRIB2 -s pgb2bfile_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr3}.idx
       cp pgb2bfile_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr3}
 #BL2018

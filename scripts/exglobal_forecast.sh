@@ -147,6 +147,15 @@ esac				#no run type determination for data atmosphere
 [[ $cplchem = .true. ]] && GSD_det
 
 echo "MAIN: RUN Type Determined"
+#-------------------------------------------------------
+#link GSDChem input files   !lzhang
+if [ $GSDChem -gt 0 ] ; then
+  echo "link chem data $DATA $file"
+  for file in $(ls $DATA/../prep/*.nc) ; do
+    $NLN $file $DATA/INPUT/$(echo $(basename $file))
+  done
+fi
+#-------------------------------------------------------
 
 echo "MAIN: Post-determination set up of run type"
 echo $RUN

@@ -25,5 +25,6 @@ if [[ -d GOCART ]]; then
   CMAKE_FLAGS="-DAPP=ATMAERO" CCPP_SUITES="FV3_GFS_v16" ./build.sh
   ./build.sh
 else
-  CMAKE_FLAGS="-DAPP=S2SW" CCPP_SUITES="FV3_GFS_v16_coupled,FV3_GFS_v16" ./build.sh
+#ssun  CMAKE_FLAGS="-DAPP=S2SW -DDEBUG=Y" CCPP_SUITES="FV3_GFS_v16_coupled,FV3_GFS_v16" ./build.sh
+  CMAKE_FLAGS="-DAPP=S2SW " CCPP_SUITES="FV3_GFS_v16_coupled,FV3_GFS_v16_coupled_gsd_chem" ./build.sh
 fi
