@@ -70,12 +70,15 @@ if [ ! -z $FIX_DIR ]; then
 fi
 cd ${pwd}/../fix                ||exit 8
 if [ $model = "coupled" ] ; then
-  for dir in fix_aer fix_am fix_chem fix_fv3_gmted2010 fix_gldas fix_lut fix_fv3_fracoro fix_orog fix_sfc_climo fix_verif fix_cice fix_mom6 fix_cpl fix_wave fix_reg2grb2 ; do
+  for dir in fix_am fix_chem fix_fv3_gmted2010 fix_gldas fix_fv3_fracoro fix_orog fix_sfc_climo fix_verif fix_cice fix_mom6 fix_cpl fix_wave fix_reg2grb2 ; do
     if [ -d $dir ]; then
       [[ $RUN_ENVIR = nco ]] && chmod -R 755 $dir
       rm -rf $dir
     fi
     $LINK $FIX_DIR/$dir .
+##ssun link fix_aer & fix_lut differently temporarily
+    $LINK /scratch1/NCEPDEV/global/glopara/fix/fix_aer .
+    $LINK /scratch1/NCEPDEV/global/glopara/fix/fix_lut .
   done
 else
   for dir in fix_aer fix_am fix_chem fix_fv3_gmted2010 fix_gldas fix_lut fix_orog fix_sfc_climo fix_verif fix_wave_gfs ; do

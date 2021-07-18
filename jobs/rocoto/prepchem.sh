@@ -98,9 +98,9 @@ for n in $(seq 1 6); do
          DIRGB=/scratch1/BMC/gsd-fv3-dev/lzhang/GBBEPx/${CASE}
       fi
       if [ $GFAS -eq 0 ]; then
-      NCGB=/scratch1/BMC/gsd-fv3-dev/Haiqin.Li/Develop/emi_${CASE}/GBBEPx
+        NCGB=/scratch1/BMC/gsd-fv3-dev/Haiqin.Li/Develop/emi_${CASE}/GBBEPx
       else
-      NCGB=/scratch1/BMC/gsd-fv3-dev/Haiqin.Li/Develop/emi_${CASE}/GFAS
+        NCGB=/scratch1/BMC/gsd-fv3-dev/Haiqin.Li/Develop/emi_${CASE}/GFAS
       fi
       PUBEMI=/scratch2/BMC/public/data/grids/sdsu/emissions
       #PUBEMI=/scratch2/NCEPDEV/stmp1/Li.Pan/tmp
@@ -110,8 +110,8 @@ for n in $(seq 1 6); do
       #mkdir -p $DIRGB/$emiss_date1
       #$NCP $PUBEMI/*${emiss_date1}.*.bin $DIRGB/$emiss_date1/
     
-      if [[ -f $NCGB/${emiss_date1}/FIRE2_GBBEPx_data.tile${n}.nc ]]; then
-        echo "NetCDF GBBEPx File $NCGB/${emiss_date1}/FIRE_GBBEPx_data.tile${n}.nc  exists, just link."
+      if [[ -f $NCGB/${emiss_date1}/FIRE2_GFAS_data.tile${n}.nc ]]; then
+        echo "NetCDF File $NCGB/${emiss_date1}/FIRE2*data.tile${n}.nc exists, just link."
       else
     
         if [ ${SYEAR} -eq 2016 ];  then
@@ -155,7 +155,11 @@ EOF
              exit $status
         fi
       fi
-      eval $NLN $NCGB/${emiss_date1}/FIRE2_GBBEPx_data.tile${n}.nc .
+      if [ $GFAS -eq 0 ]; then
+        eval $NLN $NCGB/${emiss_date1}/FIRE2_GBBEPx_data.tile${n}.nc FIRE2_data.tile${n}.nc
+      else
+        eval $NLN $NCGB/${emiss_date1}/FIRE2_GFAS_data.tile${n}.nc FIRE2_data.tile${n}.nc
+      fi
     fi
     
     if [ $EMITYPE -eq 1 ]; then 
