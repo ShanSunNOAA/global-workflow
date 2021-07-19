@@ -14,7 +14,8 @@ FV3_model_configure(){
 
 export OUTPUT_FILETYPES="$OUTPUT_FILE"
 if [[ "$OUTPUT_FILE" == "netcdf" ]]; then
-   export OUTPUT_FILETYPES=" 'netcdf_parallel' 'netcdf' "
+##ssun   export OUTPUT_FILETYPES=" 'netcdf_parallel' 'netcdf' "
+   export OUTPUT_FILETYPES=" 'netcdf' 'netcdf' "
 fi
 
 rm -f model_configure

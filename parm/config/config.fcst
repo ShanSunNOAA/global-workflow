@@ -227,7 +227,7 @@ elif [[ "$CDUMP" == "gfs" ]] ; then # GFS cycle specific parameters
     else
        #export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table_orig"  !lzhang
     fi
-    export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/diag_table_cpl_chem"  !ssun
+    export DIAG_TABLE="$HOMEgfs/parm/parm_fv3diag/chm_diag_table_cpl"  !ssun
 
     # Write gfs restart files to rerun fcst from any break point         
     export restart_interval_gfs=${restart_interval_gfs:-0}
