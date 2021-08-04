@@ -27,7 +27,14 @@ if [ $OCNRES = '025' ]; then
   CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
   FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
   MOM6_RIVER_RUNOFF='True'
-  MOM6_RESTART_SETTING="r"
+  yyyy=`echo $CDATE|cut -c 1-4`
+  y1=2011
+  y2=2017
+  if [[ $yyyy -gt $y2  ||  $yyyy -lt $y1 ]] ; then
+     MOM6_RESTART_SETTING="n"
+  else
+     MOM6_RESTART_SETTING="r"
+  fi
 elif [ $OCNRES = '050' ]; then
   NX_GLB=720
   NY_GLB=576

@@ -54,7 +54,8 @@ fi
 # Setup ATM initial condition files
 ##cp -r $ORIGIN_ROOT/$CPL_ATMIC/$CDATE/$CDUMP/*  $ICSDIR/$CDATE/atmos/
 ##ssun "replaced by l64 data" 
-/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+#/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+ /bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3ic_m3/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 ##ssun "replaced by l64 data with chem" 
 ##/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3chemic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 

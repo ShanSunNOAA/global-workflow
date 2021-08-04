@@ -5,7 +5,7 @@ CICE_namelists(){
 if [ $warm_start = ".true." ]; then
   cmeps_run_type='continue'
 else 
-  cmeps_run_type='startup'
+  cmeps_run_type='initial'
 fi
 
 
@@ -46,7 +46,7 @@ cat > ice_in <<eof
    latpnt(2)      = -65.
    lonpnt(2)      = -45.
    histfreq       = 'm','d','h','x','x'
-   histfreq_n     =  0 , 0 , 6 , 1 , 1
+   histfreq_n     =  0 , 1 , 0 , 0 , 0
    hist_avg       = $cice_hist_avg
    history_dir    = './history/'
    history_file   = 'iceh'
@@ -288,19 +288,19 @@ cat > ice_in <<eof
    f_taubx         = 'x'
    f_tauby         = 'x'
    f_strength      = 'x'
-   f_divu          = 'x'
-   f_shear         = 'x'
+   f_divu          = 'mdhxx'
+   f_shear         = 'mdhxx'
    f_sig1          = 'x' 
    f_sig2          = 'x'
    f_sigP          = 'x' 
-   f_dvidtt        = 'x'
-   f_dvidtd        = 'x'
-   f_daidtt        = 'x'
-   f_daidtd        = 'x'
+   f_dvidtt        = 'mdhxx'
+   f_dvidtd        = 'mdhxx'
+   f_daidtt        = 'mdhxx'
+   f_daidtd        = 'mdhxx'
    f_dagedtt       = 'x'
    f_dagedtd       = 'x'
-   f_mlt_onset     = 'x'
-   f_frz_onset     = 'x'
+   f_mlt_onset     = 'mdhxx'
+   f_frz_onset     = 'mdhxx'
    f_hisnap        = 'x'
    f_aisnap        = 'x'
    f_trsig         = 'x'
