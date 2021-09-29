@@ -160,6 +160,8 @@ EOF
       else
         eval $NLN $NCGB/${emiss_date1}/FIRE2_GFAS_data.tile${n}.nc FIRE2_data.tile${n}.nc
       fi
+      aerdir=/scratch1/BMC/gsd-fv3-dev/data_others/aerosol_clim_$SMONTH
+      eval $NLN ${aerdir}/aerosol.tile${n}.nc .
     fi
     
     if [ $EMITYPE -eq 1 ]; then 

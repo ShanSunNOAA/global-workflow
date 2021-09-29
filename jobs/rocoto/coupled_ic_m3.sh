@@ -57,7 +57,7 @@ fi
 #/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
  /bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3ic_m3/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 ##ssun "replaced by l64 data with chem" 
-##/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3chemic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+/bin/cp -r /scratch2/BMC/gsd-hpcs/Shan.Sun/p6l64_cfs2fv3chemic_m3/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 
 /bin/cp /home/Shan.Sun/helpme/gfs_ctrl_64.nc $ICSDIR/$CDATE/atmos/C384/INPUT/gfs_ctrl.nc
 ##ssun:"replaced by l127 data" 

@@ -53,7 +53,7 @@ else
       ##sun git clone https://github.com/NOAA-GSL/ufs-weather-model ufs_coupled.fd >> ${topdir}/checkout-ufs_coupled.log 2>&1
       git clone https://github.com/shansun6/ufs-weather-model ufs_coupled.fd >> ${topdir}/checkout-ufs_coupled.log 2>&1
       cd ufs_coupled.fd
-      git checkout chem_v20210716
+      git checkout chem_v20210929
     fi
     git submodule update --init --recursive
     cd ${topdir} 
