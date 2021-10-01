@@ -34,8 +34,8 @@ case:
 
   fv3_gfs_settings:
     CASE: C384
-    LEVS: 128
-    DELTIM: 225
+    LEVS: 65
+    DELTIM: 300
     min_lakeice: 0.15
     min_seaice: 1.0e-11
     SEEDLET: 10
@@ -52,20 +52,20 @@ case:
     n_split: 6
     layout:
        x: 12
-       y: 16
-       nth: 2
+       y: 12
+       nth: 1
        WGRP: 1
-       WGRP_NTASKS: 88
+       WGRP_NTASKS: 72
        WRTIOBUF: "32M"
 
   ocn_settings:
-    OCNPETS: 220
+    OCNPETS: 240
 
   ice_settings:
-    ICEPETS: 80
+    ICEPETS: 48
 
   wave_settings: 
-    WAVPETS: 160
+    WAVPETS: 136
     CPL_WAVIC: GEFSwave20210623
     waveGRD: 'gwes_30m'
     wavepostGRD: 'gwes_30m'
