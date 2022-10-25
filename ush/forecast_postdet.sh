@@ -277,7 +277,8 @@ EOF
   $NLN $FIX_AM/global_sfc_emissivity_idx.txt     $DATA/sfc_emissivity_idx.txt
 
   ## merra2 aerosol climo
-  if [ $IAER -eq "1011" ]; then
+  ##if [ $IAER -eq "1011" ]; then
+  if [ $IAER -ge "1011" ]; then
     FIX_AER="${FIX_DIR}/fix_aer"
     for month in $(seq 1 12); do
       MM=$(printf %02d $month)

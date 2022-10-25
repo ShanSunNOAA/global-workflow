@@ -43,6 +43,7 @@ ABSV:0.04 mb
 ABSV:0.07 mb
 ACPCP:surface
 ALBDO:surface
+AOTK:entire atmosphere
 APCP:surface
 APTMP:2 m above ground
 var discipline=0 master_table=2 parmcat=0 parm=21:2 m above ground

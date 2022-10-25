@@ -266,6 +266,8 @@ elif [ $CDUMP = "gdas" ]; then
 fi
 
 # Turn on extended globbing options
+#ss
+firstday=2018040100
 shopt -s extglob
 for targrp in $targrp_list; do
     set +e

@@ -41,6 +41,7 @@ ABSV:0.01 mb
 ABSV:0.02 mb
 ABSV:0.04 mb
 ABSV:0.07 mb
+AOTK:entire atmosphere
 APTMP:2 m above ground
 var discipline=0 master_table=2 parmcat=0 parm=21:2 m above ground
 CAPE:180-0 mb above ground
