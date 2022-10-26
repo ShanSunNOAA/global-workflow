@@ -106,7 +106,7 @@ CHECKOUT_GSI="NO"
 CHECKOUT_GDAS="NO"
 checkout_gtg="NO"
 checkout_wafs="NO"
-ufs_model_hash="Prototype-P8"
+ufs_model_hash="246b9bea"
 
 # Parse command line arguments
 while getopts ":chgum:o" option; do
@@ -151,7 +151,7 @@ mkdir -p ${logdir}
 
 # The checkout version should always be a speciifc commit (hash or tag), not a branch
 errs=0
-checkout "ufs_model.fd"    "https://github.com/ufs-community/ufs-weather-model" "${ufs_model_hash}"; errs=$((errs + $?))
+checkout "ufs_model.fd"    "https://github.com/shansun6/" "${ufs_model_hash}"; errs=$((errs + $?))
 checkout "ufs_utils.fd"    "https://github.com/ufs-community/UFS_UTILS.git"     "a2b0817"          ; errs=$((errs + $?))
 checkout "verif-global.fd" "https://github.com/NOAA-EMC/EMC_verif-global.git"   "c267780"          ; errs=$((errs + $?))
 
