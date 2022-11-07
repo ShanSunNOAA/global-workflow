@@ -603,6 +603,16 @@ data_out_GFS() {
       fi
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
+#ssun: save files in atmos/RERUN_RESTART, which is linked to warm_start/INPUT
+      $NCP $DATA/MOM6_RESTART/*   $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      sed -i 's/RESTART/\./'      $DATA/rpointer.cpl
+# no need $NCP $DATA/ufs.cpld*.nc     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/iced.*nc         $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/ww3_shel.inp     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/restart.ww3
+      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
     fi
   fi
 
@@ -777,8 +787,9 @@ MOM6_postdet() {
 
   OCNRES=${OCNRES:-"025"}
 
-  # Copy MOM6 ICs
-  $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+  if [ $warm_start = ".false." ]; then #ssun Copy MOM6 ICs from $ICSDIR in cold_start
+    $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+  fi
 
   # Copy MOM6 fixed files
   $NCP -pf $FIXmom/$OCNRES/* $DATA/INPUT/
@@ -794,8 +805,13 @@ MOM6_postdet() {
 
   # Copy mediator restart files to RUNDIR
   if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/ufs.cpld*.nc $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/rpointer.cpl $DATA/
+  #ssun  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/ufs.cpld*.nc $DATA/
+  #ssun  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/rpointer.cpl $DATA/
+    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ufs.cpld*.nc     $DATA/
+    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/rpointer.cpl     $DATA/
+    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ice.restart_file $DATA/
+    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/iced.*.nc        $DATA/
+    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/wave/restart/*restart.ww3            $DATA/restart.ww3
   fi
 
   if [ $DO_OCN_SPPT = "YES" -o $DO_OCN_PERT_EPBL = "YES" ]; then
@@ -842,10 +858,6 @@ MOM6_postdet() {
 
     source_file="ocn_${YYYY_MID}_${MM_MID}_${DD_MID}_${HH_MID}.nc"
     dest_file="ocn${VDATE}.${ENSMEM}.${IDATE}.nc"
-    ${NLN} ${COMOUTocean}/${dest_file} ${DATA}/${source_file}
-
-    source_file="wavocn_${YYYY_MID}_${MM_MID}_${DD_MID}_${HH_MID}.nc"
-    dest_file=${source_file}
     ${NLN} ${COMOUTocean}/${dest_file} ${DATA}/${source_file}
 
     source_file="ocn_daily_${YYYY}_${MM}_${DD}.nc"
@@ -952,8 +964,12 @@ CICE_postdet() {
     HH=$(echo $VDATE | cut -c9-10)
     SS=$((10#$HH*3600))
 
+# ssun
+    $NLN $COMOUTice/iceh.${YYYY}-${MM}-${DD}.nc $DATA/history/iceh.${YYYY}-${MM}-${DD}.nc
     if [[ 10#$fhr -eq 0 ]]; then
       $NLN $COMOUTice/iceic$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_ic.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+# ssun
+      $NLN $COMOUTice/ice_diag.d $DATA/ice_diag.d
     else
       (( interval = fhr - last_fhr ))
       $NLN $COMOUTice/ice$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_$(printf "%0.2d" $interval)h.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
