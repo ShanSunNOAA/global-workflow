@@ -608,7 +608,7 @@ data_out_GFS() {
       sed -i 's/RESTART/\./'      $DATA/rpointer.cpl
 # no need $NCP $DATA/ufs.cpld*.nc     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
-      $NCP $DATA/iced.*nc         $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/RESTART/iced.*nc $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ww3_shel.inp     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/restart.ww3
