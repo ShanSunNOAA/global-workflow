@@ -604,11 +604,10 @@ data_out_GFS() {
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
 #ssun: save files in atmos/RERUN_RESTART, which is linked to warm_start/INPUT
+#     no need $NCP $DATA/ufs.cpld*.nc,iced.*
       $NCP $DATA/MOM6_RESTART/*   $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       sed -i 's/RESTART/\./'      $DATA/rpointer.cpl
-# no need $NCP $DATA/ufs.cpld*.nc     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
-      $NCP $DATA/RESTART/iced.*nc $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ww3_shel.inp     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/restart.ww3
