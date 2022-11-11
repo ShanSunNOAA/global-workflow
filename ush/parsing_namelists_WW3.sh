@@ -11,6 +11,7 @@ WW3_namelists(){
   # Beginning time for outpupt may differ from SDATE if DOIAU=YES
   export date=$PDY
   export YMDH=${PDY}${cyc}
+  YMDH=$(( YMDH + FHROT ))
   # Roll back $IAU_FHROT hours of DOIAU=YES
   if [ "$DOIAU" = "YES" ]
   then
