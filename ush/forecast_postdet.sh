@@ -810,8 +810,6 @@ MOM6_postdet() {
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ufs.cpld*.nc     $DATA/
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/rpointer.cpl     $DATA/
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ice.restart_file $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/iced.*.nc        $DATA/
-  #qq  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/wave/restart/*restart.ww3            $DATA/restart.ww3
   fi
 
   if [ $DO_OCN_SPPT = "YES" -o $DO_OCN_PERT_EPBL = "YES" ]; then
