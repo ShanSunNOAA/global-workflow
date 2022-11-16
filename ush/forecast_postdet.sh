@@ -610,7 +610,6 @@ data_out_GFS() {
       $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ww3_shel.inp     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
-      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/restart.ww3
       $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
     fi
   fi
@@ -658,7 +657,9 @@ WW3_postdet() {
   for wavGRD in $waveGRD ; do
     if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
       if [ $RERUN = "NO" ]; then
-        waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
+        waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD} # this line is same as the line below
+        waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gdas.20130401/00/wave/restart/20130401.000000.restart.gwes_30m
+        waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gfs.20130401/00/wave/restart/20130401.030000.restart.ww3
       else 
         waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
       fi
@@ -810,7 +811,7 @@ MOM6_postdet() {
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/rpointer.cpl     $DATA/
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ice.restart_file $DATA/
     $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/iced.*.nc        $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/wave/restart/*restart.ww3            $DATA/restart.ww3
+  #qq  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/wave/restart/*restart.ww3            $DATA/restart.ww3
   fi
 
   if [ $DO_OCN_SPPT = "YES" -o $DO_OCN_PERT_EPBL = "YES" ]; then
