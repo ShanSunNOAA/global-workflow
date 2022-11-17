@@ -915,8 +915,13 @@ CICE_postdet() {
   #  RUNTYPE='continue'
   #  USE_RESTART_TIME='.true.'
   #fi
-  RUNTYPE='initial'
-  USE_RESTART_TIME='.false.'
+  if [[ $warm_start = ".true." ]]; then
+    RUNTYPE='continue'
+    USE_RESTART_TIME='.true.'
+  else
+    RUNTYPE='initial'
+    USE_RESTART_TIME='.false.'
+  fi
   restart_pond_lvl=${restart_pond_lvl:-".false."}
 
   ICERES=${ICERES:-"025"}
