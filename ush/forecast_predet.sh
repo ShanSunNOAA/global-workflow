@@ -175,6 +175,7 @@ FV3_GFS_predet(){
   LONB_IMO=${LONB_IMO:-$LONB_CASE}
   LATB_JMO=${LATB_JMO:-$LATB_CASE}
 
+  # moving this section to postdet
   # NSST Options
   # nstf_name contains the NSST related parameters
   # nstf_name(1) : NST_MODEL (NSST Model) : 0 = OFF, 1 = ON but uncoupled, 2 = ON and coupled
@@ -183,13 +184,13 @@ FV3_GFS_predet(){
   # nstf_name(4) : ZSEA1 (in mm) : 0
   # nstf_name(5) : ZSEA2 (in mm) : 0
   # nst_anl      : .true. or .false., NSST analysis over lake
-  NST_MODEL=${NST_MODEL:-0}
-  NST_SPINUP=${NST_SPINUP:-0}
-  NST_RESV=${NST_RESV-0}
-  ZSEA1=${ZSEA1:-0}
-  ZSEA2=${ZSEA2:-0}
-  nstf_name=${nstf_name:-"$NST_MODEL,$NST_SPINUP,$NST_RESV,$ZSEA1,$ZSEA2"}
-  nst_anl=${nst_anl:-".false."}
+  # NST_MODEL=${NST_MODEL:-0}
+  # NST_SPINUP=${NST_SPINUP:-0}
+  # NST_RESV=${NST_RESV-0}
+  # ZSEA1=${ZSEA1:-0}
+  # ZSEA2=${ZSEA2:-0}
+  # nstf_name=${nstf_name:-"$NST_MODEL,$NST_SPINUP,$NST_RESV,$ZSEA1,$ZSEA2"}
+  # nst_anl=${nst_anl:-".false."}
 
 
   # blocking factor used for threading and general physics performance

@@ -35,9 +35,6 @@ DATM_postdet(){
 FV3_GFS_postdet(){
   echo "SUB ${FUNCNAME[0]}: $RERUN and $warm_start determined for $RUN"
 
-  echo $warm_start
-  echo $RERUN
-
   #-------------------------------------------------------
   if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
     #-------------------------------------------------------
@@ -369,7 +366,11 @@ EOF
   # nstf_name(5) : ZSEA2 (in mm) : 0
   # nst_anl      : .true. or .false., NSST analysis over lake
   NST_MODEL=${NST_MODEL:-0}
-  NST_SPINUP=${NST_SPINUP:-0}
+  if [[ $warm_start = ".true." ]]; then
+    NST_SPINUP=0
+  else
+    NST_SPINUP=${NST_SPINUP:-1}
+  fi
   NST_RESV=${NST_RESV-0}
   ZSEA1=${ZSEA1:-0}
   ZSEA2=${ZSEA2:-0}
@@ -473,7 +474,7 @@ EOF
   fi
 
   # Stochastic Physics Options
-  if [ ${SET_STP_SEED:-"YES"} = "YES" ]; then
+  if [ ${SET_STP_SEED:-"YES"} = "YES" -a $warm_start = ".false." ]; then
     ISEED_SKEB=$((CDATE*1000 + MEMBER*10 + 1))
     ISEED_SHUM=$((CDATE*1000 + MEMBER*10 + 2))
     ISEED_SPPT=$((CDATE*1000 + MEMBER*10 + 3))
