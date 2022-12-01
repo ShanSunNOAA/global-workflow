@@ -352,7 +352,7 @@ EOF
   FNVETC=${FNVETC:-"${FIX_SFC}/${CASE}.vegetation_type.tileX.nc"}
   FNSOTC=${FNSOTC:-"${FIX_SFC}/${CASE}.soil_type.tileX.nc"}
   FNABSC=${FNABSC:-"${FIX_SFC}/${CASE}.maximum_snow_albedo.tileX.nc"}
-  FNSMCC=${FNSMCC:-"$FIX_AM/global_soilmgldas.statsgo.t${JCAP}.${LONB}.${LATB}.grb"}
+  FNSMCC=${FNSMCC:-"$FIX_AM/global_soilmgldas.statsgo.t1534.3072.1536.grb"}
 
   # If the appropriate resolution fix file is not present, use the highest resolution available (T1534)
   [[ ! -f $FNSMCC ]] && FNSMCC="$FIX_AM/global_soilmgldas.statsgo.t1534.3072.1536.grb"
@@ -474,7 +474,7 @@ EOF
   fi
 
   # Stochastic Physics Options
-  if [ ${SET_STP_SEED:-"YES"} = "YES" -a $warm_start = ".false." ]; then
+  if [ ${SET_STP_SEED:-"YES"} = "YES" ]; then
     ISEED_SKEB=$((CDATE*1000 + MEMBER*10 + 1))
     ISEED_SHUM=$((CDATE*1000 + MEMBER*10 + 2))
     ISEED_SPPT=$((CDATE*1000 + MEMBER*10 + 3))
@@ -606,7 +606,7 @@ data_out_GFS() {
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
 #ssun: save files in atmos/RERUN_RESTART, which is linked to warm_start/INPUT
 #     no need $NCP $DATA/ufs.cpld*.nc,iced.*
-      $NCP $DATA/MOM6_RESTART/*   $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
+      $NCP $DATA/MOM6_RESTART/*   $ROTDIR/${CDUMP}.${PDY}/${cyc}/ocean/
       sed -i 's/RESTART/\./'      $DATA/rpointer.cpl
       $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
       $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
@@ -659,8 +659,8 @@ WW3_postdet() {
       if [ $RERUN = "NO" ]; then
         waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD} # this line is same as the line below
        # waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gdas.20130401/00/wave/restart/20130401.000000.restart.gwes_30m
-       # waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gfs.20130401/00/wave/restart/20130401.030000.restart.ww3
-       waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gfs.20130401/00/wave/restart/20130401.060000.restart.ww3
+       # hardwire waverstfile for now
+        waverstfile=/scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm/gfs.20130401/00/wave/restart/20130401.060000.restart.ww3
       else 
         waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
       fi
@@ -790,6 +790,11 @@ MOM6_postdet() {
 
   if [ $warm_start = ".false." ]; then #ssun Copy MOM6 ICs from $ICSDIR in cold_start
     $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+  else # hardwire ocean restart for now
+    ln -sf /scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm_no_wave/gfs.20130401/00/ocean/MOM.res.2013-04-01-06-00-00.nc   $DATA/INPUT/MOM.res.nc
+    ln -sf /scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm_no_wave/gfs.20130401/00/ocean/MOM.res.2013-04-01-06-00-00_1.nc $DATA/INPUT/MOM.res_1.nc
+    ln -sf /scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm_no_wave/gfs.20130401/00/ocean/MOM.res.2013-04-01-06-00-00_2.nc $DATA/INPUT/MOM.res_2.nc
+    ln -sf /scratch1/BMC/gsd-hpcs/Shan.Sun/me_sfs_rst_exp/comrot/warm_no_wave/gfs.20130401/00/ocean/MOM.res.2013-04-01-06-00-00_3.nc $DATA/INPUT/MOM.res_3.nc
   fi
 
   # Copy MOM6 fixed files
