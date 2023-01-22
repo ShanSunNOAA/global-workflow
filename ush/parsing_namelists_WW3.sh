@@ -12,21 +12,26 @@ WW3_namelists(){
   export date=$PDY
   export YMDH=${PDY}${cyc}
   # Roll back $IAU_FHROT hours of DOIAU=YES
-  if [ "$DOIAU" = "YES" ]
-  then
+  if [ "$DOIAU" = "YES" ]; then
     WAVHINDH=$(( WAVHINDH + IAU_FHROT ))
+  else
+    WAVHINDH=$(( WAVHINDH + FHROT ))
   fi
   # Set time stamps for model start and output
   # For special case when IAU is on but this is an initial half cycle 
   if [ $IAU_OFFSET = 0 ]; then
-    ymdh_beg=$YMDH
+    if [ $FHROT -ge 24 ]; then
+      ymdh_beg=$(( YMDH + FHROT*100/24 ))
+    else
+      ymdh_beg=$(( YMDH + FHROT ))
+    fi
   else
     ymdh_beg=$($NDATE -$WAVHINDH $YMDH)
   fi
   time_beg="$(echo $ymdh_beg | cut -c1-8) $(echo $ymdh_beg | cut -c9-10)0000"
   ymdh_end=$($NDATE $FHMAX_WAV $YMDH)
   time_end="$(echo $ymdh_end | cut -c1-8) $(echo $ymdh_end | cut -c9-10)0000"
-  ymdh_beg_out=$YMDH
+  ymdh_beg_out=$(( YMDH + FHROT))
   time_beg_out="$(echo $ymdh_beg_out | cut -c1-8) $(echo $ymdh_beg_out | cut -c9-10)0000"
 
   # Restart file times (already has IAU_FHROT in WAVHINDH) 
@@ -51,7 +56,6 @@ WW3_namelists(){
     time_rst2_end=$time_end
   # Condition for gdas run or any other run when checkpoint stamp is > ymdh_end
     if [ $ymdh_rst2_ini -ge $ymdh_end ]; then
-      ymdh_rst2_ini=$($NDATE 3 $ymdh_end)
       time_rst2_ini="$(echo $ymdh_rst2_ini | cut -c1-8) $(echo $ymdh_rst2_ini | cut -c9-10)0000"
       time_rst2_end=$time_rst2_ini
     fi

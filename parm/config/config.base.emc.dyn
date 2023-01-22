@@ -18,7 +18,7 @@ export QUEUE_SERVICE="@QUEUE_SERVICE@"
 export PARTITION_BATCH="@PARTITION_BATCH@"
 
 # Project to use in mass store:
-HPSS_PROJECT=emc-global
+HPSS_PROJECT=fim
 
 # Directories relative to installation areas:
 export HOMEgfs=@HOMEgfs@
@@ -61,7 +61,7 @@ export DO_VRFY="YES"       # VRFY step
 #  arch.sh uses REALTIME for MOS.  Need to set REALTIME=YES
 #  if want MOS written to HPSS.   Should update arch.sh to
 #  use RUNMOS flag (currently in config.vrfy)
-export REALTIME="YES"
+export REALTIME="NO"
 
 # Experiment mode (cycled or forecast-only)
 export MODE="@MODE@" # cycled/forecast-only
@@ -100,7 +100,12 @@ export BASE_JOB="$HOMEgfs/jobs/rocoto"
 export SDATE=@SDATE@
 export FDATE=@FDATE@
 export EDATE=@EDATE@
-export EXP_WARM_START="@EXP_WARM_START@"
+export FHROT=0
+if [[ "$FHROT" -gt 0 ]]; then
+  export EXP_WARM_START=".true."
+else
+  export EXP_WARM_START=".false."
+fi
 export assim_freq=6
 export PSLOT="@PSLOT@"
 export EXPDIR="@EXPDIR@/$PSLOT"
@@ -244,7 +249,7 @@ export FHOUT=3           # Will be changed to 1 in config.base if DO_GLDAS is se
 export EUPD_CYC="gdas"
 
 # GFS cycle info
-export gfs_cyc=@gfs_cyc@ # 0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4: all 4 cycles.
+export gfs_cyc=0  #0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4: all 4 cycles.
 
 # GFS output and frequency
 export FHMIN_GFS=0
@@ -290,7 +295,7 @@ else
 fi
 
 # IAU related parameters
-export DOIAU="YES"        # Enable 4DIAU for control with 3 increments
+export DOIAU="NO"        # Enable 4DIAU for control with 3 increments
 export IAUFHRS="3,6,9"
 export IAU_FHROT=$(echo $IAUFHRS | cut -c1)
 export IAU_DELTHRS=6

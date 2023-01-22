@@ -175,6 +175,7 @@ FV3_GFS_predet(){
   LONB_IMO=${LONB_IMO:-$LONB_CASE}
   LATB_JMO=${LATB_JMO:-$LATB_CASE}
 
+  # moved this NSST setting to forecast_postdet.sh
   # NSST Options
   # nstf_name contains the NSST related parameters
   # nstf_name(1) : NST_MODEL (NSST Model) : 0 = OFF, 1 = ON but uncoupled, 2 = ON and coupled
@@ -183,12 +184,12 @@ FV3_GFS_predet(){
   # nstf_name(4) : ZSEA1 (in mm) : 0
   # nstf_name(5) : ZSEA2 (in mm) : 0
   # nst_anl      : .true. or .false., NSST analysis over lake
-  NST_MODEL=${NST_MODEL:-0}
-  NST_SPINUP=${NST_SPINUP:-0}
-  NST_RESV=${NST_RESV-0}
-  ZSEA1=${ZSEA1:-0}
-  ZSEA2=${ZSEA2:-0}
-  nstf_name=${nstf_name:-"$NST_MODEL,$NST_SPINUP,$NST_RESV,$ZSEA1,$ZSEA2"}
+  #NST_MODEL=${NST_MODEL:-0}
+  #NST_SPINUP=${NST_SPINUP:-0}
+  #NST_RESV=${NST_RESV-0}
+  #ZSEA1=${ZSEA1:-0}
+  #ZSEA2=${ZSEA2:-0}
+  #nstf_name=${nstf_name:-"$NST_MODEL,$NST_SPINUP,$NST_RESV,$ZSEA1,$ZSEA2"}
   nst_anl=${nst_anl:-".false."}
 
 
@@ -212,12 +213,15 @@ FV3_GFS_predet(){
   if [ $CDUMP = "gfs" -a $rst_invt1 -gt 0 ]; then
     RSTDIR_ATM=${RSTDIR:-$ROTDIR}/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART
     if [ ! -d $RSTDIR_ATM ]; then mkdir -p $RSTDIR_ATM ; fi
+    DATA_OCN=$DATA/MOM6_RESTART
+    if [ ! -d $DATA_OCN ]; then mkdir -p $DATA_OCN ; fi
     $NLN $RSTDIR_ATM RESTART
     # The final restart written at the end doesn't include the valid date
     # Create links that keep the same name pattern for these files
     VDATE=$($NDATE +$FHMAX_GFS $CDATE)
     vPDY=$(echo $VDATE | cut -c1-8)
     vcyc=$(echo $VDATE | cut -c9-10)
+#ssun saving atm/ocn restart files under RSTDIR_ATM
     files="coupler.res fv_core.res.nc"
     for tile in {1..6}; do
       for base in ca_data fv_core.res fv_srf_wnd.res fv_tracer.res phy_data sfc_data; do
@@ -225,7 +229,12 @@ FV3_GFS_predet(){
       done
     done
     for file in $files; do
-      $NLN $RSTDIR_ATM/$file $RSTDIR_ATM/${vPDY}.${vcyc}0000.$file
+      $NLN $RSTDIR_ATM/${vPDY}.${vcyc}0000.$file $RSTDIR_ATM/$file
+    done
+
+    files="MOM.res.nc MOM.res_1.nc MOM.res_2.nc MOM.res_3.nc"
+    for file in $files; do
+      $NLN $RSTDIR_ATM/${vPDY}.${vcyc}0000.$file $DATA/MOM6_RESTART/$file
     done
   else
     mkdir -p $DATA/RESTART
