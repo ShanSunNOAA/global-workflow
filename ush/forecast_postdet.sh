@@ -1001,17 +1001,14 @@ CICE_postdet() {
     HH=$(echo $VDATE | cut -c9-10)
     SS=$((10#$HH*3600))
 
-# ssun
-    $NLN $COMOUTice/iceh.${YYYY}-${MM}-${DD}.nc $DATA/history/iceh.${YYYY}-${MM}-${DD}.nc
     if [[ 10#$fhr -eq 0 ]]; then
       $NLN $COMOUTice/iceic$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_ic.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
-# ssun
-      $NLN $COMOUTice/ice_diag.d $DATA/ice_diag.d
     else
       (( interval = fhr - last_fhr ))
       $NLN $COMOUTice/ice$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_$(printf "%0.2d" $interval)h.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
     fi
     last_fhr=$fhr
+    $NLN $COMOUTice/ice_diag.d_${last_fhr} $DATA/ice_diag.d
   done
 }
 
