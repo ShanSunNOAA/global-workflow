@@ -100,12 +100,6 @@ export BASE_JOB="$HOMEgfs/jobs/rocoto"
 export SDATE=@SDATE@
 export FDATE=@FDATE@
 export EDATE=@EDATE@
-export FHROT=0
-if [[ "$FHROT" -gt 0 ]]; then
-  export EXP_WARM_START=".true."
-else
-  export EXP_WARM_START=".false."
-fi
 export assim_freq=6
 export PSLOT="@PSLOT@"
 export EXPDIR="@EXPDIR@/$PSLOT"
@@ -270,8 +264,15 @@ else
 fi
 export ILPOST=1           # gempak output frequency up to F120
 
+export FHROT=0
+if [[ "$FHROT" -gt 0 ]]; then
+  export EXP_WARM_START=".true."
+else
+  export EXP_WARM_START=".false."
+fi
 # GFS restart interval in hours
-export restart_interval_gfs=0
+export restart_interval_gfs=$(echo " $FHMAX_GFS - $FHROT " | bc)
+export restart_interval=$restart_interval_gfs
 
 # I/O QUILTING, true--use Write Component; false--use GFDL FMS
 # if quilting=true, choose OUTPUT_GRID as cubed_sphere_grid in netcdf or gaussian_grid

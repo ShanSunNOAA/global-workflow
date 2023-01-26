@@ -41,18 +41,32 @@ FV3_GFS_postdet(){
   #-------------------------------------------------------
   if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
     #-------------------------------------------------------
-      VDATE=$($NDATE $FHROT $CDATE)
-      YYYY=$(echo $VDATE | cut -c1-4)
-      MM=$(echo $VDATE | cut -c5-6)
-      DD=$(echo $VDATE | cut -c7-8)
-      HH=$(echo $VDATE | cut -c9-10)
-      SS=$((10#$HH*3600))
+    VDATE=$($NDATE $FHROT $CDATE)
+    YYYY=$(echo $VDATE | cut -c1-4)
+    MM=$(echo $VDATE | cut -c5-6)
+    DD=$(echo $VDATE | cut -c7-8)
+    HH=$(echo $VDATE | cut -c9-10)
+    SS=$((10#$HH*3600))
 
-      files=$(find $RSTDIR_ATM -type f)
-      for file in $files; do
-        $NLN $file $DATA/INPUT
-      done
-#ssun: link atm restart files
+    cat<<EOF0 > $RSTDIR_ATM/rpointer.cpl
+./ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF0
+    cat<<EOF1 > $DATA/rpointer.cpl
+./ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF1
+    cat<<EOF2 > $RSTDIR_ATM/ice.restart_file
+./RESTART/iced.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF2
+    cat<<EOF3 > $DATA/ice.restart_file
+./RESTART/iced.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF3
+
+    files=$(find $RSTDIR_ATM -type f)
+    for file in $files; do
+      $NLN $file $DATA/INPUT
+    done
+
+#ssun: link atm/ocean/mediator restart files
     files="coupler.res fv_core.res.nc"
     for tile in {1..6}; do
       for base in ca_data fv_core.res fv_srf_wnd.res fv_tracer.res phy_data sfc_data; do
@@ -63,11 +77,13 @@ FV3_GFS_postdet(){
       $NLN $RSTDIR_ATM/${YYYY}${MM}${DD}.${HH}0000.$file $DATA/INPUT/$file
     done
 
-#ssun: link ocean restart files
     files="MOM.res.nc MOM.res_1.nc MOM.res_2.nc MOM.res_3.nc"
     for file in $files; do
       $NLN $RSTDIR_ATM/${YYYY}${MM}${DD}.${HH}0000.$file $DATA/INPUT/$file
     done
+
+    $NLN $RSTDIR_ATM/ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc $DATA/
+
     #.............................
     if [ $RERUN = "NO" ]; then
       #.............................
@@ -634,11 +650,7 @@ data_out_GFS() {
       fi
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
-#ssun: save restart files
       $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
-      sed -i 's/RESTART/\./'      $DATA/rpointer.cpl
-      $NCP $DATA/rpointer.cpl     $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
-      $NCP $DATA/ice.restart_file $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART/
     fi
   fi
 
@@ -684,19 +696,16 @@ WW3_postdet() {
   #Copy initial condition files:
   for wavGRD in $waveGRD ; do
     if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
-
       VDATE=$($NDATE $FHROT $CDATE)
       YYYY=$(echo $VDATE | cut -c1-4)
       MM=$(echo $VDATE | cut -c5-6)
       DD=$(echo $VDATE | cut -c7-8)
       HH=$(echo $VDATE | cut -c9-10)
-      SS=$((10#$HH*3600))
-      if [ $RERUN = "NO" ]; then
-        waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
-      else 
-        waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
-      fi
-#ssun waverstfile
+    # if [ $RERUN = "NO" ]; then
+    #   waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
+    # else 
+    #   waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
+    # fi
       waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     else 
       waverstfile=${RSTDIR_WAVE}/${sPDY}.${scyc}0000.restart.${wavGRD}
@@ -839,12 +848,10 @@ MOM6_postdet() {
   fi
 
   # Copy mediator restart files to RUNDIR
-  if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
-#ssun: link restart files
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ufs.cpld*.nc     $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/rpointer.cpl     $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/atmos/RERUN_RESTART/ice.restart_file $DATA/
-  fi
+  #if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
+  #  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/ufs.cpld*.nc $DATA/
+  #  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/rpointer.cpl $DATA/
+  #fi
 
   if [ $DO_OCN_SPPT = "YES" -o $DO_OCN_PERT_EPBL = "YES" ]; then
     if [ ${SET_STP_SEED:-"YES"} = "YES" ]; then
