@@ -1013,8 +1013,8 @@ CICE_postdet() {
       $NLN $COMOUTice/ice$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_$(printf "%0.2d" $interval)h.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
     fi
     last_fhr=$fhr
-    $NLN $COMOUTice/ice_diag.d_${last_fhr} $DATA/ice_diag.d
   done
+  $NLN $COMOUTice/ice_diag.d_${YYYY}-${MM}-${DD} $DATA/ice_diag.d
 }
 
 CICE_nml() {
