@@ -10,11 +10,11 @@ echo "BEGIN: config.nsst"
 # nstf_name(1) : NST_MODEL (NSST Model) : 0 = OFF, 1 = ON but uncoupled, 2 = ON and coupled
 export NST_MODEL=2
 
-# nstf_name(2) : NST_SPINUP : 0 = OFF, 1 = ON,
-export NST_SPINUP=0
-if [[ "$CDATE" -lt "2017072000" ]]; then
-    export NST_SPINUP=1
-fi
+# nstf_name(2) : NST_SPINUP : 0 = OFF, 1 = ON, (moved to forecast_postdet.sh)
+#export NST_SPINUP=0
+#if [[ "$CDATE" -lt "2017072000" ]]; then
+#    export NST_SPINUP=1
+#fi
 
 # nstf_name(3) : NST_RESV (Reserved, NSST Analysis) : 0 = OFF, 1 = ON
 export NST_RESV=0

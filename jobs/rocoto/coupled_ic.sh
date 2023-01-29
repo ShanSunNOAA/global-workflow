@@ -101,7 +101,7 @@ if [ $DO_WAVE = "YES" ]; then
   COMOUTw="$ROTDIR/$CDUMP.$PDY/$cyc/wave/restart"
   [[ ! -d $COMOUTw ]] && mkdir -p $COMOUTw
   cd $COMOUTw || exit 99
-  $NLN $OUTDIRw/* .
+#ssun:start wave at rest  $NLN $OUTDIRw/* .
 fi
 
 if  [[ $err -ne 0 ]] ; then 

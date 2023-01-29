@@ -78,11 +78,7 @@ if [ $cpl = ".true." ]; then
 fi
 
 if [ $cplflx = .true. ]; then
-  if [ $restart_interval  -gt 0 ]; then
-    restart_interval_nems=$restart_interval
-  else
-    restart_interval_nems=$FHMAX
-  fi
+  restart_interval_nems=$(( FHMAX_GFS - FHROT ))
   sed -i -e "s;@\[ocn_model\];$OCN_model;g" tmp1
   sed -i -e "s;@\[ocn_petlist_bounds\];$ocn_petlist_bounds;g" tmp1
   sed -i -e "s;@\[DumpFields\];$DumpFields;g" tmp1

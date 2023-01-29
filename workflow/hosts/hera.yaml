@@ -3,11 +3,11 @@ base_svn: '/scratch1/NCEPDEV/global/glopara/svn'
 dmpdir: '/scratch1/NCEPDEV/global/glopara/dump'
 nwprod: '/scratch1/NCEPDEV/global/glopara/nwpara'
 comroot: '/scratch1/NCEPDEV/global/glopara/com'
-homedir: '/scratch1/NCEPDEV/global/$USER'
-stmp: '/scratch1/NCEPDEV/stmp2/$USER'
-ptmp: '/scratch1/NCEPDEV/stmp4/$USER'
+homedir: '/scratch1/BMC/gsd-fv3-dev/NCEPDEV/global/$USER'
+stmp: '/scratch1/BMC/gsd-fv3-dev/NCEPDEV/global/$USER/stmp2'
+ptmp: '/scratch1/BMC/gsd-fv3-dev/NCEPDEV/global/$USER/stmp4'
 noscrub: $HOMEDIR
-account: fv3-cpu
+account: gsd-fv3-dev
 scheduler: slurm
 queue: batch
 queue_service: service
@@ -16,4 +16,4 @@ chgrp_rstprod: 'YES'
 chgrp_cmd: 'chgrp rstprod'
 hpssarch: 'YES'
 localarch: 'NO'
-atardir: '/NCEPDEV/$HPSS_PROJECT/1year/$USER/$machine/scratch/$PSLOT'
+atardir: '/BMC/$HPSS_PROJECT/1year/$USER/$machine/scratch/$PSLOT'
