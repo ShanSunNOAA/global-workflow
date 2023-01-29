@@ -559,6 +559,7 @@ EOF
   if [ $QUILTING = ".true." -a $OUTPUT_GRID = "gaussian_grid" ]; then
     fhr=$FHMIN
     for fhr in $OUTPUT_FH; do
+      FH4=$(printf %04i $fhr)
       FH3=$(printf %03i $fhr)
       FH2=$(printf %02i $fhr)
       atmi=atmf${FH3}.$affix
@@ -566,11 +567,16 @@ EOF
       logi=logf${FH3}
       pgbi=GFSPRS.GrbF${FH2}
       flxi=GFSFLX.GrbF${FH2}
-      atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH3}.$affix
-      sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH3}.$affix
-      logo=$memdir/${CDUMP}.t${cyc}z.logf${FH3}.txt
-      pgbo=$memdir/${CDUMP}.t${cyc}z.master.grb2f${FH3}
-      flxo=$memdir/${CDUMP}.t${cyc}z.sfluxgrbf${FH3}.grib2
+     # atmo=$memdir/${CDUMP}.atmf${FH4}.$affix
+     # sfco=$memdir/${CDUMP}.sfcf${FH4}.$affix
+     # logo=$memdir/${CDUMP}.logf${FH4}.txt
+     # pgbo=$memdir/${CDUMP}.master.grb2f${FH4}
+     # flxo=$memdir/${CDUMP}.sfluxgrbf${FH4}.grib2
+      atmo=$memdir/atmf${FH4}.$affix
+      sfco=$memdir/sfcf${FH4}.$affix
+      logo=$memdir/logf${FH4}.txt
+      pgbo=$memdir/master.grb2f${FH4}
+      flxo=$memdir/sfluxgrbf${FH4}.grib2
       eval $NLN $atmo $atmi
       eval $NLN $sfco $sfci
       eval $NLN $logo $logi
@@ -867,6 +873,15 @@ MOM6_postdet() {
 
   [[ ! -d $COMOUTocean ]] && mkdir -p $COMOUTocean
 
+  YYYY=$(echo $CDATE | cut -c1-4)
+  MM=$(echo $CDATE | cut -c5-6)
+  DD=$(echo $CDATE | cut -c7-8)
+  source_file="ocn_daily_${YYYY}_${MM}_${DD}.nc"
+  dest_file=${source_file}
+  if [ ! -a "${DATA}/${source_file}" ]; then
+    $NLN ${COMOUTocean}/${dest_file} ${DATA}/${source_file}
+  fi
+
   fhrlst=$OUTPUT_FH
 
   for fhr in $fhrlst; do
@@ -894,7 +909,8 @@ MOM6_postdet() {
     SS_MID=$((10#$HH_MID*3600))
 
     source_file="ocn_${YYYY_MID}_${MM_MID}_${DD_MID}_${HH_MID}.nc"
-    dest_file="ocn${VDATE}.${ENSMEM}.${IDATE}.nc"
+   #dest_file="ocn${VDATE}.${ENSMEM}.${IDATE}.nc"
+    dest_file="ocn${VDATE}.${IDATE}.nc"
     ${NLN} ${COMOUTocean}/${dest_file} ${DATA}/${source_file}
 
     source_file="ocn_daily_${YYYY}_${MM}_${DD}.nc"
@@ -1005,6 +1021,7 @@ CICE_postdet() {
     DD=$(echo $VDATE | cut -c7-8)
     HH=$(echo $VDATE | cut -c9-10)
     SS=$((10#$HH*3600))
+    $NLN $COMOUTice/iceh.${YYYY}-${MM}-${DD}.nc $DATA/history/iceh.${YYYY}-${MM}-${DD}.nc
 
     if [[ 10#$fhr -eq 0 ]]; then
       $NLN $COMOUTice/iceic$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_ic.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
@@ -1013,8 +1030,8 @@ CICE_postdet() {
       $NLN $COMOUTice/ice$VDATE.$ENSMEM.$IDATE.nc $DATA/history/iceh_$(printf "%0.2d" $interval)h.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
     fi
     last_fhr=$fhr
-    $NLN $COMOUTice/ice_diag.d_${last_fhr} $DATA/ice_diag.d
   done
+  $NLN $COMOUTice/ice_diag.d_${YYYY}-${MM}-${DD} $DATA/ice_diag.d
 }
 
 CICE_nml() {

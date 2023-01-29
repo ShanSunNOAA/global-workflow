@@ -49,8 +49,15 @@ if [ $ICERES = '050' ]; then
  ICERESdec="0.50"        
 fi 
 
+echo "$CASE"
 # Setup ATM initial condition files
-cp -r $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/*  $ICSDIR/$CDATE/atmos/
+if [ $CASE = 'C384' ]; then
+  cp -r $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+fi
+if [ $CASE = 'C192' ]; then
+  cp -r /scratch1/BMC/gsd-fv3-dev/fv3data/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+fi
+
 rc=$?
 if [[ $rc -ne 0 ]] ; then
   echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/* to $ICSDIR/$CDATE/atmos/ (Error code $rc)" 

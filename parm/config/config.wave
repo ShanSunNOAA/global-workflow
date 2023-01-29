@@ -55,7 +55,7 @@ else
 fi
 export WAVHINDH=${WAVHINDH:-0}
 export FHMIN_WAV=${FHMIN_WAV:-0}
-export FHOUT_WAV=${FHOUT_WAV:-3}
+export FHOUT_WAV=${FHOUT_WAV:-24}
 export FHMAX_HF_WAV=${FHMAX_HF_WAV:-120}
 export FHOUT_HF_WAV=${FHOUT_HF_WAV:-1}
 

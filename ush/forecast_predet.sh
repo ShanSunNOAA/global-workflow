@@ -212,8 +212,8 @@ FV3_GFS_predet(){
   #-------------------------------------------------------
   if [ $CDUMP = "gfs" -a $rst_invt1 -gt 0 ]; then
     RSTDIR_ATM=${RSTDIR:-$ROTDIR}/${CDUMP}.${PDY}/${cyc}/atmos/RERUN_RESTART
-    if [ ! -d $RSTDIR_ATM ];         then mkdir -p $RSTDIR_ATM ;        fi
-    if [ ! -d $DATA/MOM6_RESTART ];  then mkdir -p $DATA/MOM6_RESTART ; fi
+    if [ ! -d $RSTDIR_ATM ]; then mkdir -p $RSTDIR_ATM ; fi
+    if [ ! -d $DATA/MOM6_RESTART ]; then mkdir -p $DATA/MOM6_RESTART ; fi
     $NLN $RSTDIR_ATM RESTART
     # The final restart written at the end doesn't include the valid date
     # Create links that keep the same name pattern for these files
