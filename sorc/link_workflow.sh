@@ -86,7 +86,7 @@ if [ ! -d $oro2 ]; then
   cd $oro2
   for dir in $ORO_DIR/* 
   do
-    $LINK $ORO_DIR/$dir .
+    $LINK $dir .
   done
   /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
 fi
