@@ -1,0 +1,8 @@
+An example setting for a 48hr cold run, followed by a 96hr warm run, i.e., total 144hr:
+
+Cold run: 
+  FHMAX_GFS_00=48
+  FHROT=0
+Warm run: 
+  FHMAX_GFS_00=144
+  FHROT=48
