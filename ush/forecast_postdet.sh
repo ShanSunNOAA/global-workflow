@@ -209,7 +209,11 @@ EOF
   # Grid and orography data
   for n in $(seq 1 $ntiles); do
     $NLN $FIXfv3/$CASE/${CASE}_grid.tile${n}.nc     $DATA/INPUT/${CASE}_grid.tile${n}.nc
-    $NLN $FIXfv3/$CASE/${CASE}_oro_data.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
+    if [ $CASE = "192" ] ; then
+      $NLN $FIXfv3/$CASE_ocn025/${CASE}_oro_data.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
+     else
+      $NLN $FIXfv3/$CASE/${CASE}_oro_data.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
+     fi
   done
 
   if [ $cplflx = ".false." ] ; then

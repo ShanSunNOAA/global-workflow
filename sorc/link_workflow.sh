@@ -36,6 +36,7 @@ $LINK ufs_model.fd/FV3/upp upp.fd
 #------------------------------
 if [ $machine = "hera" ]; then
     FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW"
+    ORO_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW/fix_fv3_fracoro"
 elif [ $machine = "orion" ]; then
     FIX_DIR="/work/noaa/global/glopara/fix_NEW"
 elif [ $machine = "jet" ]; then
@@ -54,13 +55,11 @@ for dir in fix_aer \
             fix_fv3_gmted2010 \
             fix_gldas \
             fix_lut \
-            fix_fv3_fracoro \
             fix_orog \
             fix_sfc_climo \
             fix_verif \
             fix_cice \
             fix_mom6 \
-            fix_cpl \
             fix_wave \
             fix_reg2grb2 \
             fix_ugwd
@@ -77,6 +76,20 @@ if [ -d ${pwd}/ufs_utils.fd ]; then
   ./link_fixdirs.sh $RUN_ENVIR $machine
 fi
 
+#---------------------------------------
+#--add files C192O025
+#---------------------------------------
+/bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_cpl ${pwd}/../fix/.
+oro2=${pwd}/../fix/fix_fv3_fracoro
+if [ ! -d $oro2 ]; then
+  mkdir -p $oro2
+  cd $oro2
+  for dir in $ORO_DIR/* 
+  do
+    $LINK $ORO_DIR/$dir .
+  done
+  /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
+fi
 
 #---------------------------------------
 #--add files from external repositories
