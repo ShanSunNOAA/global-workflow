@@ -66,7 +66,7 @@ EOF3
       $NLN $file $DATA/INPUT
     done
 
-#ssun: link atm/ocean restart files
+# link atm/ocean restart files
     files="coupler.res fv_core.res.nc"
     for tile in {1..6}; do
       for base in ca_data fv_core.res fv_srf_wnd.res fv_tracer.res phy_data sfc_data; do
@@ -648,7 +648,7 @@ data_out_GFS() {
       fi
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
-      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
+      $NCP $DATA/*.restart.ww3 $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
     fi
   fi
 
@@ -699,12 +699,12 @@ WW3_postdet() {
       MM=$(echo $VDATE | cut -c5-6)
       DD=$(echo $VDATE | cut -c7-8)
       HH=$(echo $VDATE | cut -c9-10)
+      waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     # if [ $RERUN = "NO" ]; then
     #   waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
     # else 
     #   waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
     # fi
-      waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     else 
       waverstfile=${RSTDIR_WAVE}/${sPDY}.${scyc}0000.restart.${wavGRD}
     fi
@@ -829,7 +829,7 @@ MOM6_postdet() {
 
   OCNRES=${OCNRES:-"025"}
 
-  if [ $warm_start = ".false." ]; then #ssun Copy MOM6 ICs from $ICSDIR in cold_start
+  if [ $warm_start = ".false." ]; then
     $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
   fi
 

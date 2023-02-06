@@ -226,7 +226,6 @@ FV3_GFS_predet(){
         files="${files} ${base}.tile${tile}.nc"
       done
     done
-#ssun saving atm/ocn restart files under RSTDIR_ATM
     for file in $files; do
       $NLN $RSTDIR_ATM/${vPDY}.${vcyc}0000.$file $RSTDIR_ATM/$file
     done
