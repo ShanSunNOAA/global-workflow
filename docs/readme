@@ -1,0 +1,8 @@
+An example setting for a 48-hr cold run, followed by a 48-hr warm run, that is a total of 96-hr integration:
+
+Cold run: 
+  FHMAX_GFS_00=48
+  FHROT=0
+Warm run: 
+  FHMAX_GFS_00=96
+  FHROT=48

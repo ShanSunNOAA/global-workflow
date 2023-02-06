@@ -21,7 +21,7 @@ start_hour:              ${tcyc}
 start_minute:            0
 start_second:            0
 nhours_fcst:             $FHMAX
-fhrot:                   ${IAU_FHROT:-0}
+fhrot:                   ${FHROT:-0}
 
 dt_atmos:                $DELTIM
 calendar:                ${calendar:-'julian'}

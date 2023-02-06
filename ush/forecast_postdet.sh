@@ -41,6 +41,47 @@ FV3_GFS_postdet(){
   #-------------------------------------------------------
   if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
     #-------------------------------------------------------
+    VDATE=$($NDATE $FHROT $CDATE)
+    YYYY=$(echo $VDATE | cut -c1-4)
+    MM=$(echo $VDATE | cut -c5-6)
+    DD=$(echo $VDATE | cut -c7-8)
+    HH=$(echo $VDATE | cut -c9-10)
+    SS=$((10#$HH*3600))
+
+    cat<<EOF0 > $RSTDIR_ATM/rpointer.cpl
+./RESTART/ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF0
+    cat<<EOF1 > $DATA/rpointer.cpl
+./RESTART/ufs.cpld.cpl.r.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF1
+    cat<<EOF2 > $RSTDIR_ATM/ice.restart_file
+./RESTART/iced.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF2
+    cat<<EOF3 > $DATA/ice.restart_file
+./RESTART/iced.${YYYY}-${MM}-${DD}-$(printf "%5.5d" ${SS}).nc
+EOF3
+
+    files=$(find $RSTDIR_ATM -type f)
+    for file in $files; do
+      $NLN $file $DATA/INPUT
+    done
+
+#ssun: link atm/ocean restart files
+    files="coupler.res fv_core.res.nc"
+    for tile in {1..6}; do
+      for base in ca_data fv_core.res fv_srf_wnd.res fv_tracer.res phy_data sfc_data; do
+        files="${files} ${base}.tile${tile}.nc"
+      done
+    done
+    for file in $files; do
+      $NLN $RSTDIR_ATM/${YYYY}${MM}${DD}.${HH}0000.$file $DATA/INPUT/$file
+    done
+
+    files="MOM.res.nc MOM.res_1.nc MOM.res_2.nc MOM.res_3.nc"
+    for file in $files; do
+      $NLN $RSTDIR_ATM/${YYYY}${MM}${DD}.${HH}0000.$file $DATA/INPUT/$file
+    done
+
     #.............................
     if [ $RERUN = "NO" ]; then
       #.............................
@@ -355,7 +396,7 @@ EOF
   FNVETC=${FNVETC:-"${FIX_SFC}/${CASE}.vegetation_type.tileX.nc"}
   FNSOTC=${FNSOTC:-"${FIX_SFC}/${CASE}.soil_type.tileX.nc"}
   FNABSC=${FNABSC:-"${FIX_SFC}/${CASE}.maximum_snow_albedo.tileX.nc"}
-  FNSMCC=${FNSMCC:-"$FIX_AM/global_soilmgldas.statsgo.t${JCAP}.${LONB}.${LATB}.grb"}
+  FNSMCC=${FNSMCC:-"$FIX_AM/global_soilmgldas.statsgo.t1534.3072.1536.grb"}
 
   # If the appropriate resolution fix file is not present, use the highest resolution available (T1534)
   [[ ! -f $FNSMCC ]] && FNSMCC="$FIX_AM/global_soilmgldas.statsgo.t1534.3072.1536.grb"
@@ -369,7 +410,11 @@ EOF
   # nstf_name(5) : ZSEA2 (in mm) : 0
   # nst_anl      : .true. or .false., NSST analysis over lake
   NST_MODEL=${NST_MODEL:-0}
-  NST_SPINUP=${NST_SPINUP:-0}
+  if [[ $warm_start = ".true." ]]; then
+    NST_SPINUP=0
+  else
+    NST_SPINUP=1
+  fi
   NST_RESV=${NST_RESV-0}
   ZSEA1=${ZSEA1:-0}
   ZSEA2=${ZSEA2:-0}
@@ -603,6 +648,7 @@ data_out_GFS() {
       fi
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
+      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
     fi
   fi
 
@@ -648,11 +694,17 @@ WW3_postdet() {
   #Copy initial condition files:
   for wavGRD in $waveGRD ; do
     if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
-      if [ $RERUN = "NO" ]; then
-        waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
-      else 
-        waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
-      fi
+      VDATE=$($NDATE $FHROT $CDATE)
+      YYYY=$(echo $VDATE | cut -c1-4)
+      MM=$(echo $VDATE | cut -c5-6)
+      DD=$(echo $VDATE | cut -c7-8)
+      HH=$(echo $VDATE | cut -c9-10)
+    # if [ $RERUN = "NO" ]; then
+    #   waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
+    # else 
+    #   waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
+    # fi
+      waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     else 
       waverstfile=${RSTDIR_WAVE}/${sPDY}.${scyc}0000.restart.${wavGRD}
     fi
@@ -777,8 +829,9 @@ MOM6_postdet() {
 
   OCNRES=${OCNRES:-"025"}
 
-  # Copy MOM6 ICs
-  $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+  if [ $warm_start = ".false." ]; then #ssun Copy MOM6 ICs from $ICSDIR in cold_start
+    $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+  fi
 
   # Copy MOM6 fixed files
   $NCP -pf $FIXmom/$OCNRES/* $DATA/INPUT/
@@ -793,10 +846,10 @@ MOM6_postdet() {
   fi
 
   # Copy mediator restart files to RUNDIR
-  if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/ufs.cpld*.nc $DATA/
-    $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/rpointer.cpl $DATA/
-  fi
+  #if [ $warm_start = ".true." -o $RERUN = "YES" ]; then
+  #  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/ufs.cpld*.nc $DATA/
+  #  $NCP $ROTDIR/$CDUMP.$PDY/$cyc/med/rpointer.cpl $DATA/
+  #fi
 
   if [ $DO_OCN_SPPT = "YES" -o $DO_OCN_PERT_EPBL = "YES" ]; then
     if [ ${SET_STP_SEED:-"YES"} = "YES" ]; then
@@ -905,8 +958,13 @@ CICE_postdet() {
   #  RUNTYPE='continue'
   #  USE_RESTART_TIME='.true.'
   #fi
-  RUNTYPE='initial'
-  USE_RESTART_TIME='.false.'
+  if [[ $warm_start = ".true." ]]; then
+    RUNTYPE='continue'
+    USE_RESTART_TIME='.true.'
+  else
+    RUNTYPE='initial'
+    USE_RESTART_TIME='.false.'
+  fi
   restart_pond_lvl=${restart_pond_lvl:-".false."}
 
   ICERES=${ICERES:-"025"}
@@ -960,6 +1018,7 @@ CICE_postdet() {
     fi
     last_fhr=$fhr
   done
+  $NLN $COMOUTice/ice_diag.d_${YYYY}-${MM}-${DD} $DATA/ice_diag.d
 }
 
 CICE_nml() {

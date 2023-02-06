@@ -100,7 +100,6 @@ export BASE_JOB="$HOMEgfs/jobs/rocoto"
 export SDATE=@SDATE@
 export FDATE=@FDATE@
 export EDATE=@EDATE@
-export EXP_WARM_START="@EXP_WARM_START@"
 export assim_freq=6
 export PSLOT="@PSLOT@"
 export EXPDIR="@EXPDIR@/$PSLOT"
@@ -244,11 +243,9 @@ export FHOUT=3           # Will be changed to 1 in config.base if DO_GLDAS is se
 export EUPD_CYC="gdas"
 
 # GFS cycle info
-export gfs_cyc=@gfs_cyc@ # 0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4: all 4 cycles.
+export gfs_cyc=0  #0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4: all 4 cycles.
 
 # GFS output and frequency
-export FHMIN_GFS=0
-
 export FHMAX_GFS_00=${FHMAX_GFS_00:-384}
 export FHMAX_GFS_06=${FHMAX_GFS_06:-384}
 export FHMAX_GFS_12=${FHMAX_GFS_12:-384}
@@ -265,8 +262,17 @@ else
 fi
 export ILPOST=1           # gempak output frequency up to F120
 
+export FHROT=0
+if [[ "$FHROT" -gt 0 ]]; then
+  export EXP_WARM_START=".true."
+else
+  export EXP_WARM_START=".false."
+fi
 # GFS restart interval in hours
-export restart_interval_gfs=0
+export restart_interval_gfs=$FHMAX_GFS
+export restart_interval=$restart_interval_gfs
+export FHMIN_GFS=$FHROT
+export FHMIN=$FHROT
 
 # I/O QUILTING, true--use Write Component; false--use GFDL FMS
 # if quilting=true, choose OUTPUT_GRID as cubed_sphere_grid in netcdf or gaussian_grid
@@ -290,7 +296,7 @@ else
 fi
 
 # IAU related parameters
-export DOIAU="YES"        # Enable 4DIAU for control with 3 increments
+export DOIAU="NO"        # Enable 4DIAU for control with 3 increments
 export IAUFHRS="3,6,9"
 export IAU_FHROT=$(echo $IAUFHRS | cut -c1)
 export IAU_DELTHRS=6

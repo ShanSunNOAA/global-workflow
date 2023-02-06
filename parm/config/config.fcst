@@ -333,7 +333,7 @@ elif [[ "$CDUMP" == "gfs" ]] ; then # GFS cycle specific parameters
           rst_list="$rst_list $xfh"
           xfh=$((xfh+restart_interval_gfs))
         done
-        export restart_interval="$rst_list"
+       #export restart_interval="$rst_list"
     fi
 
     if [ $DO_AERO = "YES" ]; then
