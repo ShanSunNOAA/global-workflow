@@ -336,12 +336,13 @@ elif [[ "$CDUMP" == "gfs" ]] ; then # GFS cycle specific parameters
        #export restart_interval="$rst_list"
     fi
 
-    if [ $DO_AERO = "YES" ]; then
-        # Make sure a restart file is written at the cadence time
-        if [[ ! "${restart_interval[*]}" =~ "$STEP_GFS"  ]]; then
-            export restart_interval="$STEP_GFS $restart_interval"
-        fi
-    fi
+## temporarily share the settings with DO_AERO = NO
+   #if [ $DO_AERO = "YES" ]; then
+     # Make sure a restart file is written at the cadence time
+     #  if [[ ! "${restart_interval[*]}" =~ "$STEP_GFS"  ]]; then
+     #      export restart_interval="$STEP_GFS $restart_interval"
+     #  fi
+   #fi
     
     # Choose coupling with wave
     if [ $DO_WAVE = "YES" -a "$WAVE_CDUMP" != "gdas" ]; then 
