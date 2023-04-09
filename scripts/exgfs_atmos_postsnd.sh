@@ -36,7 +36,7 @@ export INCREMENT=12
 export MAKEBUFR=NO
 export F00FLAG=YES
 export fformat=${OUTPUT_FILE:-netcdf}
-if [ $fformat == "netcdf" ]
+if [[ $fformat == "netcdf" ]]
  then
 export atmfm="nc"
 export logfm="txt"
@@ -52,13 +52,13 @@ fi
 rm -f -r ${COMOUT}/bufr.${cycle}
 mkdir -p ${COMOUT}/bufr.${cycle}
 
-    if [ -f $HOMEgfs/ush/getncdimlen ]
+    if [[ -f $HOMEgfs/ush/getncdimlen ]]
 	then
 	GETDIM=$HOMEgfs/ush/getncdimlen
 	else
 	GETDIM=$EXECbufrsnd/getncdimlen
 	fi
-if [ $fformat == "netcdf" ]
+if [[ $fformat == "netcdf" ]]
  then
 export LEVS=$($GETDIM $COMIN/${RUN}.${cycle}.atmf000.${atmfm} pfull)
 else
@@ -78,14 +78,14 @@ export FINT=$NINT1
    # Define the end hour for the input
    export FEND=$(expr $FSTART + $INCREMENT) 
    if test $FEND -lt 100; then FEND=0$FEND; fi 
-   if [ $FSTART -eq 00 ]
+   if [[ $FSTART -eq 00 ]]
    then 
        export F00FLAG=YES
    else
        export F00FLAG=NO
    fi
    
-   if [ $FEND -eq $ENDHOUR ]
+   if [[ $FEND -eq $ENDHOUR ]]
    then
        export MAKEBUFR=YES
    fi
@@ -93,7 +93,7 @@ export FINT=$NINT1
    ic=0
    while [ $ic -lt 1000 ]
    do
-      if [ ! -f $COMIN/${RUN}.${cycle}.logf$FEND.${logfm} ]
+      if [[ ! -f $COMIN/${RUN}.${cycle}.logf$FEND.${logfm} ]]
       then
           sleep 10
           ic=$(expr $ic + 1)
@@ -101,14 +101,14 @@ export FINT=$NINT1
           break
       fi
 
-      if [ $ic -ge 360 ]
+      if [[ $ic -ge 360 ]]
       then
          err_exit "COULD NOT LOCATE logf$FEND file AFTER 1 HOUR"
       fi
    done
 
 ## 1-hourly output before $NEND1, 3-hourly output after
-   if [ $FEND -gt $NEND1 ]; then
+   if [[ $FEND -gt $NEND1 ]]; then
      export FINT=$NINT3
    fi
 ##   $USHbufrsnd/gfs_bufr.sh
@@ -138,7 +138,7 @@ fi
 # add appropriate WMO Headers.
 ########################################
 collect=' 1 2 3 4 5 6 7 8 9'
-if [ $machine == "HERA" -o  $machine == "JET" ]; then
+if [[ $machine == "HERA" -o  $machine == "JET" ]]; then
 for m in ${collect}
 do
 sh $USHbufrsnd/gfs_sndp.sh $m

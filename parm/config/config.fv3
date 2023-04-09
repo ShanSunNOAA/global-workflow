@@ -68,18 +68,18 @@ case $case_in in
         export n_split=6
         ;;
     "C192")
-        export DELTIM=450
+        export DELTIM=${DELTIM:-600}
         export layout_x=4
         export layout_y=6
-        export layout_x_gfs=4
-        export layout_y_gfs=6
+        export layout_x_gfs=${layout_x_gfs:-4}
+        export layout_y_gfs=${layout_y_gfs:-6}
         export nth_fv3=2
         export nth_fv3_gfs=2
         export cdmbgwd="0.23,1.5,1.0,1.0"  # mountain blocking, ogwd, cgwd, cgwd src scaling
         export WRITE_GROUP=1
         export WRTTASK_PER_GROUP=$npe_node_max
-        export WRITE_GROUP_GFS=2
-        export WRTTASK_PER_GROUP_GFS=$npe_node_max
+        export WRITE_GROUP_GFS=${WRITE_GROUP_GFS:-2}
+        export WRTTASK_PER_GROUP_GFS=${WRTTASK_PER_GROUP_GFS:-$npe_node_max}
         export WRTIOBUF="8M"
         ;;
     "C384")

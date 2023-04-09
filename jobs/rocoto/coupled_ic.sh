@@ -36,6 +36,9 @@ done
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
+ocn_ic=2
+me_wave=0
+
 # Create ICSDIR if needed
 [[ ! -d $ICSDIR/$CDATE ]] && mkdir -p $ICSDIR/$CDATE
 [[ ! -d $ICSDIR/$CDATE/atmos ]] && mkdir -p $ICSDIR/$CDATE/atmos
@@ -66,21 +69,47 @@ err=$((err + rc))
 
 
 # Setup Ocean IC files 
-cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
-rc=$?
+if [ $ocn_ic -eq 1 ]; then
+ cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
+ rc=$?
+fi
+
+if [ $ocn_ic -eq 2 ]; then
+ if [ $ICERES = '025' ]; then
+  ICERESdec="0.25"
+  ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/ORAS5/$PDY/ORAS5.mx025.ic.nc $ICSDIR/$CDATE/ocn/
+ ## cd $ICSDIR/$CDATE/ocn/
+ ## hsi get /ESRL/BMC/fim/5year/Shan.Sun/Pegion_oras5/$PDY.zip
+ ## unzip $PDY.zip
+ ## /bin/rm $PDY.zip
+  rc=$?
+ fi 
+fi 
+
 if [[ $rc -ne 0 ]] ; then
+ if [ $ocn_ic -eq 1 ]; then
   echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
+ fi
+ if [ $ocn_ic -eq 2 ]; then
+  echo "FATAL: Unable to copy /scratch2/BMC/gsd-fv3-test/Shan.Sun/ORAS5/$PDY/ORAS5.mx025.ic.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
+ fi
 fi
 err=$((err + rc))
 
 #Setup Ice IC files 
-cp $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
-rc=$?
+if [[ -f $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc ]]; then
+  cp $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+  rc=$?
+else
+  cp /scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs_mx025/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+  rc=$?
+fi
 if [[ $rc -ne 0 ]] ; then
   echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc (Error code $rc)"
 fi
 err=$((err + rc))
 
+if [ $me_wave -eq 1 ]; then
 if [ $DO_WAVE = "YES" ]; then
   [[ ! -d $ICSDIR/$CDATE/wav ]] && mkdir -p $ICSDIR/$CDATE/wav
   for grdID in $waveGRD
@@ -92,6 +121,7 @@ if [ $DO_WAVE = "YES" ]; then
     fi
     err=$((err + rc))
   done
+fi
 fi
 
 # Stage the FV3 initial conditions to ROTDIR

@@ -68,26 +68,29 @@ if [ $FH -eq -1 ] ; then
   export paramlist=${paramlist:-$PARMpost/global_1x1_paramlist_g2.anl}
   export paramlistb=${paramlistb:-$PARMpost/global_master-catchup_parmlist_g2}
   export fhr3=anl
+  export fhr4=anl
   export PGBS=YES
 elif [ $FH -eq 0 ] ; then
   export paramlist=${paramlist:-$PARMpost/global_1x1_paramlist_g2.f000}
   export paramlistb=${paramlistb:-$PARMpost/global_master-catchup_parmlist_g2}
   export fhr3=000
+  export fhr4=0000
   export PGBS=YES
 else
   export paramlist=${paramlist:-$PARMpost/global_1x1_paramlist_g2}
   export paramlistb=${paramlistb:-$PARMpost/global_master-catchup_parmlist_g2}
   export fhr3=$(printf "%03d" ${FH})
-  if (( fhr3%FHOUT_PGB == 0 )); then
+  export fhr4=$(printf "%04d" ${FH})
+  if (( FH%FHOUT_PGB == 0 )); then
     export PGBS=YES
   fi
 fi
 
 
-$WGRIB2 $PGBOUT2 | grep -F -f $paramlist | $WGRIB2 -i -grib  tmpfile1_$fhr3 $PGBOUT2
+$WGRIB2 $PGBOUT2 | grep -F -f $paramlist | $WGRIB2 -i -grib  tmpfile1_$fhr4 $PGBOUT2
 export err=$?; err_chk
 if [ $downset = 2 ]; then
-  $WGRIB2 $PGBOUT2 | grep -F -f $paramlistb | $WGRIB2 -i -grib  tmpfile2_$fhr3 $PGBOUT2
+  $WGRIB2 $PGBOUT2 | grep -F -f $paramlistb | $WGRIB2 -i -grib  tmpfile2_$fhr4 $PGBOUT2
   export err=$?; err_chk
 fi
 
@@ -100,7 +103,7 @@ if [ $downset = 1 ]; then totalset=1 ; fi
 #..............................................
 while [ $nset -le $totalset ]; do
   #..............................................
-  export tmpfile=$(eval echo tmpfile${nset}_${fhr3})
+  export tmpfile=$(eval echo tmpfile${nset}_${fhr4})
 
   # split of Grib files to run downstream jobs using MPMD
   export ncount=$($WGRIB2 $tmpfile |wc -l)
@@ -154,7 +157,7 @@ while [ $nset -le $totalset ]; do
 
     $WGRIB2 $tmpfile -for ${start}:${end} -grib ${tmpfile}_${iproc}
     export err=$?; err_chk
-    echo "${GFSDWNSH:-$USHgfs/fv3gfs_dwn_nems.sh} ${tmpfile}_${iproc} $fhr3 $iproc $nset" >> $DATA/poescript
+    echo "${GFSDWNSH:-$USHgfs/fv3gfs_dwn_nems.sh} ${tmpfile}_${iproc} $fhr4 $iproc $nset" >> $DATA/poescript
 
     # if at final record and have not reached the final processor then write echo's to
     # poescript for remaining processors
@@ -195,19 +198,19 @@ while [ $nset -le $totalset ]; do
   export iproc=1
   while [ $iproc -le $nproc ]; do
     if [ $nset = 1 ]; then
-      cat pgb2file_${fhr3}_${iproc}_0p25 >> pgb2file_${fhr3}_0p25
+    #  cat pgb2file_${fhr4}_${iproc}_0p25 >> pgb2file_${fhr4}_0p25
       if [ "$PGBS" = "YES" ]; then
-        cat pgb2file_${fhr3}_${iproc}_0p5  >> pgb2file_${fhr3}_0p5
-        cat pgb2file_${fhr3}_${iproc}_1p0  >> pgb2file_${fhr3}_1p0
+        cat pgb2file_${fhr4}_${iproc}_0p5  >> pgb2file_${fhr4}_0p5
+        cat pgb2file_${fhr4}_${iproc}_1p0  >> pgb2file_${fhr4}_1p0
         if [ "$PGB1F" = 'YES' ]; then
-          cat pgbfile_${fhr3}_${iproc}_1p0   >> pgbfile_${fhr3}_1p0
+          cat pgbfile_${fhr4}_${iproc}_1p0   >> pgbfile_${fhr4}_1p0
         fi
       fi
     elif [ $nset = 2 ]; then
-      cat pgb2bfile_${fhr3}_${iproc}_0p25 >> pgb2bfile_${fhr3}_0p25
+    #  cat pgb2bfile_${fhr4}_${iproc}_0p25 >> pgb2bfile_${fhr4}_0p25
       if [ "$PGBS" = "YES" ]; then
-        cat pgb2bfile_${fhr3}_${iproc}_0p5 >> pgb2bfile_${fhr3}_0p5
-        cat pgb2bfile_${fhr3}_${iproc}_1p0 >> pgb2bfile_${fhr3}_1p0
+        cat pgb2bfile_${fhr4}_${iproc}_0p5 >> pgb2bfile_${fhr4}_0p5
+        cat pgb2bfile_${fhr4}_${iproc}_1p0 >> pgb2bfile_${fhr4}_1p0
       fi
     fi
     export iproc=$(expr $iproc + 1)
@@ -221,69 +224,69 @@ while [ $nset -le $totalset ]; do
   ##0p25 degree
   # $WGRIB2 land.grb -set_grib_type same -new_grid_interpolation bilinear -new_grid_winds earth -new_grid $grid0p25 newland.grb
   # $WGRIB2 newland.grb -set_byte 4 11 218 -grib newnewland.grb
-  # cat ./newnewland.grb >> pgb2file_${fhr3}_0p25
+  # cat ./newnewland.grb >> pgb2file_${fhr4}_0p25
   # $CNVGRIB -g21 newnewland.grb newnewland.grb1
-  # cat ./newnewland.grb1 >> pgbfile_${fhr3}_0p25
+  # cat ./newnewland.grb1 >> pgbfile_${fhr4}_0p25
   ##0p5 degree
   # rm -f newland.grb newnewland.grb newnewland.grb1
   # $WGRIB2 land.grb -set_grib_type same -new_grid_interpolation bilinear -new_grid_winds earth -new_grid $grid0p5 newland.grb
   # $WGRIB2 newland.grb -set_byte 4 11 218 -grib newnewland.grb
-  # cat ./newnewland.grb >> pgb2file_${fhr3}_0p5
+  # cat ./newnewland.grb >> pgb2file_${fhr4}_0p5
   #1p0
   # rm -f newland.grb newnewland.grb newnewland.grb1
   # $WGRIB2 land.grb -set_grib_type same -new_grid_interpolation bilinear -new_grid_winds earth -new_grid $grid1p0 newland.grb
   # $WGRIB2 newland.grb -set_byte 4 11 218 -grib newnewland.grb
-  # cat ./newnewland.grb >> pgb2file_${fhr3}_1p0
+  # cat ./newnewland.grb >> pgb2file_${fhr4}_1p0
   # $CNVGRIB -g21 newnewland.grb newnewland.grb1
-  # cat ./newnewland.grb1 >> pgbfile_${fhr3}_1p0
+  # cat ./newnewland.grb1 >> pgbfile_${fhr4}_1p0
   # fi
 
   if [ $nset = 1 ]; then
-    if [ $fhr3 = anl ]; then
-      cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.anl
-      $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
+    if [ $fhr4 = anl ]; then
+    #  cp pgb2file_${fhr4}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.anl
+    #  $WGRIB2 -s pgb2file_${fhr4}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.anl.idx
       if [ "$PGBS" = "YES" ]; then
-        cp pgb2file_${fhr3}_0p5   $COMOUT/${PREFIX}pgrb2.0p50.anl
-        cp pgb2file_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.anl
-        $WGRIB2 -s pgb2file_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2.0p50.anl.idx
-        $WGRIB2 -s pgb2file_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.anl.idx
+        cp pgb2file_${fhr4}_0p5   $COMOUT/${PREFIX}pgrb2.0p50.anl
+        cp pgb2file_${fhr4}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.anl
+        $WGRIB2 -s pgb2file_${fhr4}_0p5  > $COMOUT/${PREFIX}pgrb2.0p50.anl.idx
+        $WGRIB2 -s pgb2file_${fhr4}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.anl.idx
         if [ "$PGB1F" = 'YES' ]; then
-          cp pgbfile_${fhr3}_1p0    $COMOUT/${PREFIX}pgrb.1p00.anl
+          cp pgbfile_${fhr4}_1p0    $COMOUT/${PREFIX}pgrb.1p00.anl
           $GRBINDEX $COMOUT/${PREFIX}pgrb.1p00.anl $COMOUT/${PREFIX}pgrb.1p00.anl.idx
         fi
       fi
     else
-      cp pgb2file_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}
-      $WGRIB2 -s pgb2file_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr3}.idx
+    #  cp pgb2file_${fhr4}_0p25  $COMOUT/${PREFIX}pgrb2.0p25.f${fhr4}
+    #  $WGRIB2 -s pgb2file_${fhr4}_0p25 > $COMOUT/${PREFIX}pgrb2.0p25.f${fhr4}.idx
       if [ "$PGBS" = "YES" ]; then
-        cp pgb2file_${fhr3}_0p5   $COMOUT/${PREFIX}pgrb2.0p50.f${fhr3}
-        cp pgb2file_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.f${fhr3}
-        $WGRIB2 -s pgb2file_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2.0p50.f${fhr3}.idx
-        $WGRIB2 -s pgb2file_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.f${fhr3}.idx
+        cp pgb2file_${fhr4}_0p5   $COMOUT/${PREFIX}pgrb2.0p50.f${fhr4}
+        cp pgb2file_${fhr4}_1p0   $COMOUT/${PREFIX}pgrb2.1p00.f${fhr4}
+        $WGRIB2 -s pgb2file_${fhr4}_0p5  > $COMOUT/${PREFIX}pgrb2.0p50.f${fhr4}.idx
+        $WGRIB2 -s pgb2file_${fhr4}_1p0  > $COMOUT/${PREFIX}pgrb2.1p00.f${fhr4}.idx
         if [ "$PGB1F" = 'YES' ]; then
-          cp pgbfile_${fhr3}_1p0    $COMOUT/${PREFIX}pgrb.1p00.f${fhr3}
-          $GRBINDEX $COMOUT/${PREFIX}pgrb.1p00.f${fhr3} $COMOUT/${PREFIX}pgrb.1p00.f${fhr3}.idx
+          cp pgbfile_${fhr4}_1p0    $COMOUT/${PREFIX}pgrb.1p00.f${fhr4}
+          $GRBINDEX $COMOUT/${PREFIX}pgrb.1p00.f${fhr4} $COMOUT/${PREFIX}pgrb.1p00.f${fhr4}.idx
         fi
       fi
     fi
   elif [ $nset = 2 ]; then
-    if [ $fhr3 = anl ]; then
-      cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.anl
-      $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.anl.idx
+    if [ $fhr4 = anl ]; then
+    #  cp pgb2bfile_${fhr4}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.anl
+    #  $WGRIB2 -s pgb2bfile_${fhr4}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.anl.idx
       if [ "$PGBS" = "YES" ]; then
-        cp pgb2bfile_${fhr3}_0p5   $COMOUT/${PREFIX}pgrb2b.0p50.anl
-        cp pgb2bfile_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2b.1p00.anl
-        $WGRIB2 -s pgb2bfile_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.anl.idx
-        $WGRIB2 -s pgb2bfile_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.anl.idx
+        cp pgb2bfile_${fhr4}_0p5   $COMOUT/${PREFIX}pgrb2b.0p50.anl
+        cp pgb2bfile_${fhr4}_1p0   $COMOUT/${PREFIX}pgrb2b.1p00.anl
+        $WGRIB2 -s pgb2bfile_${fhr4}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.anl.idx
+        $WGRIB2 -s pgb2bfile_${fhr4}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.anl.idx
       fi
     else
-      cp pgb2bfile_${fhr3}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}
-      $WGRIB2 -s pgb2bfile_${fhr3}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr3}.idx
+    #  cp pgb2bfile_${fhr4}_0p25  $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr4}
+    #  $WGRIB2 -s pgb2bfile_${fhr4}_0p25 > $COMOUT/${PREFIX}pgrb2b.0p25.f${fhr4}.idx
       if [ "$PGBS" = "YES" ]; then
-        cp pgb2bfile_${fhr3}_0p5   $COMOUT/${PREFIX}pgrb2b.0p50.f${fhr3}
-        cp pgb2bfile_${fhr3}_1p0   $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr3}
-        $WGRIB2 -s pgb2bfile_${fhr3}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.f${fhr3}.idx
-        $WGRIB2 -s pgb2bfile_${fhr3}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr3}.idx
+        cp pgb2bfile_${fhr4}_0p5   $COMOUT/${PREFIX}pgrb2b.0p50.f${fhr4}
+        cp pgb2bfile_${fhr4}_1p0   $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr4}
+        $WGRIB2 -s pgb2bfile_${fhr4}_0p5  > $COMOUT/${PREFIX}pgrb2b.0p50.f${fhr4}.idx
+        $WGRIB2 -s pgb2bfile_${fhr4}_1p0  > $COMOUT/${PREFIX}pgrb2b.1p00.f${fhr4}.idx
       fi
     fi
   fi

@@ -571,11 +571,11 @@ EOF
       logi=logf${FH3}
       pgbi=GFSPRS.GrbF${FH2}
       flxi=GFSFLX.GrbF${FH2}
-      atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH3}.$affix
-      sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH3}.$affix
-      logo=$memdir/${CDUMP}.t${cyc}z.logf${FH3}.txt
-      pgbo=$memdir/${CDUMP}.t${cyc}z.master.grb2f${FH3}
-      flxo=$memdir/${CDUMP}.t${cyc}z.sfluxgrbf${FH3}.grib2
+      atmo=$memdir/${CDUMP}.t${cyc}z.atmf${FH4}.$affix
+      sfco=$memdir/${CDUMP}.t${cyc}z.sfcf${FH4}.$affix
+      logo=$memdir/${CDUMP}.t${cyc}z.logf${FH4}.txt
+      pgbo=$memdir/${CDUMP}.t${cyc}z.master.grb2f${FH4}
+      flxo=$memdir/${CDUMP}.t${cyc}z.sfluxgrbf${FH4}.grib2
       eval $NLN $atmo $atmi
       eval $NLN $sfco $sfci
       eval $NLN $logo $logi
@@ -704,12 +704,12 @@ WW3_postdet() {
       MM=$(echo $VDATE | cut -c5-6)
       DD=$(echo $VDATE | cut -c7-8)
       HH=$(echo $VDATE | cut -c9-10)
+      waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     # if [ $RERUN = "NO" ]; then
     #   waverstfile=${WRDIR}/${sPDY}.${scyc}0000.restart.${wavGRD}
     # else 
     #   waverstfile=${RSTDIR_WAVE}/${PDYT}.${cyct}0000.restart.${wavGRD}
     # fi
-      waverstfile=$RSTDIR_WAVE/${YYYY}${MM}${DD}.${HH}0000.restart.ww3
     else 
       waverstfile=${RSTDIR_WAVE}/${sPDY}.${scyc}0000.restart.${wavGRD}
     fi
@@ -835,7 +835,7 @@ MOM6_postdet() {
   OCNRES=${OCNRES:-"025"}
 
   if [ $warm_start = ".false." ]; then #ssun Copy MOM6 ICs from $ICSDIR in cold_start
-    $NCP -pf $ICSDIR/$CDATE/ocn/MOM*nc $DATA/INPUT/
+    $NLN -f $ICSDIR/$CDATE/ocn/*O*nc $DATA/INPUT/
   fi
 
   # Copy MOM6 fixed files
@@ -872,9 +872,10 @@ MOM6_postdet() {
 
   [[ ! -d $COMOUTocean ]] && mkdir -p $COMOUTocean
 
-  YYYY=$(echo $CDATE | cut -c1-4)
-  MM=$(echo $CDATE | cut -c5-6)
-  DD=$(echo $CDATE | cut -c7-8)
+  VDATE=$($NDATE $FHROT $CDATE)
+  YYYY=$(echo $VDATE | cut -c1-4)
+    MM=$(echo $VDATE | cut -c5-6)
+    DD=$(echo $VDATE | cut -c7-8)
   source_file="ocn_daily_${YYYY}_${MM}_${DD}.nc"
   dest_file=${source_file}
   if [ ! -a "${DATA}/${source_file}" ]; then

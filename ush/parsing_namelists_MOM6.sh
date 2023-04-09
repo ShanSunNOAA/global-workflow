@@ -31,7 +31,11 @@ if [ $OCNRES = '025' ]; then
   CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
   FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
   MOM6_RIVER_RUNOFF='True'
-  MOM6_RESTART_SETTING="r"
+  if [ $warm_start = ".true." ]; then
+    MOM6_RESTART_SETTING='r'
+  else
+    MOM6_RESTART_SETTING='n'
+  fi
 elif [ $OCNRES = '050' ]; then
   NX_GLB=720
   NY_GLB=576

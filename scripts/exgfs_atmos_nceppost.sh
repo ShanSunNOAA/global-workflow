@@ -93,7 +93,7 @@ export IDRT=${IDRT:-0} # IDRT=0 is setting for outputting grib files on lat/lon 
 # Post Analysis Files before starting the Forecast Post
 ############################################################
 # Process analysis when post_times is 00
-export stime=$(echo $post_times | cut -c1-3)
+export stime=$(echo $post_times | cut -c1-4)
 if [ $OUTTYP -eq 4 ]; then
   export loganl=$COMIN/${PREFIX}atmanl${SUFFIX}
 else
@@ -396,19 +396,19 @@ else   ## not_anl if_stime
       export FLUXFL=${PREFIX}sfluxgrbf${fhr}.grib2
       FLUXFLIDX=${PREFIX}sfluxgrbf${fhr}.grib2.idx
 
-      #Add extra flux.1p00 file for coupled
-      if [ "$FLXGF" = 'YES' ]; then                    
-        export FH=$(expr $fhr + 0)     
-        $GFSDOWNSHF                  
-        export err=$?; err_chk
-      fi   
-
       if [ $INLINE_POST = ".false." ]; then
         $POSTGPSH
         export err=$?; err_chk
         mv fluxfile $COMOUT/${FLUXFL}
       fi
       $WGRIB2 -s $COMOUT/${FLUXFL} > $COMOUT/${FLUXFLIDX}
+
+      #Add extra flux.1p00 file for coupled
+      if [ "$FLXGF" = 'YES' ]; then                    
+        export FH=$(expr $fhr + 0)     
+        $GFSDOWNSHF                  
+        export err=$?; err_chk
+      fi   
 
       if [ "$SENDDBN" = 'YES' ]; then
         $DBNROOT/bin/dbn_alert MODEL GFS_SGB_GB2 $job $COMOUT/${FLUXFL}
