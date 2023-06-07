@@ -36,7 +36,7 @@ done
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
-ocn_ic=2
+ocn_ic=1
 me_wave=0
 
 # Create ICSDIR if needed
@@ -70,7 +70,12 @@ err=$((err + rc))
 
 # Setup Ocean IC files 
 if [ $ocn_ic -eq 1 ]; then
- cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
+#ssun cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
+ ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_1.nc $ICSDIR/$CDATE/ocn/
+ ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_2.nc $ICSDIR/$CDATE/ocn/
+ ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_3.nc $ICSDIR/$CDATE/ocn/
+ ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_4.nc $ICSDIR/$CDATE/ocn/
+ ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res.nc   $ICSDIR/$CDATE/ocn/
  rc=$?
 fi
 
