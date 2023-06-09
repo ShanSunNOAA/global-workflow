@@ -40,10 +40,11 @@ if [ $FH -eq 0 ] ; then
 else
   export fhr3=$(expr $FH + 0 )
   export fhr4=$(expr $FH + 0 )
-  if [ $fhr3 -lt 100 ]; then export fhr3="0$fhr3"; fi
-  if [ $fhr3 -lt 10 ];  then export fhr3="0$fhr3"; fi
-  if [ $fhr4 -lt 100 ]; then export fhr4="00$fhr4"; fi
-  if [ $fhr4 -lt 10 ];  then export fhr4="0$fhr4"; fi
+  if [ $fhr3 -lt 100  ]; then export fhr3="0$fhr3"; fi
+  if [ $fhr3 -lt 10   ]; then export fhr3="0$fhr3"; fi
+  if [ $fhr4 -lt 1000 ]; then export fhr4="0$fhr4"; fi
+  if [ $fhr4 -lt 100  ]; then export fhr4="0$fhr4"; fi
+  if [ $fhr4 -lt 10   ]; then export fhr4="0$fhr4"; fi
 fi
 
 #---------------------------------------------------------------
