@@ -23,6 +23,7 @@ else
   MOM6_USE_WAVES='False'
 fi
 
+ocn_ic=1
 if [ $OCNRES = '025' ]; then
   NX_GLB=1440
   NY_GLB=1080
@@ -31,7 +32,7 @@ if [ $OCNRES = '025' ]; then
   CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
   FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
   MOM6_RIVER_RUNOFF='True'
-  if [ $warm_start = ".true." ]; then
+  if [[ $warm_start = ".true." || $ocn_ic = "1" ]]; then
     MOM6_RESTART_SETTING='r'
   else
     MOM6_RESTART_SETTING='n'
