@@ -23,7 +23,9 @@ else
   MOM6_USE_WAVES='False'
 fi
 
+ocn_ic=0
 ocn_ic=1
+ocn_ic=2
 if [ $OCNRES = '025' ]; then
   NX_GLB=1440
   NY_GLB=1080
@@ -33,9 +35,9 @@ if [ $OCNRES = '025' ]; then
   FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
   MOM6_RIVER_RUNOFF='True'
   if [[ $warm_start = ".true." || $ocn_ic = "1" ]]; then
-    MOM6_RESTART_SETTING='r'
+    MOM6_RESTART_SETTING='r' #CPC3Dvar belong to this category
   else
-    MOM6_RESTART_SETTING='n'
+    MOM6_RESTART_SETTING='n' #ORAS5 & CFSR belong to this category
   fi
 elif [ $OCNRES = '050' ]; then
   NX_GLB=720
@@ -53,8 +55,12 @@ elif [ $OCNRES = '100' ]; then
   DT_THERM_MOM6='3600'
   FRUNOFF=""
   CHLCLIM="seawifs_1998-2006_smoothed_2X.nc"
-  MOM6_RESTART_SETTING='n'
   MOM6_RIVER_RUNOFF='False'
+  if [[ $warm_start = ".true." || $ocn_ic = "1" ]]; then
+    MOM6_RESTART_SETTING='r' #CPC3Dvar belong to this category
+  else
+    MOM6_RESTART_SETTING='n' #ORAS5 & CFSR belong to this category
+  fi
 elif [ $OCNRES = '400' ]; then
   NX_GLB=90
   NY_GLB=80

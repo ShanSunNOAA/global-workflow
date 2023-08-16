@@ -37,6 +37,7 @@ $LINK ufs_model.fd/FV3/upp upp.fd
 if [ $machine = "hera" ]; then
     FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW"
     ORO_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW/fix_fv3_fracoro"
+   FIX_MOM6="/scratch1/NCEPDEV/global/glopara/fix_NEW/fix_mom6"
 elif [ $machine = "orion" ]; then
     FIX_DIR="/work/noaa/global/glopara/fix_NEW"
 elif [ $machine = "jet" ]; then
@@ -59,7 +60,6 @@ for dir in fix_aer \
             fix_sfc_climo \
             fix_verif \
             fix_cice \
-            fix_mom6 \
             fix_wave \
             fix_reg2grb2 \
             fix_ugwd
@@ -89,6 +89,21 @@ if [ ! -d $oro2 ]; then
     $LINK $dir .
   done
   /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
+fi
+
+#---------------------------------------
+#-- modify fix_mom6/100
+#---------------------------------------
+fix2=${pwd}/../fix/fix_mom6
+if [ ! -d $fix2 ]; then
+  mkdir -p $fix2
+  cd $fix2
+  for dir in $FIX_MOM6/*
+  do
+    $LINK $dir .
+  done
+  /bin/rm -r 100
+  /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_mom6/100 $fix2/.
 fi
 
 #---------------------------------------

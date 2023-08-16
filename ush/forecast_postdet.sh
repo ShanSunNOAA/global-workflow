@@ -653,7 +653,8 @@ data_out_GFS() {
       fi
     elif [ $CDUMP = "gfs" ]; then
       $NCP $DATA/input.nml $ROTDIR/${CDUMP}.${PDY}/${cyc}/atmos/
-      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
+#ss_wave1 unable to copy at the end of the run when APP=S2S
+#ss_wave1      $NCP $DATA/*.restart.ww3    $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/restart/
     fi
   fi
 
@@ -673,9 +674,9 @@ WW3_postdet() {
     for wavGRD in ${grdALL}; do
       $NCP $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/rundata/${COMPONENTwave}.mod_def.$wavGRD $DATA/mod_def.$wavGRD
     done
-  else 
-    #if shel, only 1 waveGRD which is linked to mod_def.ww3 
-    $NCP $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/rundata/${COMPONENTwave}.mod_def.$waveGRD $DATA/mod_def.ww3
+  ##ss_wave2 else 
+  #if shel, only 1 waveGRD which is linked to mod_def.ww3 
+  #ss_wave2 start from rest $NCP $ROTDIR/${CDUMP}.${PDY}/${cyc}/wave/rundata/${COMPONENTwave}.mod_def.$waveGRD $DATA/mod_def.ww3
   fi
 
 
@@ -943,6 +944,7 @@ CICE_postdet() {
   month=$(echo $CDATE|cut -c 5-6)
   day=$(echo $CDATE|cut -c 7-8)
   sec=$(echo $CDATE|cut -c 9-10)  
+  sec=$((10#$sec*3600))
   stepsperhr=$((3600/$ICETIM))
   nhours=$($NHOUR $CDATE ${year}010100)
   steps=$((nhours*stepsperhr))
@@ -1030,6 +1032,10 @@ CICE_postdet() {
     last_fhr=$fhr
   done
   $NLN $COMOUTice/ice_diag.d_${YYYY}-${MM}-${DD} $DATA/ice_diag.d
+
+#ss: reset OUTPUT_FH after all links are made
+   OUTPUT_FH=" $FHOUT -1 "
+
 }
 
 CICE_nml() {

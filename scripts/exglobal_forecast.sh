@@ -101,8 +101,8 @@ cplwav=${cplwav:-.false.} # ? how to control 1-way/2-way?
 cplchm=${cplchm:-.false.} # Chemistry model
 cplice=${cplice:-.false.} # ICE model
 
-OCNTIM=${OCNTIM:-1800}
-DELTIM=${DELTIM:-450}
+OCNTIM=${OCNTIM:-3600}
+DELTIM=${DELTIM:-900}
 ICETIM=${DELTIM}
 
 CPL_SLOW=${CPL_SLOW:-$OCNTIM}

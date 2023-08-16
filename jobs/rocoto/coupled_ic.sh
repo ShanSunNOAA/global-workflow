@@ -36,7 +36,12 @@ done
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
-ocn_ic=1
+ocn_ic=0  #cfsr
+ocn_ic=1  #cpc
+ocn_ic=2  #oras5
+
+ice_ic=2  #oras5
+ice_ic=1  #cpc
 me_wave=0
 
 # Create ICSDIR if needed
@@ -51,13 +56,16 @@ fi
 if [ $ICERES = '050' ]; then         
  ICERESdec="0.50"        
 fi 
+if [ $ICERES = '100' ]; then         
+ ICERESdec="1.00"        
+fi 
 
 echo "$CASE"
 # Setup ATM initial condition files
-if [ $CASE = 'C384' ]; then
+if [[ $CASE = 'C384' ]]; then
   cp -r $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 fi
-if [ $CASE = 'C192' ]; then
+if [[ $CASE = 'C192' || $CASE = 'C96' ]]; then
   cp -r /scratch1/BMC/gsd-fv3-dev/fv3data/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 fi
 
@@ -67,8 +75,14 @@ if [[ $rc -ne 0 ]] ; then
 fi
 err=$((err + rc))
 
-
 # Setup Ocean IC files 
+if [ $ocn_ic -eq 0 ]; then
+ if [ $OCNRES -eq 100 ]; then   # use cfsr temporarily
+   ln -sf /scratch1/BMC/gsd-fv3-dev/ocndata/MOM6_IC_TS.nc        $ICSDIR/$CDATE/ocn/
+   rc=$?
+ fi
+fi
+
 if [ $ocn_ic -eq 1 ]; then
 #ssun cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
  ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_1.nc $ICSDIR/$CDATE/ocn/
@@ -80,15 +94,12 @@ if [ $ocn_ic -eq 1 ]; then
 fi
 
 if [ $ocn_ic -eq 2 ]; then
- if [ $ICERES = '025' ]; then
-  ICERESdec="0.25"
-  ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/ORAS5/$PDY/ORAS5.mx025.ic.nc $ICSDIR/$CDATE/ocn/
+  ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
  ## cd $ICSDIR/$CDATE/ocn/
  ## hsi get /ESRL/BMC/fim/5year/Shan.Sun/Pegion_oras5/$PDY.zip
  ## unzip $PDY.zip
  ## /bin/rm $PDY.zip
   rc=$?
- fi 
 fi 
 
 if [[ $rc -ne 0 ]] ; then
@@ -96,21 +107,33 @@ if [[ $rc -ne 0 ]] ; then
   echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
  fi
  if [ $ocn_ic -eq 2 ]; then
-  echo "FATAL: Unable to copy /scratch2/BMC/gsd-fv3-test/Shan.Sun/ORAS5/$PDY/ORAS5.mx025.ic.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
+  echo "FATAL: Unable to copy /scratch2/BMC/gsd-fv3-test/Shan.Sun/ORAS5/$PDY/ORAS5.mx$OCNRES.ic.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
  fi
 fi
 err=$((err + rc))
 
 #Setup Ice IC files 
-if [[ -f $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc ]]; then
-  cp $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
-  rc=$?
-else
-  cp /scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs_mx025/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
-  rc=$?
-fi
+ if [ $ice_ic -eq 1 ]; then
+   ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc
+ fi
+ if [ $ice_ic -eq 2 ]; then
+   ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+ fi
+ echo "ice IC: ${ice_ic} to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc "
+ if [[ -f ${ice_ic} ]]; then
+   cp ${ice_ic} $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+   rc=$?
+##ss else 
+##ss if [[ -f $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc ]]; then
+ else
+   cp $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+   rc=$?
+##ss   cp /scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs_mx025/cice5_model_${ICERESdec}.res_$CDATE.nc $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+##ss   rc=$?
+ fi
+
 if [[ $rc -ne 0 ]] ; then
-  echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc (Error code $rc)"
+  echo "FATAL: Unable to copy ${ice_ic} Error code $rc "
 fi
 err=$((err + rc))
 
@@ -122,7 +145,7 @@ if [ $DO_WAVE = "YES" ]; then
     cp $BASE_CPLIC/$CPL_WAVIC/$CDATE/wav/$grdID/*restart.$grdID $ICSDIR/$CDATE/wav/
     rc=$?
     if [[ $rc -ne 0 ]] ; then
-      echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_WAVIC/$CDATE/wav/$grdID/*restart.$grdID to $ICSDIR/$CDATE/wav/ (Error code $rc)" 
+      echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_WAVIC/$CDATE/wav/$grdID/*restart.$grdID to $ICSDIR/$CDATE/wav/  Error code $rc " 
     fi
     err=$((err + rc))
   done
