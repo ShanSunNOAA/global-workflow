@@ -40,8 +40,8 @@ ocn_ic=0  #cfsr
 ocn_ic=1  #cpc
 ocn_ic=2  #oras5
 
-ice_ic=2  #oras5
 ice_ic=1  #cpc
+ice_ic=2  #oras5
 me_wave=0
 
 # Create ICSDIR if needed
@@ -66,7 +66,7 @@ if [[ $CASE = 'C384' ]]; then
   cp -r $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 fi
 if [[ $CASE = 'C192' || $CASE = 'C96' ]]; then
-  cp -r /scratch1/BMC/gsd-fv3-dev/fv3data/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+  cp -r /scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 fi
 
 rc=$?

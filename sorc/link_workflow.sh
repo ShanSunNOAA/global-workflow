@@ -59,7 +59,6 @@ for dir in fix_aer \
             fix_orog \
             fix_sfc_climo \
             fix_verif \
-            fix_cice \
             fix_wave \
             fix_reg2grb2 \
             fix_ugwd
@@ -90,6 +89,11 @@ if [ ! -d $oro2 ]; then
   done
   /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
 fi
+
+#---------------------------------------
+#-- update cice fix files from reliable source
+#---------------------------------------
+/bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_cice ${pwd}/../fix/.
 
 #---------------------------------------
 #-- modify fix_mom6/100

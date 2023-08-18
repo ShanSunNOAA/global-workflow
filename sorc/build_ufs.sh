@@ -5,7 +5,7 @@ cwd=$(pwd)
 
 # Default settings
 APP="S2SWA"
-CCPP_SUITES="FV3_GFS_v17_coupled_p8,FV3_GFS_v17_coupled_p8_sfcocn,FV3_GFS_v17_coupled_p8_tskin"
+CCPP_SUITES="FV3_GFS_v17_coupled_p8,FV3_GFS_v17_coupled_p8_sfcocn,FV3_GFS_v17_coupled_p8_skinsst"
 
 while getopts ":da:v" option; do
   case "${option}" in
