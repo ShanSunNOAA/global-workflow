@@ -98,7 +98,7 @@ if [ $ocn_ic -eq 1 ]; then
 fi
 
 if [ $ocn_ic -eq 2 ]; then
-  if [[ ${machine} = 'hera' ]]; then
+  if [[ ${machine} = 'HERA' ]]; then
     ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
   else
     ln -sf         /work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
@@ -125,7 +125,7 @@ err=$((err + rc))
    ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc
  fi
  if [ $ice_ic -eq 2 ]; then
-   if [[ ${machine} = 'hera' ]]; then
+   if [[ ${machine} = 'HERA' ]]; then
      ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
    else
                   ice_ic=/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
