@@ -35,16 +35,18 @@ $LINK ufs_model.fd/FV3/upp upp.fd
 #--model fix fields
 #------------------------------
 if [ $machine = "hera" ]; then
-    FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW"
-    ORO_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW/fix_fv3_fracoro"
-   FIX_MOM6="/scratch1/NCEPDEV/global/glopara/fix_NEW/fix_mom6"
+        FIX_DIR="/scratch1/NCEPDEV/global/glopara/fix_NEW"
+    p8_more_fix="/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix"
 elif [ $machine = "orion" ]; then
     FIX_DIR="/work/noaa/global/glopara/fix_NEW"
+    p8_more_fix="/work2/noaa/wrfruc/Shan.Sun/p8_more_fix"
 elif [ $machine = "jet" ]; then
     FIX_DIR="/lfs4/HFIP/hfv3gfs/glopara/git/fv3gfs/fix_NEW"
 elif [ $machine = "stampede" ]; then
     FIX_DIR="/work/07738/jkuang/stampede2/tempFixICdir/fix_UFSp6"
 fi
+  ORO_DIR=${FIX_DIR}/fix_fv3_fracoro
+ FIX_MOM6=${FIX_DIR}/fix_mom6
 
 if [ ! -z $FIX_DIR ]; then
  if [ ! -d ${pwd}/../fix ]; then mkdir ${pwd}/../fix; fi
@@ -78,22 +80,22 @@ fi
 #---------------------------------------
 #--add files C192O025
 #---------------------------------------
-/bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_cpl ${pwd}/../fix/.
+/bin/cp -r -p ${p8_more_fix}/fix_cpl ${pwd}/../fix/.
 oro2=${pwd}/../fix/fix_fv3_fracoro
 if [ ! -d $oro2 ]; then
   mkdir -p $oro2
   cd $oro2
-  for dir in $ORO_DIR/* 
+  for dir in $ORO_DIR/*
   do
     $LINK $dir .
   done
-  /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
+  /bin/cp -r -p ${p8_more_fix}/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
 fi
 
 #---------------------------------------
 #-- update cice fix files from reliable source
 #---------------------------------------
-/bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_cice ${pwd}/../fix/.
+/bin/cp -r -p ${p8_more_fix}/fix_cice ${pwd}/../fix/.
 
 #---------------------------------------
 #-- modify fix_mom6/100
@@ -107,7 +109,7 @@ if [ ! -d $fix2 ]; then
     $LINK $dir .
   done
   /bin/rm -r 100
-  /bin/cp -r -p /scratch2/BMC/gsd-fv3-dev/sun/p8_c192_jan16/fix/fix_mom6/100 $fix2/.
+  /bin/cp -r -p ${p8_more_fix}/fix_mom6/100 $fix2/.
 fi
 
 #---------------------------------------

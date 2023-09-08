@@ -338,8 +338,16 @@ EOF
 
   $NLN $FIX_AM/global_co2historicaldata_glob.txt $DATA/co2historicaldata_glob.txt
   $NLN $FIX_AM/co2monthlycyc.txt                 $DATA/co2monthlycyc.txt
+
+  if [ $machine = HERA ]; then
+     co2_path=/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix/fix_co2_proj
+  fi
+  if [ $machine = ORION ]; then
+     co2_path=/work2/noaa/wrfruc/Shan.Sun/p8_more_fix/fix_co2_proj
+  fi
   if [ $ICO2 -gt 0 ]; then
-    for file in $(ls $FIX_AM/fix_co2_proj/global_co2historicaldata*) ; do
+#ss     for file in $(ls $FIX_AM/fix_co2_proj/global_co2historicaldata*) ; do
+    for file in $(ls ${co2_path}/global_co2historicaldata*) ; do
       $NLN $file $DATA/$(echo $(basename $file) | sed -e "s/global_//g")
     done
   fi
@@ -894,7 +902,11 @@ MOM6_postdet() {
       continue
     fi
     (( interval = fhr - last_fhr ))
-    (( midpoint = last_fhr + interval/2 ))
+    if [ $FHOUT = '1' ]; then
+      midpoint=$last_fhr
+    else
+      (( midpoint = last_fhr + interval/2 ))
+    fi
     VDATE=$($NDATE $fhr $IDATE)
     YYYY=$(echo $VDATE | cut -c1-4)
     MM=$(echo $VDATE | cut -c5-6)

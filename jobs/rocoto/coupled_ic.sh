@@ -66,7 +66,11 @@ if [[ $CASE = 'C384' ]]; then
   cp -r $BASE_CPLIC/$CPL_ATMIC/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
 fi
 if [[ $CASE = 'C192' || $CASE = 'C96' ]]; then
-  cp -r /scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+  if [[ ${machine} = 'HERA' ]]; then
+    cp -r   /scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+  else
+    cp -r /work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+  fi
 fi
 
 rc=$?
@@ -94,7 +98,11 @@ if [ $ocn_ic -eq 1 ]; then
 fi
 
 if [ $ocn_ic -eq 2 ]; then
-  ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
+  if [[ ${machine} = 'hera' ]]; then
+    ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
+  else
+    ln -sf         /work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc $ICSDIR/$CDATE/ocn/
+  fi 
  ## cd $ICSDIR/$CDATE/ocn/
  ## hsi get /ESRL/BMC/fim/5year/Shan.Sun/Pegion_oras5/$PDY.zip
  ## unzip $PDY.zip
@@ -117,7 +125,11 @@ err=$((err + rc))
    ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc
  fi
  if [ $ice_ic -eq 2 ]; then
-   ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+   if [[ ${machine} = 'hera' ]]; then
+     ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+   else
+                  ice_ic=/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+   fi
  fi
  echo "ice IC: ${ice_ic} to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc "
  if [[ -f ${ice_ic} ]]; then
