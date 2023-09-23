@@ -122,18 +122,18 @@ err=$((err + rc))
 
 #Setup Ice IC files 
  if [ $ice_ic -eq 1 ]; then
-   ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc
+   iceic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc
  fi
  if [ $ice_ic -eq 2 ]; then
    if [[ ${machine} = 'HERA' ]]; then
-     ice_ic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+     iceic=/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
    else
-                  ice_ic=/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
+                  iceic=/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
    fi
  fi
- echo "ice IC: ${ice_ic} to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc "
- if [[ -f ${ice_ic} ]]; then
-   cp ${ice_ic} $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
+ echo "ice IC: ${iceic} to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc "
+ if [[ -f ${iceic} ]]; then
+   cp ${iceic} $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc
    rc=$?
 ##ss else 
 ##ss if [[ -f $BASE_CPLIC/$CPL_ICEIC/$CDATE/ice/$ICERES/cice5_model_${ICERESdec}.res_$CDATE.nc ]]; then
@@ -145,7 +145,7 @@ err=$((err + rc))
  fi
 
 if [[ $rc -ne 0 ]] ; then
-  echo "FATAL: Unable to copy ${ice_ic} Error code $rc "
+  echo "FATAL: Unable to copy ${iceic} Error code $rc "
 fi
 err=$((err + rc))
 
