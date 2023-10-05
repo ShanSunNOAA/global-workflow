@@ -36,12 +36,18 @@ done
 status=$?
 [[ $status -ne 0 ]] && exit $status
 
+atm_ic=3  #Jieshun
+atm_ic=1  #cfsr p8
+
 ocn_ic=0  #cfsr
 ocn_ic=1  #cpc
+ocn_ic=3  #GLORe
 ocn_ic=2  #oras5
 
 ice_ic=1  #cpc
+ice_ic=3  #GLORe
 ice_ic=2  #oras5
+
 me_wave=0
 
 # Create ICSDIR if needed
@@ -67,7 +73,11 @@ if [[ $CASE = 'C384' ]]; then
 fi
 if [[ $CASE = 'C192' || $CASE = 'C96' ]]; then
   if [[ ${machine} = 'HERA' ]]; then
-    cp -r   /scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+   if [[ $atm_ic -eq 3 ]]; then
+    cp -r /scratch1/BMC/gsd-fv3-dev/fv3data/IC/jzhu/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+   else
+    cp -r /scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
+   fi
   else
     cp -r /work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/* $ICSDIR/$CDATE/atmos/
   fi
@@ -110,6 +120,11 @@ if [ $ocn_ic -eq 2 ]; then
   rc=$?
 fi 
 
+if [ $ocn_ic -eq 3 ]; then
+  ln -sf /scratch2/BMC/gsd-fv3-test/Shan.Sun/GLORe/${PDY}12/ctrl/MOM.res.nc $ICSDIR/$CDATE/ocn/
+  rc=$?
+fi
+
 if [[ $rc -ne 0 ]] ; then
  if [ $ocn_ic -eq 1 ]; then
   echo "FATAL: Unable to copy $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc to $ICSDIR/$CDATE/ocn/ (Error code $rc)"
@@ -130,6 +145,9 @@ err=$((err + rc))
    else
                   iceic=/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc
    fi
+ fi
+ if [ $ice_ic -eq 3 ]; then
+   iceic=/scratch2/BMC/gsd-fv3-test/Shan.Sun/GLORe/${PDY}12/ctrl/iced.${PDY}-43200.nc
  fi
  echo "ice IC: ${iceic} to $ICSDIR/$CDATE/ice/cice_model_${ICERESdec}.res_$CDATE.nc "
  if [[ -f ${iceic} ]]; then
