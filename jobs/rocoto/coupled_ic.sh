@@ -98,13 +98,18 @@ if [ $ocn_ic -eq 0 ]; then
 fi
 
 if [ $ocn_ic -eq 1 ]; then
+ if [ $OCNRES -eq 100 ]; then   # use cfsr temporarily
+   ln -sf /scratch1/BMC/gsd-fv3-dev/ocndata/MOM6_IC_TS.nc        $ICSDIR/$CDATE/ocn/
+   rc=$?
+ else
 #ssun cp -r $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM*.nc  $ICSDIR/$CDATE/ocn/
- ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_1.nc $ICSDIR/$CDATE/ocn/
- ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_2.nc $ICSDIR/$CDATE/ocn/
- ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_3.nc $ICSDIR/$CDATE/ocn/
- ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_4.nc $ICSDIR/$CDATE/ocn/
- ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res.nc   $ICSDIR/$CDATE/ocn/
- rc=$?
+   ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_1.nc $ICSDIR/$CDATE/ocn/
+   ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_2.nc $ICSDIR/$CDATE/ocn/
+   ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_3.nc $ICSDIR/$CDATE/ocn/
+   ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res_4.nc $ICSDIR/$CDATE/ocn/
+   ln -sf $BASE_CPLIC/$CPL_OCNIC/$CDATE/ocn/$OCNRES/MOM.res.nc   $ICSDIR/$CDATE/ocn/
+   rc=$?
+ fi
 fi
 
 if [ $ocn_ic -eq 2 ]; then

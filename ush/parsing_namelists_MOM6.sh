@@ -36,7 +36,7 @@ if [ $OCNRES = '025' ]; then
   CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
   FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
   MOM6_RIVER_RUNOFF='True'
-  if [[ $warm_start = ".true." || $ocn_ic = "1" || $ocn_ice = "3" ]]; then
+  if [[ $warm_start = ".true." || $ocn_ic = "1" || $ocn_ic = "3" ]]; then
     MOM6_RESTART_SETTING='r' #CPC3Dvar & GLORe belong to this category
   else
     MOM6_RESTART_SETTING='n' #ORAS5 & CFSR belong to this category
