@@ -39,15 +39,6 @@ status=$?
 atm_ic=3  #Jieshun
 atm_ic=1  #cfsr p8
 
-ocn_ic=0  #cfsr
-ocn_ic=1  #cpc
-ocn_ic=3  #GLORe
-ocn_ic=2  #oras5
-
-ice_ic=1  #cpc
-ice_ic=3  #GLORe
-ice_ic=2  #oras5
-
 me_wave=0
 
 # Create ICSDIR if needed

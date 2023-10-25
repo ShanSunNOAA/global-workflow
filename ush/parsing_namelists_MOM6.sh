@@ -5,7 +5,8 @@ MOM6_namelists(){
 # MOM6 namelists generation
 
 OCNRES=${OCNRES:-"025"}
-MOM_INPUT=MOM_input_template_$OCNRES
+ocn_ic=${ocn_ic:-"1"}
+MOM_INPUT=MOM_input_template_${OCNRES}_${ocn_ic}
 
 #Set to False for restart reproducibility
 MOM6_USE_LI2016=${MOM6_USE_LI2016:-'True'}
@@ -22,11 +23,6 @@ if [ $cplwav = ".true." ] ; then
 else
   MOM6_USE_WAVES='False'
 fi
-
-ocn_ic=0
-ocn_ic=1
-ocn_ic=3
-ocn_ic=2
 
 if [ $OCNRES = '025' ]; then
   NX_GLB=1440
@@ -127,7 +123,7 @@ echo "$(cat input.nml)"
 
 
 #Copy MOM_input and edit:
-$NCP -pf $HOMEgfs/parm/mom6/MOM_input_template_$OCNRES $DATA/INPUT/
+$NCP -pf $HOMEgfs/parm/mom6/MOM_input_template_${OCNRES}_${ocn_ic} $DATA/INPUT/
 sed -e "s/@\[DT_THERM_MOM6\]/$DT_THERM_MOM6/g" \
     -e "s/@\[DT_DYNAM_MOM6\]/$DT_DYNAM_MOM6/g" \
     -e "s/@\[MOM6_RIVER_RUNOFF\]/$MOM6_RIVER_RUNOFF/g" \
@@ -140,8 +136,8 @@ sed -e "s/@\[DT_THERM_MOM6\]/$DT_THERM_MOM6/g" \
     -e "s/@\[CHLCLIM\]/$CHLCLIM/g" \
     -e "s/@\[DO_OCN_SPPT\]/$OCN_SPPT/g" \
     -e "s/@\[PERT_EPBL\]/$PERT_EPBL/g" \
-    -e "s/@\[MOM_IAU_HRS\]/$MOM_IAU_HRS/g" $DATA/INPUT/MOM_input_template_$OCNRES > $DATA/INPUT/MOM_input
-rm $DATA/INPUT/MOM_input_template_$OCNRES
+    -e "s/@\[MOM_IAU_HRS\]/$MOM_IAU_HRS/g" $DATA/INPUT/MOM_input_template_${OCNRES}_${ocn_ic} > $DATA/INPUT/MOM_input
+rm $DATA/INPUT/MOM_input_template_${OCNRES}_${ocn_ic}
 
 #data table for runoff:
 DATA_TABLE=${DATA_TABLE:-$PARM_FV3DIAG/data_table}

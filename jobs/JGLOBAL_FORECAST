@@ -17,7 +17,7 @@ export CDUMP=${CDUMP:-${RUN:-"gfs"}}
 #############################
 # Source relevant config files
 #############################
-configs="base fcst"
+configs="base coupled_ic fcst"
 export EXPDIR=${EXPDIR:-$HOMEgfs/parm/config}
 config_path=${EXPDIR:-$NWROOT/gfs.${gfs_ver}/parm/config}
 for config in $configs; do
