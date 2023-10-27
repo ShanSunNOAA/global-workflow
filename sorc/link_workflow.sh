@@ -90,6 +90,8 @@ if [ ! -d $oro2 ]; then
     $LINK $dir .
   done
   /bin/cp -r -p ${p8_more_fix}/fix_fv3_fracoro/C192.mx025_frac $oro2/C192.mx025_frac
+  /bin/cp -r -p ${p8_more_fix}/fix_fv3_fracoro/C96.mx025_frac  $oro2/C96.mx025_frac
+  /bin/cp -r -p ${p8_more_fix}/fix_fv3_fracoro/C96.mx100_frac  $oro2/C96.mx100_frac
 fi
 
 #---------------------------------------

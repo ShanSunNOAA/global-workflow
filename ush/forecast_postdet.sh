@@ -208,26 +208,21 @@ EOF
   #--------------------------------------------------------------------------
   # Grid and orography data
   for n in $(seq 1 $ntiles); do
-    $NLN $FIXfv3/$CASE/${CASE}_grid.tile${n}.nc     $DATA/INPUT/${CASE}_grid.tile${n}.nc
-    if [ $CASE = "192" ] ; then
-      $NLN $FIXfv3/$CASE_ocn025/${CASE}_oro_data.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
-     else
-      $NLN $FIXfv3/$CASE/${CASE}_oro_data.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
-     fi
+    $NLN $FIXfv3/${ATMRES}.mx${OCNRES}_frac/${CASE}_grid.tile${n}.nc $DATA/INPUT/${CASE}_grid.tile${n}.nc
   done
 
   if [ $cplflx = ".false." ] ; then
     $NLN $FIXfv3/$CASE/${CASE}_mosaic.nc $DATA/INPUT/grid_spec.nc
   else
-    $NLN $FIXfv3/$CASE/${CASE}_mosaic.nc $DATA/INPUT/${CASE}_mosaic.nc
+    $NLN $FIXfv3/${ATMRES}.mx${OCNRES}_frac/${CASE}_mosaic.nc $DATA/INPUT/${CASE}_mosaic.nc
   fi
 
   # Fractional grid related
   if [ $FRAC_GRID = ".true." ]; then
-    OROFIX=${OROFIX:-"${FIX_DIR}/fix_fv3_fracoro/${CASE}.mx${OCNRES}_frac"}
+    OROFIX=${OROFIX:-"${FIX_DIR}/fix_fv3_fracoro/${ATMRES}.mx${OCNRES}_frac"}
     FIX_SFC=${FIX_SFC:-"${OROFIX}/fix_sfc"}
     for n in $(seq 1 $ntiles); do
-      $NLN ${OROFIX}/oro_${CASE}.mx${OCNRES}.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
+      $NLN ${OROFIX}/oro_${ATMRES}.mx${OCNRES}.tile${n}.nc $DATA/INPUT/oro_data.tile${n}.nc
     done
   else
     OROFIX=${OROFIX:-"${FIXfv3}/${CASE}"}
