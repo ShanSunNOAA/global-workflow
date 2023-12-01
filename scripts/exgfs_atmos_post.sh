@@ -77,7 +77,7 @@ export IDRT=${IDRT:-0} # IDRT=0 is setting for outputting grib files on lat/lon 
 # Post Analysis Files before starting the Forecast Post
 ############################################################
 # Process analysis when post_times is 00
-stime="$(echo "${post_times}" | cut -c1-3)"
+stime="$(echo "${post_times}" | cut -c1-4)"
 export stime
 export loganl="${COM_ATMOS_ANALYSIS}/${PREFIX}atmanl.nc"
 
@@ -128,10 +128,10 @@ if [[ "${stime}" = "anl" ]]; then
       export err=$?; err_chk
     fi
 
-    export fhr3=anl
+    export fhr4=anl
     if [[ "${GRIBVERSION}" = 'grib2' ]]; then
-        MASTERANL=${PREFIX}master.grb2${fhr3}
-        MASTERANLIDX=${PREFIX}master.grb2i${fhr3}
+        MASTERANL=${PREFIX}master.grb2${fhr4}
+        MASTERANLIDX=${PREFIX}master.grb2i${fhr4}
         cp "${PGBOUT2}" "${COM_ATMOS_MASTER}/${MASTERANL}"
         ${GRB2INDEX} "${PGBOUT2}" "${COM_ATMOS_MASTER}/${MASTERANLIDX}"
     fi
@@ -140,15 +140,15 @@ if [[ "${stime}" = "anl" ]]; then
         "${DBNROOT}/bin/dbn_alert" MODEL GFS_MSC_sfcanl "${job}" "${COM_ATMOS_ANALYSIS}/${PREFIX}sfcanl.nc"
         "${DBNROOT}/bin/dbn_alert" MODEL GFS_SA "${job}" "${COM_ATMOS_ANALYSIS}/${PREFIX}atmanl.nc"
         if [[ "${PGBF}" = 'YES' ]]; then
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.anl"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.anl.idx"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.anl"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.anl.idx"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.anl"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.anl.idx"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.anl"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.anl.idx"
 	    
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.anl"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.anl.idx"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.anl"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.anl.idx"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.anl"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.anl.idx"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.anl"
+  #ss          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.anl.idx"
 	    
             "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0 "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.anl"
             "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0_WIDX "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.anl.idx"
@@ -171,9 +171,9 @@ else   ## not_anl if_stime
   # Loop Through the Post Forecast Files 
   ############################################################
 
-  for fhr3 in ${post_times}; do
-    echo "Start processing fhr=${fhr3}"
-    fhr=$(( 10#${fhr3} ))
+  for fhr4 in ${post_times}; do
+    echo "Start processing fhr=${fhr4}"
+    fhr=$(( 10#${fhr4} ))
     ###############################
     # Start Looping for the 
     # existence of the restart files
@@ -181,7 +181,7 @@ else   ## not_anl if_stime
     export pgm="postcheck"
     ic=1
     while (( ic <= SLEEP_LOOP_MAX )); do
-      if [[ -f "${restart_file}${fhr3}.txt" ]]; then
+      if [[ -f "${restart_file}${fhr4}.txt" ]]; then
         break
       else
         ic=$(( ic + 1 ))
@@ -193,7 +193,7 @@ else   ## not_anl if_stime
       # period and error exit
       ###############################
       if (( ic == SLEEP_LOOP_MAX )); then
-        echo " *** FATAL ERROR: No model output for f${fhr3} "
+        echo " *** FATAL ERROR: No model output for f${fhr4} "
         export err=9
         err_chk
       fi
@@ -204,9 +204,9 @@ else   ## not_anl if_stime
     # for backup to start Model Fcst
     ###############################
     [[ -f flxfile ]] && rm flxfile ; [[ -f nemsfile ]] && rm nemsfile
-    ln -fs "${COM_ATMOS_HISTORY}/${PREFIX}atmf${fhr3}.nc" nemsfile
+    ln -fs "${COM_ATMOS_HISTORY}/${PREFIX}atmf${fhr4}.nc" nemsfile
     export NEMSINP=nemsfile
-    ln -fs "${COM_ATMOS_HISTORY}/${PREFIX}sfcf${fhr3}.nc" flxfile
+    ln -fs "${COM_ATMOS_HISTORY}/${PREFIX}sfcf${fhr4}.nc" flxfile
     export FLXINP=flxfile
 
     if (( fhr > 0 )); then
@@ -221,7 +221,7 @@ else   ## not_anl if_stime
     # shellcheck disable=
     export VDATE
     export OUTTYP=${OUTTYP:-4}
-    export GFSOUT="${PREFIX}gfsio${fhr3}"
+    export GFSOUT="${PREFIX}gfsio${fhr4}"
 
     if [[ "${GRIBVERSION}" = 'grib2' ]]; then
       export POSTGRB2TBL="${POSTGRB2TBL:-${g2tmpl_ROOT}/share/params_grib2_tbl_new}"
@@ -258,8 +258,8 @@ else   ## not_anl if_stime
     export PGIOUT2=pgifile.grib2.idx
     export FILTER=0 
     if [[ "${GRIBVERSION}" = 'grib2' ]]; then
-      MASTERFL=${PREFIX}master.grb2f${fhr3}
-      MASTERFLIDX=${PREFIX}master.grb2if${fhr3}
+      MASTERFL=${PREFIX}master.grb2f${fhr4}
+      MASTERFLIDX=${PREFIX}master.grb2if${fhr4}
     fi
 
     if [[ "${INLINE_POST}" = ".false." ]]; then
@@ -291,23 +291,23 @@ else   ## not_anl if_stime
     if [[ "${SENDDBN}" = 'YES' ]]; then
       if [[ "${GRIBVERSION}" = 'grib2' ]]; then
         if [[ "${PGBF}" = 'YES' ]]; then
-          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr3}"
-          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr3}.idx"
-          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.f${fhr3}"
-          "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.f${fhr3}.idx"
+ #ss         "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr4}"
+ #ss         "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr4}.idx"
+ #ss         "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25 "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.f${fhr4}"
+ #ss         "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P25_WIDX "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2b.0p25.f${fhr4}.idx"
 
-          if [[ -s "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr3}" ]]; then
-            "${DBNROOT}/bin/dbn_alert"  MODEL GFS_PGB2_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr3}"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr3}.idx"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.f${fhr3}"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.f${fhr3}.idx"
-          fi
+ #ss         if [[ -s "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr4}" ]]; then
+ #ss           "${DBNROOT}/bin/dbn_alert"  MODEL GFS_PGB2_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr4}"
+ #ss           "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2.0p50.f${fhr4}.idx"
+ #ss           "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5 "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.f${fhr4}"
+ #ss           "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_0P5_WIDX "${job}" "${COM_ATMOS_GRIB_0p50}/${PREFIX}pgrb2b.0p50.f${fhr4}.idx"
+ #ss         fi
 
-          if [[ -s "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr3}" ]]; then
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0 "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr3}"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0_WIDX "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr3}.idx"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_1P0 "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2b.1p00.f${fhr3}"
-            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_1P0_WIDX "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2b.1p00.f${fhr3}.idx"
+          if [[ -s "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr4}" ]]; then
+            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0 "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr4}"
+            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2_1P0_WIDX "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr4}.idx"
+            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_1P0 "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2b.1p00.f${fhr4}"
+            "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGB2B_1P0_WIDX "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2b.1p00.f${fhr4}.idx"
           fi
         fi
       fi 
@@ -330,8 +330,8 @@ else   ## not_anl if_stime
       fi
       export PGBOUT=fluxfile
       export FILTER=0
-      export FLUXFL=${PREFIX}sfluxgrbf${fhr3}.grib2
-      FLUXFLIDX=${PREFIX}sfluxgrbf${fhr3}.grib2.idx
+      export FLUXFL=${PREFIX}sfluxgrbf${fhr4}.grib2
+      FLUXFLIDX=${PREFIX}sfluxgrbf${fhr4}.grib2.idx
 
       if [[ "${INLINE_POST}" = ".false." ]]; then
         ${POSTGPSH}
@@ -362,7 +362,7 @@ else   ## not_anl if_stime
       # if model already runs gfs io, make sure GFSOUT is linked to the gfsio file
       # new imported variable for global_post.sh
 
-      export GFSOUT=${PREFIX}gfsio${fhr3}
+      export GFSOUT=${PREFIX}gfsio${fhr4}
 
       # link satellite coefficients files, use hwrf version as ops crtm 2.0.5
       # does not new coefficient files used by post
@@ -392,11 +392,11 @@ else   ## not_anl if_stime
         SPECIALFLIDX="${PREFIX}special.grb2i"
       fi
 
-      mv goesfile "${COM_ATMOS_GOES}/${SPECIALFL}f${fhr3}"
-      mv goesifile "${COM_ATMOS_GOES}/${SPECIALFLIDX}f${fhr3}"
+      mv goesfile "${COM_ATMOS_GOES}/${SPECIALFL}f${fhr4}"
+      mv goesifile "${COM_ATMOS_GOES}/${SPECIALFLIDX}f${fhr4}"
 
       if [[ "${SENDDBN}" = "YES" ]]; then
-          "${DBNROOT}/bin/dbn_alert" MODEL GFS_SPECIAL_GB2 "${job}" "${COM_ATMOS_GOES}/${SPECIALFL}f${fhr3}"
+          "${DBNROOT}/bin/dbn_alert" MODEL GFS_SPECIAL_GB2 "${job}" "${COM_ATMOS_GOES}/${SPECIALFL}f${fhr4}"
       fi
     fi
     # end of satellite processing

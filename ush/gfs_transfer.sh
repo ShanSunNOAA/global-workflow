@@ -18,14 +18,14 @@
 source "${HOMEgfs}/ush/preamble.sh"
 
 if [[ "${SENDDBN}" = 'YES' && "${RUN}" = 'gfs' ]]; then
-  fhr3=$(printf "%03d" "${fhr}")
-  "${DBNROOT}/bin/dbn_alert" MODEL GFS_SF "${job}" "${COMOUT}/${RUN}.t${cyc}z.atmf${fhr3}.nc"
+  fhr4=$(printf "%04d" "${fhr}")
+  "${DBNROOT}/bin/dbn_alert" MODEL GFS_SF "${job}" "${COMOUT}/${RUN}.t${cyc}z.atmf${fhr4}.nc"
  
   if (( fhr > 0  && fhr <= 84 )); then
-     "${DBNROOT}/bin/dbn_alert" MODEL GFS_BF "${job}" "${COMOUT}/${RUN}.t${cyc}z.sfcf${fhr3}.nc"
+     "${DBNROOT}/bin/dbn_alert" MODEL GFS_BF "${job}" "${COMOUT}/${RUN}.t${cyc}z.sfcf${fhr4}.nc"
   fi
   if (( fhr == 120 )); then
-     "${DBNROOT}/bin/dbn_alert" MODEL GFS_BF "${job}" "${COMOUT}/${RUN}.t${cyc}z.sfcf${fhr3}.nc"
+     "${DBNROOT}/bin/dbn_alert" MODEL GFS_BF "${job}" "${COMOUT}/${RUN}.t${cyc}z.sfcf${fhr4}.nc"
   fi
 fi
 

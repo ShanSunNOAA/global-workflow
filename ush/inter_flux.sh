@@ -36,20 +36,25 @@ export grid2p5="latlon 0:144:2.5 90:73:-2.5"
 
 if [ $FH -eq 0 ] ; then
   export fhr3=000
+  export fhr4=0000
 else
   export fhr3=$(expr $FH + 0 )
-  if [ $fhr3 -lt 100 ]; then export fhr3="0$fhr3"; fi
-  if [ $fhr3 -lt 10 ];  then export fhr3="0$fhr3"; fi
+  export fhr4=$(expr $FH + 0 )
+  if [ $fhr3 -lt 100 ];  then export fhr3="0$fhr3"; fi
+  if [ $fhr3 -lt 10 ];   then export fhr3="0$fhr3"; fi
+  if [ $fhr4 -lt 1000 ]; then export fhr4="0$fhr4"; fi
+  if [ $fhr4 -lt 100 ];  then export fhr4="0$fhr4"; fi
+  if [ $fhr4 -lt 10 ];   then export fhr4="0$fhr4"; fi
 fi
 
 #---------------------------------------------------------------
   ${WGRIB2} "${COM_ATMOS_MASTER}/${FLUXFL}" ${option1} ${option21} ${option22} ${option23} \
     ${option24} ${option25} ${option26} ${option27} ${option28} \
-    -new_grid ${grid1p0} fluxfile_${fhr3}_1p00
+    -new_grid ${grid1p0} fluxfile_${fhr4}_1p00
   export err=$?; err_chk
 
-  ${WGRIB2} -s "fluxfile_${fhr3}_1p00" > "${COM_ATMOS_GRIB_1p00}/${PREFIX}flux.1p00.f${fhr3}.idx"
-  cp "fluxfile_${fhr3}_1p00" "${COM_ATMOS_GRIB_1p00}/${PREFIX}flux.1p00.f${fhr3}"
+  ${WGRIB2} -s "fluxfile_${fhr4}_1p00" > "${COM_ATMOS_GRIB_1p00}/${PREFIX}flux.1p00.f${fhr4}.idx"
+  cp "fluxfile_${fhr4}_1p00" "${COM_ATMOS_GRIB_1p00}/${PREFIX}flux.1p00.f${fhr4}"
 #---------------------------------------------------------------
 
 

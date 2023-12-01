@@ -82,7 +82,7 @@ cat > ice_in <<eof
    latpnt(2)      = -65.
    lonpnt(2)      = -45.
    histfreq       = 'm','d','h','x','x'
-   histfreq_n     =  0 , 0 , ${FHOUT} , 1 , 1
+   histfreq_n     =  1 , 1 , 0 , 1 , 1
    hist_avg       = ${cice_hist_avg}
    history_dir    = './CICE_OUTPUT/'
    history_file   = 'iceh'

@@ -127,7 +127,7 @@ if [[ "${stime}" = "anl" ]]; then
     if [[ "${GRIBVERSION}" = 'grib2' ]]; then
         MASTERANL=${PREFIX}master.grb2anl
         ##########XXW Accord to Boi, fortran index should use *if${fhr}, wgrib index use .idx
-        #MASTERANLIDX=${RUN}.${cycle}.master.grb2${fhr3}.idx
+        #MASTERANLIDX=${RUN}.${cycle}.master.grb2${fhr4}.idx
         MASTERANLIDX=${PREFIX}master.grb2ianl
         cp "${PGBOUT2}" "${COM_ATMOS_MASTER}/${MASTERANL}"
         ${GRB2INDEX} "${PGBOUT2}" "${COM_ATMOS_MASTER}/${MASTERANLIDX}"
@@ -247,7 +247,7 @@ else   ## not_anl if_stimes
     export PGBOUT2=pgbfile.grib2
     export PGIOUT2=pgifile.grib2.idx
     export FILTER=0
-    export fhr3=${fhr}
+    export fhr4=${fhr}
     if [[ "${GRIBVERSION}" = 'grib2' ]]; then
       MASTERFHR=${PREFIX}master.grb2f${fhr}
       MASTERFHRIDX=${PREFIX}master.grb2if${fhr}
@@ -272,8 +272,8 @@ else   ## not_anl if_stimes
 
     if [[ "${SENDDBN}" = "YES" ]]; then
       run="$(echo "${RUN}" | tr '[:lower:]' '[:upper:]')"
-      "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB2_0P25" "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr}"
-      "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB2_0P25_WIDX ""${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr}.idx"
+#ss      "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB2_0P25" "${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr}"
+#ss      "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB2_0P25_WIDX ""${job}" "${COM_ATMOS_GRIB_0p25}/${PREFIX}pgrb2.0p25.f${fhr}.idx"
       "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB_GB2" "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr}"
       "${DBNROOT}/bin/dbn_alert" MODEL "${run}_PGB_GB2_WIDX" "${job}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb2.1p00.f${fhr}.idx"
     fi

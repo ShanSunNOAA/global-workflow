@@ -23,14 +23,17 @@ PGB1F=${PGB1F:-"NO"}  # YES - generate 1-degree grib1 data
 # Files used
 if (( FH == -1 )); then
   fhr3="anl"
+  fhr4="anl"
   PGBS="YES"
   paramlista=${paramlist:-"${HOMEgfs}/parm/post/global_1x1_paramlist_g2.anl"}
 elif (( FH == 0 )); then
   fhr3="f000"
+  fhr4="f0000"
   PGBS="YES"
   paramlista=${paramlist:-"${HOMEgfs}/parm/post/global_1x1_paramlist_g2.f000"}
 else
   fhr3=$(printf "f%03d" "${FH}")
+  fhr4=$(printf "f%04d" "${FH}")
   if (( FH%FHOUT_PGB == 0 )); then
     PGBS="YES"
   fi
@@ -41,19 +44,21 @@ paramlistb=${paramlistb:-"${HOMEgfs}/parm/post/global_master-catchup_parmlist_g2
 # Get inventory from ${PGBOUT2} that matches patterns from ${paramlista}
 # Extract this inventory from ${PGBOUT2} into a smaller tmpfile or tmpfileb based on paramlista or paramlistb
 # shellcheck disable=SC2312
-${WGRIB2} "${PGBOUT2}" | grep -F -f "${paramlista}" | ${WGRIB2} -i -grib "tmpfile_${fhr3}" "${PGBOUT2}"
+${WGRIB2} "${PGBOUT2}" | grep -F -f "${paramlista}" | ${WGRIB2} -i -grib "tmpfile_${fhr4}" "${PGBOUT2}"
 export err=$?; err_chk
 # Do the same as above for ${paramlistb}
 if (( downset = 2 )); then
   # shellcheck disable=SC2312
-  ${WGRIB2} "${PGBOUT2}" | grep -F -f "${paramlistb}" | ${WGRIB2} -i -grib "tmpfileb_${fhr3}" "${PGBOUT2}"
+  ${WGRIB2} "${PGBOUT2}" | grep -F -f "${paramlistb}" | ${WGRIB2} -i -grib "tmpfileb_${fhr4}" "${PGBOUT2}"
   export err=$?; err_chk
 fi
 
 # Determine grids once and save them as a string and an array for processing
-grid_string="0p25"
+#ss grid_string="0p25"
+grid_string="1p00"
 if [[ "${PGBS}" = "YES" ]]; then
-  grid_string="${grid_string}:0p50:1p00"
+ #ss grid_string="${grid_string}:0p50:1p00"
+  grid_string="${grid_string}"
 fi
 # Also transform the ${grid_string} into an array for processing
 IFS=':' read -ra grids <<< "${grid_string}"
@@ -74,7 +79,7 @@ for (( nset=1 ; nset <= downset ; nset++ )); do
   fi
 
   # process Grib files to run downstream jobs using MPMD
-  tmpfile="tmpfile${grp}_${fhr3}"
+  tmpfile="tmpfile${grp}_${fhr4}"
 
   # shellcheck disable=SC2312
   ncount=$(${WGRIB2} "${tmpfile}" | wc -l)
@@ -111,7 +116,7 @@ for (( nset=1 ; nset <= downset ; nset++ )); do
     ${WGRIB2} "${tmpfile}" -for "${first}":"${last}" -grib "${tmpfile}_${iproc}"
     export err=$?; err_chk
     input_file="${tmpfile}_${iproc}"
-    output_file_prefix="pgb2${grp}file_${fhr3}_${iproc}"
+    output_file_prefix="pgb2${grp}file_${fhr4}_${iproc}"
     echo "${GFSDWNSH} ${input_file} ${output_file_prefix} ${grid_string}" >> "${DATA}/poescript"
 
     # if at final record and have not reached the final processor then write echo's to
@@ -144,8 +149,8 @@ for (( nset=1 ; nset <= downset ; nset++ )); do
   echo "Concatenating processor specific grib2 files into a single product"
   for (( iproc = 1 ; iproc <= nproc ; iproc++ )); do
     for grid in "${grids[@]}"; do
-      cat "pgb2${grp}file_${fhr3}_${iproc}_${grid}" >> "pgb2${grp}file_${fhr3}_${grid}"
-      rm  "pgb2${grp}file_${fhr3}_${iproc}_${grid}"
+      cat "pgb2${grp}file_${fhr4}_${iproc}_${grid}" >> "pgb2${grp}file_${fhr4}_${grid}"
+      rm  "pgb2${grp}file_${fhr4}_${iproc}_${grid}"
     done
     # There is no further use of the processor specific tmpfile; delete it
     rm "${tmpfile}_${iproc}"
@@ -154,8 +159,8 @@ for (( nset=1 ; nset <= downset ; nset++ )); do
   # Move to COM and index the product grib files
   for grid in "${grids[@]}"; do
     prod_dir="COM_ATMOS_GRIB_${grid}"
-    ${NCP} "pgb2${grp}file_${fhr3}_${grid}" "${!prod_dir}/${PREFIX}pgrb2${grp}.${grid}.${fhr3}"
-    ${WGRIB2} -s "pgb2${grp}file_${fhr3}_${grid}" > "${!prod_dir}/${PREFIX}pgrb2${grp}.${grid}.${fhr3}.idx"
+    ${NCP} "pgb2${grp}file_${fhr4}_${grid}" "${!prod_dir}/${PREFIX}pgrb2${grp}.${grid}.${fhr4}"
+    ${WGRIB2} -s "pgb2${grp}file_${fhr4}_${grid}" > "${!prod_dir}/${PREFIX}pgrb2${grp}.${grid}.${fhr4}.idx"
   done
 
   # Create supplemental 1-degree grib1 output TODO: who needs 1-degree grib1 product?
@@ -163,10 +168,10 @@ for (( nset=1 ; nset <= downset ; nset++ )); do
   if (( nset == 1 )); then
     if [[ "${PGBS}" = "YES" ]]; then
       if [[ "${PGB1F}" = "YES" ]]; then
-        ${CNVGRIB} -g21 "pgb2${grp}file_${fhr3}_1p00" "pgb${grp}file_${fhr3}_1p00"
+        ${CNVGRIB} -g21 "pgb2${grp}file_${fhr4}_1p00" "pgb${grp}file_${fhr4}_1p00"
         export err=$?; err_chk
-        ${NCP} "pgb${grp}file_${fhr3}_1p00" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr3}"
-        ${GRBINDEX} "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr3}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr3}.idx"
+        ${NCP} "pgb${grp}file_${fhr4}_1p00" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr4}"
+        ${GRBINDEX} "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr4}" "${COM_ATMOS_GRIB_1p00}/${PREFIX}pgrb${grp}.1p00.${fhr4}.idx"
       fi
     fi
   fi

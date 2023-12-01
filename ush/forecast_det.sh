@@ -46,7 +46,8 @@ FV3_det(){
   RERUN=${RERUN:-"NO"}
   # Get a list of all YYYYMMDD.HH0000.coupler.res files from the atmos restart directory
   mapfile -t file_array < <(find "${COM_ATMOS_RESTART:-/dev/null}" -name "????????.??0000.coupler.res")
-  if [[ ( "${RUN}" = "gfs" || "${RUN}" = "gefs" ) \
+#ss  if [[ ( "${RUN}" = "gfs" || "${RUN}" = "gefs" ) \
+  if [[ ( "${RUN}" = "ss-gfs" || "${RUN}" = "ss-gefs" ) \
     && "${#file_array[@]}" -gt 0 ]]; then
 
     # Look in reverse order of file_array to determine available restart times

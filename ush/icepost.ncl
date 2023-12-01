@@ -52,11 +52,11 @@ begin
 
    ; variables to be regridded with the native tripole stagger location
 
-   varlist = (/ (/     "hi_h", "Ct", "bilinear"/) \
-               ,(/     "hs_h", "Ct", "bilinear"/) \
-               ,(/   "Tsfc_h", "Ct", "bilinear"/) \
-               ,(/   "aice_h", "Ct", "bilinear"/) \
-               ,(/    "sst_h", "Ct", "bilinear"/) \
+   varlist = (/ (/     "hi_d", "Ct", "bilinear"/) \
+               ,(/     "hs_d", "Ct", "bilinear"/) \
+               ,(/   "Tsfc_d", "Ct", "bilinear"/) \
+               ,(/   "aice_d", "Ct", "bilinear"/) \
+               ,(/    "sst_d", "Ct", "bilinear"/) \
              /)
      dims = dimsizes(varlist)
     nvars = dims(0)
@@ -69,7 +69,7 @@ begin
     ; be remapped using conservative
    nvpairs = 1
    veclist = new( (/nvpairs,3,2/),"string")
-   veclist = (/ (/ (/"uvel_h", "vvel_h"/), (/"Bu", "Bu"/), (/"bilinear", "bilinear"/) /) \
+   veclist = (/ (/ (/"uvel_d", "vvel_d"/), (/"Bu", "Bu"/), (/"bilinear", "bilinear"/) /) \
              /)
    ;print(veclist)
 
@@ -92,7 +92,7 @@ begin
 
   ; get a 2 dimensional fields for creating the interpolation mask
   ; the mask2d contain 1's on land and 0's at valid points.
-  mask2d = where(ismissing(icef[0]->sst_h),  1.0, 0.0)
+  mask2d = where(ismissing(icef[0]->sst_d),  1.0, 0.0)
   ;printVarSummary(mask2d)
 
   ; create conformed rotation arrays to make vector rotations cleaner
