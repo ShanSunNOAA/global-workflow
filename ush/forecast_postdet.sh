@@ -794,6 +794,12 @@ MOM6_postdet() {
 
       local last_fhr=${fhr}
     done
+    local vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + 0 hours" +%Y%m%d%H)
+    local source_file="ocn_daily_${vdate:0:4}_${vdate:4:2}_${vdate:6:2}.nc"
+    local dest_file=${source_file}
+    if [[ ! -a "${DATA}/${source_file}" ]]; then
+      ${NLN} "${COM_OCEAN_HISTORY}/${dest_file}" "${DATA}/${source_file}"
+    fi
 
   elif [[ "${RUN}" =~ "gdas" ]]; then
     # Link output files for RUN = gdas
