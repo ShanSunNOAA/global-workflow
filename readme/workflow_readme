@@ -1,0 +1,11 @@
+module use -a /contrib/anaconda/modulefiles
+module load anaconda/anaconda3-5.3.1
+module load rocoto/1.3.3
+
+setup_expt.py gfs forecast-only --idate 2015052100 --edate 2015052100 --app S2S --pslot nsst_lo 
+--configdir /scratch1/BMC/gsd-hpcs/Shan.Sun/me_hr3/parm/config/gfs 
+--comroot /scratch1/BMC/gsd-hpcs/Shan.Sun/me_hr3/comrot 
+--expdir /scratch1/BMC/gsd-hpcs/Shan.Sun/me_hr3/expdir --resdetatmos 96 --resdetocean 100
+
+setup_xml.py /scratch1/BMC/gsd-hpcs/Shan.Sun/me_hr3/expdir/nsst_lo
+
