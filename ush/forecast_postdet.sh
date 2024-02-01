@@ -251,10 +251,18 @@ EOF
     ${NLN} "${FIXlut}/optics_SU.v1_3.dat"  "${DATA}/optics_SU.dat"
   fi
 
-  ${NLN} "${FIXam}/global_co2historicaldata_glob.txt" "${DATA}/co2historicaldata_glob.txt"
-  ${NLN} "${FIXam}/co2monthlycyc.txt"                 "${DATA}/co2monthlycyc.txt"
+    ${NLN} "${FIXam}/global_co2historicaldata_glob.txt" "${DATA}/co2historicaldata_glob.txt"
+    ${NLN} "${FIXam}/co2monthlycyc.txt"                 "${DATA}/co2monthlycyc.txt"
+    if [ $machine = HERA ]; then
+      co2_path=/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix/fix_co2_proj
+    fi
+    if [ $machine = ORION ]; then
+      co2_path=/work2/noaa/wrfruc/Shan.Sun/p8_more_fix/fix_co2_proj
+    fi
+
   if [[ ${ICO2} -gt 0 ]]; then
-    for file in $(ls "${FIXam}/fix_co2_proj/global_co2historicaldata"*) ; do
+#ss   for file in $(ls "${FIXam}/fix_co2_proj/global_co2historicaldata"*) ; do
+    for file in $(ls "${co2_path}/global_co2historicaldata"*) ; do
       ${NLN} "${file}" "${DATA}/$(basename "${file//global_}")"
     done
   fi
@@ -469,24 +477,25 @@ EOF
   if [[ ! -d ${COM_ATMOS_MASTER} ]]; then mkdir -p "${COM_ATMOS_MASTER}"; fi
   if [[ "${QUILTING}" = ".true." ]] && [[ "${OUTPUT_GRID}" = "gaussian_grid" ]]; then
     for fhr in ${FV3_OUTPUT_FH}; do
+      local FH4=$(printf %04i "${fhr}")
       local FH3=$(printf %03i "${fhr}")
       local FH2=$(printf %02i "${fhr}")
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH3}.nc" "atmf${FH3}.nc"
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH3}.nc" "sfcf${FH3}.nc"
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH3}.txt" "log.atm.f${FH3}"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH4}.nc" "atmf${FH4}.nc"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH4}.nc" "sfcf${FH4}.nc"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH4}.txt" "log.atm.f${FH4}"
       if [[ ${WRITE_DOPOST} = ".true." ]]; then
-        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH3}" "GFSPRS.GrbF${FH2}"
-        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH3}.grib2" "GFSFLX.GrbF${FH2}"
+        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH4}" "GFSPRS.GrbF${FH2}"
+        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH4}.grib2" "GFSFLX.GrbF${FH2}"
       fi
     done
-  else  # TODO: Is this even valid anymore?
-    for n in $(seq 1 "${ntiles}"); do
-      ${NLN} "nggps2d.tile${n}.nc"       "${COM_ATMOS_HISTORY}/nggps2d.tile${n}.nc"
-      ${NLN} "nggps3d.tile${n}.nc"       "${COM_ATMOS_HISTORY}/nggps3d.tile${n}.nc"
-      ${NLN} "grid_spec.tile${n}.nc"     "${COM_ATMOS_HISTORY}/grid_spec.tile${n}.nc"
-      ${NLN} "atmos_static.tile${n}.nc"  "${COM_ATMOS_HISTORY}/atmos_static.tile${n}.nc"
-      ${NLN} "atmos_4xdaily.tile${n}.nc" "${COM_ATMOS_HISTORY}/atmos_4xdaily.tile${n}.nc"
-    done
+#ss  else  # TODO: Is this even valid anymore?
+#ss    for n in $(seq 1 "${ntiles}"); do
+#ss      ${NLN} "nggps2d.tile${n}.nc"       "${COM_ATMOS_HISTORY}/nggps2d.tile${n}.nc"
+#ss      ${NLN} "nggps3d.tile${n}.nc"       "${COM_ATMOS_HISTORY}/nggps3d.tile${n}.nc"
+#ss      ${NLN} "grid_spec.tile${n}.nc"     "${COM_ATMOS_HISTORY}/grid_spec.tile${n}.nc"
+#ss      ${NLN} "atmos_static.tile${n}.nc"  "${COM_ATMOS_HISTORY}/atmos_static.tile${n}.nc"
+#ss      ${NLN} "atmos_4xdaily.tile${n}.nc" "${COM_ATMOS_HISTORY}/atmos_4xdaily.tile${n}.nc"
+#ss    done
   fi
 }
 
@@ -681,7 +690,8 @@ MOM6_postdet() {
   echo "SUB ${FUNCNAME[0]}: MOM6 after run type determination"
 
   # Copy MOM6 ICs
-  ${NLN} "${COM_OCEAN_RESTART_PREV}/${sPDY}.${scyc}0000.MOM.res.nc" "${DATA}/INPUT/MOM.res.nc"
+ #ss ${NLN} "${COM_OCEAN_RESTART_PREV}/${sPDY}.${scyc}0000.MOM.res.nc" "${DATA}/INPUT/MOM.res.nc"
+  ${NLN} "${COM_OCEAN_RESTART_PREV}/ORAS5.mx100.ic.nc" "${DATA}/INPUT/"
   case ${OCNRES} in
     "025")
       for nn in $(seq 1 4); do
@@ -766,9 +776,9 @@ MOM6_postdet() {
       (( interval = fhr - last_fhr ))
       (( midpoint = last_fhr + interval/2 ))
 
+      local vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + 0 hours" +%Y%m%d%H)
       local vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y%m%d%H)
       local vdate_mid=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${midpoint} hours" +%Y%m%d%H)
-
 
       # Native model output uses window midpoint in the filename, but we are mapping that to the end of the period for COM
       local source_file="ocn_${vdate_mid:0:4}_${vdate_mid:4:2}_${vdate_mid:6:2}_${vdate_mid:8:2}.nc"
@@ -790,8 +800,8 @@ MOM6_postdet() {
     # Save MOM6 backgrounds
     for fhr in ${FV3_OUTPUT_FH}; do
       local idatestr=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y_%m_%d_%H)
-      local fhr3=$(printf %03i "${fhr}")
-      ${NLN} "${COM_OCEAN_HISTORY}/${RUN}.t${cyc}z.ocnf${fhr3}.nc" "${DATA}/ocn_da_${idatestr}.nc"
+      local fhr4=$(printf %04i "${fhr}")
+      ${NLN} "${COM_OCEAN_HISTORY}/${RUN}.t${cyc}z.ocnf${fhr4}.nc" "${DATA}/ocn_da_${idatestr}.nc"
     done
   fi
 
@@ -913,12 +923,17 @@ CICE_postdet() {
       vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y%m%d%H)
       seconds=$(to_seconds "${vdate:8:2}0000")  # convert HHMMSS to seconds
       vdatestr="${vdate:0:4}-${vdate:4:2}-${vdate:6:2}-${seconds}"
+   #ss daily vdatestr="${vdate:0:4}-${vdate:4:2}-${vdate:6:2}"
+   #ss daily vdatestr2="${vdate:0:4}-${vdate:4:2}"
 
       if [[ 10#${fhr} -eq 0 ]]; then
         ${NLN} "${COM_ICE_HISTORY}/iceic${vdate}.${ENSMEM}.${current_cycle}.nc" "${DATA}/CICE_OUTPUT/iceh_ic.${vdatestr}.nc"
       else
         (( interval = fhr - last_fhr ))  # Umm.. isn't this CICE_HISTFREQ_N in hours (currently set to FHOUT)?
         ${NLN} "${COM_ICE_HISTORY}/ice${vdate}.${ENSMEM}.${current_cycle}.nc" "${DATA}/CICE_OUTPUT/iceh_$(printf "%0.2d" "${interval}")h.${vdatestr}.nc"
+    #ss daily ${NLN} "${COM_ICE_HISTORY}/ice${vdate}.${ENSMEM}.${current_cycle}.nc" "${DATA}/CICE_OUTPUT/iceh.${vdatestr}.nc"
+    #ss daily ${NLN} "${COM_ICE_HISTORY}/iceh.${vdatestr}.nc" "${DATA}/CICE_OUTPUT/iceh.${vdatestr}.nc"
+        ${NLN} "${COM_ICE_HISTORY}/ice_diag.d" "${DATA}/ice_diag.d"
       fi
       last_fhr=${fhr}
     done
@@ -933,14 +948,14 @@ CICE_postdet() {
     ${NLN} "${COM_ICE_HISTORY}/${RUN}.t${cyc}z.iceic.nc" "${DATA}/CICE_OUTPUT/iceh_ic.${vdatestr}.nc"
 
     # Link instantaneous CICE forecast output files from DATA/CICE_OUTPUT to COMOUTice
-    local vdate vdatestr seconds fhr fhr3
+    local vdate vdatestr seconds fhr fhr4
     fhr="${FHOUT}"
     while [[ "${fhr}" -le "${FHMAX}" ]]; do
       vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y%m%d%H)
       seconds=$(to_seconds "${vdate:8:2}0000")  # convert HHMMSS to seconds
       vdatestr="${vdate:0:4}-${vdate:4:2}-${vdate:6:2}-${seconds}"
-      fhr3=$(printf %03i "${fhr}")
-      ${NLN} "${COM_ICE_HISTORY}/${RUN}.t${cyc}z.icef${fhr3}.nc" "${DATA}/CICE_OUTPUT/iceh_inst.${vdatestr}.nc"
+      fhr4=$(printf %04i "${fhr}")
+      ${NLN} "${COM_ICE_HISTORY}/${RUN}.t${cyc}z.icef${fhr4}.nc" "${DATA}/CICE_OUTPUT/iceh_inst.${vdatestr}.nc"
       fhr=$((fhr + FHOUT))
     done
 
@@ -956,6 +971,9 @@ CICE_postdet() {
     ${NLN} "${COM_ICE_RESTART}/${vdate:0:8}.${vdate:8:2}0000.cice_model.res.nc" "${DATA}/CICE_RESTART/cice_model.res.${vdatestr}.nc"
     vdate=$(date --utc -d "${vdate:0:8} ${vdate:8:2} + ${restart_interval} hours" +%Y%m%d%H)
   done
+
+#ss: reset FV3_OUTPUT_FH after all links are made
+   FV3_OUTPUT_FH=" $FHOUT -1 "
 }
 
 CICE_nml() {

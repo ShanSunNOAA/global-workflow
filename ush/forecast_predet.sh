@@ -117,10 +117,15 @@ FV3_predet(){
   FV3_OUTPUT_FH=""
   local fhr=${FHMIN}
   if (( FHOUT_HF > 0 && FHMAX_HF > 0 )); then
-    FV3_OUTPUT_FH="${FV3_OUTPUT_FH} $(seq -s ' ' "${FHMIN}" "${FHOUT_HF}" "${FHMAX_HF}")"
+    for (( fh = FHMIN; fh < FHMAX_HF; fh = fh + FHOUT_HF )); do
+      FV3_OUTPUT_FH="${FV3_OUTPUT_FH} ${fh}"
+    done
     fhr=${FHMAX_HF}
   fi
-  FV3_OUTPUT_FH="${FV3_OUTPUT_FH} $(seq -s ' ' "${fhr}" "${FHOUT}" "${FHMAX}")"
+  for (( fh = fhr; fh <= FHMAX; fh = fh + FHOUT )); do
+    FV3_OUTPUT_FH="${FV3_OUTPUT_FH} ${fh}"
+  done
+
 
   # Model resolution specific parameters
   DELTIM=${DELTIM:-225}
