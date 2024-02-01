@@ -26,6 +26,12 @@ error_message() {
 }
 
 ###############################################################
+
+  atm_ic=2 #cfsr,  1=default
+  ocn_ic=2 #oras5, 1=default
+  ice_ic=2 #oras5, 1=default
+  echo "CASE= $CASE"
+
 for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
 
   # Stage atmosphere initial conditions to ROTDIR
@@ -55,7 +61,16 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     # Stage the FV3 cold-start initial conditions to ROTDIR
     YMD=${PDY} HH=${cyc} generate_com COM_ATMOS_INPUT
     [[ ! -d "${COM_ATMOS_INPUT}" ]] && mkdir -p "${COM_ATMOS_INPUT}"
-    src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+    if [[ $atm_ic -eq 1 ]] ; then
+     src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+    fi
+    if [[ $atm_ic -eq 2 ]] ; then
+     if [[ ${machine} = 'HERA' ]]; then
+       src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+     else
+       src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+     fi
+    fi
     tgt="${COM_ATMOS_INPUT}/gfs_ctrl.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?
@@ -63,7 +78,16 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     err=$((err + rc))
     for ftype in gfs_data sfc_data; do
       for ((tt = 1; tt <= 6; tt++)); do
+       if [[ $atm_ic -eq 1 ]] ; then
         src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/${ftype}.tile${tt}.nc"
+       fi
+       if [[ $atm_ic -eq 2 ]] ; then
+        if [[ ${machine} = 'HERA' ]]; then
+          src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+        else
+          src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+        fi
+       fi
         tgt="${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc"
         ${NCP} "${src}" "${tgt}"
         rc=$?
@@ -77,9 +101,20 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_OCN:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} generate_com COM_OCEAN_RESTART_PREV:COM_OCEAN_RESTART_TMPL
     [[ ! -d "${COM_OCEAN_RESTART_PREV}" ]] && mkdir -p "${COM_OCEAN_RESTART_PREV}"
+   if [[ $ocn_ic -eq 1 ]] ; then
     src="${BASE_CPLIC}/${CPL_OCNIC:-}/${PDY}${cyc}/${MEMDIR}/ocean/${PDY}.${cyc}0000.MOM.res.nc"
     tgt="${COM_OCEAN_RESTART_PREV}/${PDY}.${cyc}0000.MOM.res.nc"
+   fi
+   if [[ $ocn_ic -eq 2 ]] ; then
+    if [[ ${machine} = 'HERA' ]]; then
+      src="/scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+    else
+      src="/work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+    fi
+    tgt="${COM_OCEAN_RESTART_PREV}/"
+   fi
     ${NCP} "${src}" "${tgt}"
+    echo "ocnic ${src} ${tgt}"
     rc=$?
     ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
     err=$((err + rc))
@@ -128,9 +163,19 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_ICE:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} generate_com COM_ICE_RESTART_PREV:COM_ICE_RESTART_TMPL
     [[ ! -d "${COM_ICE_RESTART_PREV}" ]] && mkdir -p "${COM_ICE_RESTART_PREV}"
-    src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${PDY}.${cyc}0000.cice_model.res.nc"
+    if [[ $ice_ic -eq 1 ]] ; then
+     src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${PDY}.${cyc}0000.cice_model.res.nc"
+    fi
+    if [[ $ice_ic -eq 2 ]] ; then
+     if [[ ${machine} = 'HERA' ]]; then
+       src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+     else
+       src="/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+     fi
+    fi
     tgt="${COM_ICE_RESTART_PREV}/${PDY}.${cyc}0000.cice_model.res.nc"
     ${NCP} "${src}" "${tgt}"
+    echo "iceic ${src} ${tgt}"
     rc=$?
     ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
     err=$((err + rc))

@@ -54,9 +54,9 @@ while [ $fhcnt -le $fend ] ; do
   fhr=$(printf "%03d" $fhcnt)
   fhcnt3=$(expr $fhr % 3)
 
-  fhr3=$(printf "03d" $fhcnt)
+  fhr4=$(printf "04d" $fhcnt)
   GRIBIN=$COMIN/${model}.${cycle}.${GRIB}${fhr}${EXT}
-  GEMGRD=${RUN2}_${PDY}${cyc}f${fhr3}
+  GEMGRD=${RUN2}_${PDY}${cyc}f${fhr4}
 
   GRIBIN_chk=$GRIBIN
 

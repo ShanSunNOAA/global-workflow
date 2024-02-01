@@ -74,9 +74,9 @@ while [ $fhcnt -le $fend ] ; do
   fhr=$(printf "%03d" $fhcnt)
   fhcnt3=$(expr $fhr % 3)
 
-  fhr3=$(printf "%03d" $fhcnt)
+  fhr4=$(printf "%04d" $fhcnt)
 
-  GEMGRD=${RUN2}_${PDY}${cyc}f${fhr3}
+  GEMGRD=${RUN2}_${PDY}${cyc}f${fhr4}
 
   if [[ ${RUN2} = "gdas_0p25" ]]; then
     export GRIBIN=${COM_ATMOS_GRIB_0p25}/${model}.${cycle}.pgrb2.0p25.f${fhr}

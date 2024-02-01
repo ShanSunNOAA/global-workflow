@@ -93,6 +93,7 @@ fi
 for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
 
    fhr3=$(printf "%03d" "${fhr}")
+   fhr4=$(printf "%04d" "${fhr}")
 
    ###############################
    # Start Looping for the
@@ -101,7 +102,7 @@ for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
    export pgm="postcheck"
    ic=1
    while (( ic <= SLEEP_LOOP_MAX )); do
-      if [[ -f "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2b.0p50.f${fhr3}.idx" ]]; then
+      if [[ -f "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2b.0p50.f${fhr4}.idx" ]]; then
          break
       else
          ic=$((ic + 1))
@@ -123,22 +124,22 @@ for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
    # Process Global NPOESS 0.50 GFS GRID PRODUCTS IN GRIB2 F000 - F024  #
    ######################################################################
    paramlist=${PARMproduct}/global_npoess_paramlist_g2
-   cp "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2.0p50.f${fhr3}" tmpfile2
-   cp "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2b.0p50.f${fhr3}" tmpfile2b
+   cp "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2.0p50.f${fhr4}" tmpfile2
+   cp "${COM_ATMOS_GRIB_0p50}/gfs.t${cyc}z.pgrb2b.0p50.f${fhr4}" tmpfile2b
    cat tmpfile2 tmpfile2b > tmpfile
    ${WGRIB2} tmpfile | grep -F -f ${paramlist} | ${WGRIB2} -i -grib  pgb2file tmpfile
    export err=$?; err_chk
 
-   cp pgb2file "${COM_ATMOS_GOES}/${RUN}.${cycle}.pgrb2f${fhr3}.npoess"
+   cp pgb2file "${COM_ATMOS_GOES}/${RUN}.${cycle}.pgrb2f${fhr4}.npoess"
 
    if [[ ${SENDDBN} == "YES" ]]; then
        "${DBNROOT}/bin/dbn_alert" MODEL GFS_PGBNPOESS "${job}" \
-				  "${COM_ATMOS_GOES}/${RUN}.${cycle}.pgrb2f${fhr3}.npoess"
+				  "${COM_ATMOS_GOES}/${RUN}.${cycle}.pgrb2f${fhr4}.npoess"
    else
-       msg="File ${RUN}.${cycle}.pgrb2f${fhr3}.npoess not posted to db_net."
+       msg="File ${RUN}.${cycle}.pgrb2f${fhr4}.npoess not posted to db_net."
        postmsg "${msg}" || echo "${msg}"
    fi
-   echo "${PDY}${cyc}${fhr3}" > "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.control.halfdeg.npoess"
+   echo "${PDY}${cyc}${fhr4}" > "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.control.halfdeg.npoess"
    rm tmpfile pgb2file
 
 done
@@ -160,6 +161,7 @@ fi
 for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
 
    fhr3=$(printf "%03d" "${fhr}")
+   fhr4=$(printf "%04d" "${fhr}")
 
    ###############################
    # Start Looping for the 
@@ -169,7 +171,7 @@ for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
    export pgm="postcheck"
    ic=1
    while (( ic <= SLEEP_LOOP_MAX )); do
-      if [[ -f "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.special.grb2if${fhr3}.idx" ]]; then
+      if [[ -f "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.special.grb2if${fhr4}.idx" ]]; then
          break
       else
          ic=$((ic + 1))
@@ -191,7 +193,7 @@ for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
    # Put restart files into /nwges 
    # for backup to start Model Fcst
    ###############################
-   cp "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.special.grb2if${fhr3}" masterfile
+   cp "${COM_ATMOS_GOES}/${RUN}.t${cyc}z.special.grb2if${fhr4}" masterfile
    export grid0p25="latlon 0:1440:0.25 90:721:-0.25"
    ${WGRIB2} masterfile ${opt1} ${opt21} ${opt22} ${opt23} ${opt24} ${opt25} ${opt26} \
       ${opt27} ${opt28} -new_grid ${grid0p25} pgb2file
@@ -202,9 +204,9 @@ for (( fhr=$((10#${SHOUR})); fhr <= $((10#${FHOUR})); fhr = fhr + FHINC )); do
 
    ${WGRIB2} pgb2file -s > pgb2ifile
 
-   cp pgb2file "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2.0p25.f${fhr3}"
-   cp pgb2ifile "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2.0p25.f${fhr3}.idx"
-   cp pgb2file2 "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2f${fhr3}.grd221"
+   cp pgb2file "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2.0p25.f${fhr4}"
+   cp pgb2ifile "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2.0p25.f${fhr4}.idx"
+   cp pgb2file2 "${COM_ATMOS_GOES}/${RUN}.${cycle}.goessimpgrb2f${fhr4}.grd221"
 
    if [[ ${SENDDBN} == "YES" ]]; then
        "${DBNROOT}/bin/dbn_alert" MODEL GFS_GOESSIMPGB2_0P25 "${job}" \
