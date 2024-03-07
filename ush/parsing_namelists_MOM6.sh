@@ -107,7 +107,8 @@ else
   local PERT_EPBL="False"
 fi
 # Ensure the template exists
-local template=${MOM6_INPUT_TEMPLATE:-"${PARMgfs}/ufs/MOM_input_${OCNRES}.IN"}
+ocn_ic=${ocn_ic:-"1"}
+local template=${MOM6_INPUT_TEMPLATE:-"${PARMgfs}/ufs/MOM_input_${OCNRES}_${ocn_ic}.IN"}
 if [[ ! -f "${template}" ]]; then
   echo "FATAL ERROR: template '${template}' does not exist, ABORT!"
   exit 1
