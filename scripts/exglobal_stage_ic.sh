@@ -26,6 +26,16 @@ error_message() {
 }
 
 ###############################################################
+  echo "CASE= $CASE"
+  atm_ic=2 #cfsr,  1=default
+  ocn_ic=2 #oras5, 1=default
+  if [[ $CASE = 'C96' ]]; then
+    ice_ic=2
+    ice_ic=1
+  else
+    ice_ic=1
+  fi
+
 for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
 
   # Stage atmosphere initial conditions to ROTDIR
@@ -55,7 +65,17 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     # Stage the FV3 cold-start initial conditions to ROTDIR
     YMD=${PDY} HH=${cyc} declare_from_tmpl COM_ATMOS_INPUT
     [[ ! -d "${COM_ATMOS_INPUT}" ]] && mkdir -p "${COM_ATMOS_INPUT}"
-    src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+    if [[ $atm_ic -eq 1 ]] ; then
+     src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+     src="/scratch1/NCEPDEV/climate/role.ufscpara/IC/GEFS-NoahMP-aerosols-p8c/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+    fi
+    if [[ $atm_ic -eq 2 ]] ; then
+     if [[ ${machine} = 'HERA' ]]; then
+       src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+     else
+       src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+     fi
+    fi
     tgt="${COM_ATMOS_INPUT}/gfs_ctrl.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?
@@ -63,9 +83,24 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     err=$((err + rc))
     for ftype in gfs_data sfc_data; do
       for ((tt = 1; tt <= 6; tt++)); do
-        src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/${ftype}.tile${tt}.nc"
+        if [[ $atm_ic -eq 1 ]] ; then
+          if [[ $CASE = 'C384' ]]; then
+            src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/${ftype}.tile${tt}.nc"
+            src="/scratch1/NCEPDEV/climate/role.ufscpara/IC/GEFS-NoahMP-aerosols-p8c/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+          fi
+        fi
+        if [[ $atm_ic -eq 2 ]] ; then
+          if [[ ${machine} = 'HERA' ]]; then
+            src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+          else
+            src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+          fi
+        fi
         tgt="${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc"
         ${NCP} "${src}" "${tgt}"
+        if [[ ${ftype} = 'sfc_data' && ${atm_ic} = 1 ]]; then 
+          ncrename -d xaxis_1,lon -d yaxis_1,lat -d zaxis_1,lsoil ${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc
+        fi
         rc=$?
         ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
         err=$((err + rc))
@@ -77,13 +112,11 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_OCN:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} declare_from_tmpl COM_OCEAN_RESTART_PREV:COM_OCEAN_RESTART_TMPL
     [[ ! -d "${COM_OCEAN_RESTART_PREV}" ]] && mkdir -p "${COM_OCEAN_RESTART_PREV}"
-    src="${BASE_CPLIC}/${CPL_OCNIC:-}/${PDY}${cyc}/${MEMDIR}/ocean/${PDY}.${cyc}0000.MOM.res.nc"
-    tgt="${COM_OCEAN_RESTART_PREV}/${PDY}.${cyc}0000.MOM.res.nc"
-    ${NCP} "${src}" "${tgt}"
-    rc=$?
-    ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
-    err=$((err + rc))
-    case "${OCNRES}" in
+    if [[ $ocn_ic -eq 1 ]] ; then
+      src="${BASE_CPLIC}/${CPL_OCNIC:-}/${PDY}${cyc}/${MEMDIR}/ocean/${PDY}.${cyc}0000.MOM.res.nc"
+      tgt="${COM_OCEAN_RESTART_PREV}/${PDY}.${cyc}0000.MOM.res.nc"
+
+     case "${OCNRES}" in
       "500" | "100")
         # Nothing more to do for these resolutions
         ;;
@@ -102,7 +135,21 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
         rc=1
         err=$((err + rc))
         ;;
-    esac
+     esac
+    fi
+
+    if [[ $ocn_ic -eq 2 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+      else
+       src="/work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+      fi
+      tgt="${COM_OCEAN_RESTART_PREV}/"
+    fi
+    ${NCP} "${src}" "${tgt}"
+    rc=$?
+    ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
+    err=$((err + rc))
 
     # Ocean Perturbation Files
     # Extra zero on MEMDIR ensure we have a number even if the string is empty
@@ -139,7 +186,21 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_ICE:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} declare_from_tmpl COM_ICE_RESTART_PREV:COM_ICE_RESTART_TMPL
     [[ ! -d "${COM_ICE_RESTART_PREV}" ]] && mkdir -p "${COM_ICE_RESTART_PREV}"
-    src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${PDY}.${cyc}0000.cice_model.res.nc"
+    if [[ $ice_ic -eq 1 ]] ; then
+      if [[ $CASE = 'C96' ]]; then
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc"
+      else
+        src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${PDY}.${cyc}0000.cice_model.res.nc"
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_0.25.res_${PDY}00.nc"
+      fi
+    fi
+    if [[ $ice_ic -eq 2 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+      fi
+    fi
     tgt="${COM_ICE_RESTART_PREV}/${PDY}.${cyc}0000.cice_model.res.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?

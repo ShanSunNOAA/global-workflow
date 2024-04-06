@@ -44,9 +44,8 @@ if [[ "${RUN}" == "gfs" ]]; then
     fhmax=${FHMAX_GFS}
     fhr=0
     while [ "${fhr}" -le "${fhmax}" ]; do
-        fhr2=$(printf %02i "${fhr}")
-        fhr3=$(printf %03i "${fhr}")
-        nb_copy "${COM_ATMOS_GRIB_1p00}/${APREFIX}pgrb2.1p00.f${fhr3}" "${ARCDIR}/pgbf${fhr2}.${RUN}.${PDY}${cyc}.grib2"
+        fhr4=$(printf %04i "${fhr}")
+        nb_copy "${COM_ATMOS_GRIB_1p00}/${APREFIX}pgrb2.1p00.f${fhr4}" "${ARCDIR}/pgbf${fhr4}.${RUN}.${PDY}${cyc}.grib2"
         fhr=$((10#${fhr} + 10#${FHOUT_GFS} ))
     done
 fi
@@ -55,8 +54,8 @@ if [[ "${RUN}" == "gdas" ]]; then
     for fhr in ${flist}; do
         fname="${COM_ATMOS_GRIB_1p00}/${APREFIX}pgrb2.1p00.f${fhr}"
         # TODO Shouldn't the archived files also use three-digit tags?
-        fhr2=$(printf %02i $((10#${fhr})))
-        nb_copy "${fname}" "${ARCDIR}/pgbf${fhr2}.${RUN}.${PDY}${cyc}.grib2"
+        fhr4=$(printf %04i $((10#${fhr})))
+        nb_copy "${fname}" "${ARCDIR}/pgbf${fhr4}.${RUN}.${PDY}${cyc}.grib2"
     done
 fi
 
@@ -106,9 +105,9 @@ if [[ "${RUN}" == "gfs" ]] && [[ "${FITSARC}" = "YES" ]]; then
     fhmax=${FHMAX_FITS:-${FHMAX_GFS}}
     fhr=0
     while [[ ${fhr} -le ${fhmax} ]]; do
-        fhr3=$(printf %03i "${fhr}")
-        sfcfile="${COM_ATMOS_HISTORY}/${prefix}.sfcf${fhr3}.nc"
-        sigfile="${COM_ATMOS_HISTORY}/${prefix}.atmf${fhr3}.nc"
+        fhr4=$(printf %04i "${fhr}")
+        sfcfile="${COM_ATMOS_HISTORY}/${prefix}.sfcf${fhr4}.nc"
+        sigfile="${COM_ATMOS_HISTORY}/${prefix}.atmf${fhr4}.nc"
         nb_copy "${sfcfile}" "${VFYARC}/${RUN}.${PDY}/${cyc}/"
         nb_copy "${sigfile}" "${VFYARC}/${RUN}.${PDY}/${cyc}/"
         (( fhr = 10#${fhr} + 6 ))

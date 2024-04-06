@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ex
 
 #--make symbolic links for EMC installation and hardcopies for NCO delivery
 
@@ -76,6 +77,15 @@ case "${machine}" in
     ;;
 esac
 
+case "${machine}" in
+  "hera")     More_FIX="/scratch2/BMC/gsd-fv3-dev/sun/my_hr3_fix" ;;
+  "orion")    More_FIX="/work2/noaa/gsd-fv3-dev/Shan.Sun/my_hr3_fix" ;;
+  *)
+    echo "FATAL: Unknown target machine ${machine}, couldn't set More_FIX"
+    exit 1
+    ;;
+esac
+
 # Source fix version file
 source "${HOMEgfs}/versions/fix.ver"
 
@@ -119,7 +129,25 @@ do
   fix_ver="${dir}_ver"
   ${LINK_OR_COPY} "${FIX_DIR}/${dir}/${!fix_ver}" "${dir}"
 done
-
+#ss---------------------------------------
+#ss-- add files for MOM6 and CICE at 100
+#ss---------------------------------------
+mv ${HOMEgfs}/fix/mom6 ${HOMEgfs}/fix/mom60
+mv ${HOMEgfs}/fix/cice ${HOMEgfs}/fix/cice0
+FIX_MOM6=${FIX_DIR}/mom6
+pwd=$(pwd -P)
+fix2=${pwd}/../fix/mom6
+if [ ! -d $fix2 ]; then
+  mkdir -p $fix2
+  cd $fix2
+  for dir in $FIX_MOM6/$mom6_ver/*
+  do
+    $LINK $dir .
+  done
+  /bin/rm -r 100
+  /bin/cp -r -p ${More_FIX}/mom6/100 $fix2/.
+fi
+/bin/cp -r -p ${More_FIX}/cice ${pwd}/../fix/.
 
 #---------------------------------------
 #--add files from external repositories

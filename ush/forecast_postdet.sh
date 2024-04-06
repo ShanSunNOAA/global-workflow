@@ -473,14 +473,15 @@ EOF
   cd "${DATA}" || exit 1
   if [[ "${QUILTING}" = ".true." ]] && [[ "${OUTPUT_GRID}" = "gaussian_grid" ]]; then
     for fhr in ${FV3_OUTPUT_FH}; do
+      local FH4=$(printf %04i "${fhr}")
       local FH3=$(printf %03i "${fhr}")
       local FH2=$(printf %02i "${fhr}")
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH3}.nc" "atmf${FH3}.nc"
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH3}.nc" "sfcf${FH3}.nc"
-      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH3}.txt" "log.atm.f${FH3}"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH4}.nc" "atmf${FH4}.nc"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH4}.nc" "sfcf${FH4}.nc"
+      ${NLN} "${COM_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH4}.txt" "log.atm.f${FH4}"
       if [[ ${WRITE_DOPOST} = ".true." ]]; then
-        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH3}" "GFSPRS.GrbF${FH2}"
-        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH3}.grib2" "GFSFLX.GrbF${FH2}"
+        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH4}" "GFSPRS.GrbF${FH2}"
+        ${NLN} "${COM_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH4}.grib2" "GFSFLX.GrbF${FH2}"
       fi
     done
   else  # TODO: Is this even valid anymore?
@@ -682,7 +683,8 @@ MOM6_postdet() {
   echo "SUB ${FUNCNAME[0]}: MOM6 after run type determination"
 
   # Copy MOM6 ICs
-  ${NLN} "${COM_OCEAN_RESTART_PREV}/${sPDY}.${scyc}0000.MOM.res.nc" "${DATA}/INPUT/MOM.res.nc"
+ #ss ${NLN} "${COM_OCEAN_RESTART_PREV}/${sPDY}.${scyc}0000.MOM.res.nc" "${DATA}/INPUT/MOM.res.nc"
+  ${NLN} "${COM_OCEAN_RESTART_PREV}/ORAS5.mx${OCNRES}.ic.nc" "${DATA}/INPUT/"
   case ${OCNRES} in
     "025")
       local nn
@@ -735,9 +737,9 @@ MOM6_postdet() {
     # Link output files for RUN = gfs|gefs
 
     # Looping over MOM6 output hours
-    local fhr fhr3 last_fhr interval midpoint vdate vdate_mid source_file dest_file
+    local fhr fhr4 last_fhr interval midpoint vdate vdate_mid source_file dest_file
     for fhr in ${MOM6_OUTPUT_FH}; do
-      fhr3=$(printf %03i "${fhr}")
+      fhr4=$(printf %04i "${fhr}")
 
       if [[ -z ${last_fhr:-} ]]; then
         last_fhr=${fhr}
@@ -752,13 +754,13 @@ MOM6_postdet() {
 
       # Native model output uses window midpoint in the filename, but we are mapping that to the end of the period for COM
       source_file="ocn_${vdate_mid:0:4}_${vdate_mid:4:2}_${vdate_mid:6:2}_${vdate_mid:8:2}.nc"
-      dest_file="${RUN}.ocean.t${cyc}z.${interval}hr_avg.f${fhr3}.nc"
+      dest_file="${RUN}.ocean.t${cyc}z.${interval}hr_avg.f${fhr4}.nc"
       ${NLN} "${COM_OCEAN_HISTORY}/${dest_file}" "${DATA}/${source_file}"
 
       # Daily output
       if (( fhr > 0 & fhr % 24 == 0 )); then
         source_file="ocn_daily_${vdate:0:4}_${vdate:4:2}_${vdate:6:2}.nc"
-        dest_file="${RUN}.ocean.t${cyc}z.daily.f${fhr3}.nc"
+        dest_file="${RUN}.ocean.t${cyc}z.daily.f${fhr4}.nc"
         ${NLN} "${COM_OCEAN_HISTORY}/${dest_file}" "${DATA}/${source_file}"
       fi
 
@@ -771,9 +773,9 @@ MOM6_postdet() {
 
     # Save (instantaneous) MOM6 backgrounds
     for fhr in ${MOM6_OUTPUT_FH}; do
-      local fhr3=$(printf %03i "${fhr}")
+      local fhr4=$(printf %04i "${fhr}")
       local vdatestr=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y_%m_%d_%H)
-      ${NLN} "${COM_OCEAN_HISTORY}/${RUN}.ocean.t${cyc}z.inst.f${fhr3}.nc" "${DATA}/ocn_da_${vdatestr}.nc"
+      ${NLN} "${COM_OCEAN_HISTORY}/${RUN}.ocean.t${cyc}z.inst.f${fhr4}.nc" "${DATA}/ocn_da_${vdatestr}.nc"
     done
   fi
 
@@ -851,15 +853,16 @@ CICE_postdet() {
 
   # Link iceh_ic file to COM.  This is the initial condition file from CICE (f000)
   # TODO: Is this file needed in COM? Is this going to be used for generating any products?
-  local vdate seconds vdatestr fhr fhr3 interval last_fhr
+  local vdate seconds vdatestr fhr fhr4 interval last_fhr
   seconds=$(to_seconds "${current_cycle:8:2}0000")  # convert HHMMSS to seconds
   vdatestr="${current_cycle:0:4}-${current_cycle:4:2}-${current_cycle:6:2}-${seconds}"
   ${NLN} "${COM_ICE_HISTORY}/${RUN}.ice.t${cyc}z.ic.nc" "${DATA}/CICE_OUTPUT/iceh_ic.${vdatestr}.nc"
+  ${NLN} "${COM_ICE_HISTORY}/ice_diag.d" "${DATA}/ice_diag.d"
 
   # Link CICE forecast output files from DATA/CICE_OUTPUT to COM
   local source_file dest_file
   for fhr in ${CICE_OUTPUT_FH}; do
-    fhr3=$(printf %03i "${fhr}")
+    fhr4=$(printf %04i "${fhr}")
 
     if [[ -z ${last_fhr:-} ]]; then
       last_fhr=${fhr}
@@ -874,10 +877,10 @@ CICE_postdet() {
 
     if [[ "${RUN}" =~ "gfs" || "${RUN}" =~ "gefs" ]]; then
       source_file="iceh_$(printf "%0.2d" "${interval}")h.${vdatestr}.nc"
-      dest_file="${RUN}.ice.t${cyc}z.${interval}hr_avg.f${fhr3}.nc"
+      dest_file="${RUN}.ice.t${cyc}z.${interval}hr_avg.f${fhr4}.nc"
     elif [[ "${RUN}" =~ "gdas" ]]; then
       source_file="iceh_inst.${vdatestr}.nc"
-      dest_file="${RUN}.ice.t${cyc}z.inst.f${fhr3}.nc"
+      dest_file="${RUN}.ice.t${cyc}z.inst.f${fhr4}.nc"
     fi
     ${NLN} "${COM_ICE_HISTORY}/${dest_file}" "${DATA}/CICE_OUTPUT/${source_file}"
 
@@ -894,6 +897,9 @@ CICE_postdet() {
     ${NLN} "${COM_ICE_RESTART}/${vdate:0:8}.${vdate:8:2}0000.cice_model.res.nc" "${DATA}/CICE_RESTART/cice_model.res.${vdatestr}.nc"
     vdate=$(date --utc -d "${vdate:0:8} ${vdate:8:2} + ${restart_interval} hours" +%Y%m%d%H)
   done
+
+#ss: reset FV3_OUTPUT_FH after all links are made
+   FV3_OUTPUT_FH=" $FHOUT -1 "
 }
 
 CICE_nml() {
