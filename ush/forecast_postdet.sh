@@ -259,8 +259,17 @@ EOF
   if [[ ${reforecast:-"NO"} == "YES" ]]; then
     co2dir="co2dat_4a"
   fi
+
+  if [ $machine = HERA ]; then
+    co2dir=/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix/fix_co2_proj
+  fi
+  if [ $machine = ORION ]; then
+    co2dir=/work2/noaa/wrfruc/Shan.Sun/p8_more_fix/fix_co2_proj
+  fi
+
   if (( ICO2 > 0 )); then
-    for file in $(ls "${FIXgfs}/am/${co2dir}/global_co2historicaldata"*) ; do
+#ss    for file in $(ls "${FIXgfs}/am/${co2dir}/global_co2historicaldata"*) ; do
+    for file in $(ls "${co2dir}/global_co2historicaldata"*) ; do
       ${NLN} "${file}" "${DATA}/$(basename "${file//global_}")"
     done
   fi

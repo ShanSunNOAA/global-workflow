@@ -27,11 +27,11 @@ error_message() {
 
 ###############################################################
   echo "CASE= $CASE"
+  echo "LEVS= $LEVS"
   atm_ic=2 #cfsr,  1=default
   ocn_ic=2 #oras5, 1=default
   if [[ $CASE = 'C96' ]]; then
     ice_ic=2
-    ice_ic=1
   else
     ice_ic=1
   fi
@@ -71,9 +71,9 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     fi
     if [[ $atm_ic -eq 2 ]] ; then
      if [[ ${machine} = 'HERA' ]]; then
-       src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+       src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/gfs_ctrl.nc"
      else
-       src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/gfs_ctrl.nc"
+       src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/gfs_ctrl.nc"
      fi
     fi
     tgt="${COM_ATMOS_INPUT}/gfs_ctrl.nc"
@@ -91,14 +91,22 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
         fi
         if [[ $atm_ic -eq 2 ]] ; then
           if [[ ${machine} = 'HERA' ]]; then
-            src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+            src1="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L128/INPUT/${ftype}.tile${tt}.nc"
+            src2="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/${ftype}.tile${tt}.nc"
           else
-            src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+            src1="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L128/INPUT/${ftype}.tile${tt}.nc"
+            src2="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/${ftype}.tile${tt}.nc"
           fi
+        fi
+        if [[ ${ftype} = 'sfc_data' ]]; then 
+          src=$src1
+        else
+          src=$src2
         fi
         tgt="${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc"
         ${NCP} "${src}" "${tgt}"
-        if [[ ${ftype} = 'sfc_data' && ${atm_ic} = 1 ]]; then 
+    #ss    if [[ ${ftype} = 'sfc_data' && ${atm_ic} = 1 ]]; then 
+        if [[ ${ftype} = 'sfc_data' ]]; then 
           ncrename -d xaxis_1,lon -d yaxis_1,lat -d zaxis_1,lsoil ${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc
         fi
         rc=$?
