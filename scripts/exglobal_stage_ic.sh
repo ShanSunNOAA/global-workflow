@@ -105,10 +105,9 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
         fi
         tgt="${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc"
         ${NCP} "${src}" "${tgt}"
-    #ss    if [[ ${ftype} = 'sfc_data' && ${atm_ic} = 1 ]]; then 
-        if [[ ${ftype} = 'sfc_data' ]]; then 
-          ncrename -d xaxis_1,lon -d yaxis_1,lat -d zaxis_1,lsoil ${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc
-        fi
+    #ss  if [[ ${ftype} = 'sfc_data' && ${atm_ic} = 1 ]]; then 
+    #ss    ncrename -d xaxis_1,lon -d yaxis_1,lat -d zaxis_1,lsoil ${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc
+    #ss  fi
         rc=$?
         ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
         err=$((err + rc))
