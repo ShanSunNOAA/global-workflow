@@ -47,7 +47,7 @@ FV3_det(){
   # Get a list of all YYYYMMDD.HH0000.coupler.res files from the atmos restart directory
   # shellcheck disable=SC2312
   mapfile -t file_array < <(find "${COM_ATMOS_RESTART:-/dev/null}" -name "????????.??0000.coupler.res" | sort)
-  if [[ ( "${RUN}" = "gfs" || "${RUN}" = "gefs" ) \
+  if [[ ( "${RUN}" = "ss-gfs" || "${RUN}" = "ss-gefs" ) \
     && "${#file_array[@]}" -gt 0 ]]; then
 
     # Look in reverse order of file_array to determine available restart times
