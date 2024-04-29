@@ -146,7 +146,8 @@ if [ ! -d $fix2 ]; then
   /bin/rm -r 100
   /bin/cp -r -p ${More_FIX}/mom6/100 $fix2/.
 fi
-/bin/cp -r -p ${More_FIX}/cice ${pwd}/../fix/.
+/bin/cp -r -p ${More_FIX}/cice           ${pwd}/../fix/.
+/bin/cp -r -p ${More_FIX}/mom_input/*.IN ${pwd}/../parm/ufs/.
 
 #---------------------------------------
 #--add files from external repositories
