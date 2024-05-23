@@ -89,11 +89,11 @@ case "${fv3_res}" in
         export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=1
         ;;
     "C96")
-        export DELTIM=600
-        export layout_x=2
-        export layout_y=2
-        export layout_x_gfs=2
-        export layout_y_gfs=2
+        export DELTIM=720
+        export layout_x=12
+        export layout_y=8
+        export layout_x_gfs=12
+        export layout_y_gfs=8
         export nthreads_fv3=1
         export nthreads_fv3_gfs=1
         export nthreads_ufs=1
@@ -101,7 +101,7 @@ case "${fv3_res}" in
         export cdmbgwd="0.14,1.8,1.0,1.0"  # mountain blocking, ogwd, cgwd, cgwd src scaling
         export cdmbgwd_gsl="20.0,2.5,1.0,1.0"   # settings for GSL drag suite
         export knob_ugwp_tauamp=3.0e-3      # setting for UGWPv1 non-stationary GWD
-        export WRITE_GROUP=1
+        export WRITE_GROUP=2
         export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE=1
         export WRITE_GROUP_GFS=1
         export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=1
@@ -241,14 +241,13 @@ export cplice=".false."
 export cplchm=".false."
 export cplwav=".false."
 export cplwav2atm=".false."
-export CCPP_SUITE="FV3_GFS_v17_p8_ugwpv1"
+export CCPP_SUITE="FV3_GFS_v17_coupled_p8_ugwpv1"  # TODO: Does this include FV3_GFS_v17_p8?  Can this be used instead of FV3_GFS_v17_p8?
 model_list="atm"
 
 # Mediator specific settings
 if [[ "${skip_mediator}" == "false" ]]; then
   export cpl=".true."
   export nthreads_mediator=${nthreads_fv3}  # Use same threads as FV3
-  export CCPP_SUITE="FV3_GFS_v17_coupled_p8_ugwpv1"  # TODO: Does this include FV3_GFS_v17_p8?  Can this be used instead of FV3_GFS_v17_p8?
 fi
 
 # MOM6 specific settings
@@ -276,7 +275,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       TOPOEDITS=""
       ;;
     "100")
-      ntasks_mom6=20
+      ntasks_mom6=40
       OCNTIM=3600
       NX_GLB=360
       NY_GLB=320
@@ -284,7 +283,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       DT_THERM_MOM6='3600'
       FRUNOFF="runoff.daitren.clim.1deg.nc"
       CHLCLIM="seawifs_1998-2006_smoothed_2X.nc"
-      MOM6_RESTART_SETTING='r'
+      MOM6_RESTART_SETTING='n'
       MOM6_RIVER_RUNOFF='False'
       eps_imesh="2.5e-1"
       TOPOEDITS="ufs.topo_edits_011818.nc"
@@ -329,7 +328,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
       CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
       MOM6_RIVER_RUNOFF='True'
-      MOM6_RESTART_SETTING="r"
+      MOM6_RESTART_SETTING="n"
       eps_imesh="1.0e-1"
       if [[ "${DO_JEDIOCNVAR:-NO}" = "YES" ]]; then
         MOM6_DIAG_COORD_DEF_Z_FILE="oceanda_zgrid_75L.nc"
