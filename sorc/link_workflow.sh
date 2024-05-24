@@ -79,6 +79,7 @@ esac
 case "${machine}" in
   "hera")     More_FIX="/scratch2/BMC/gsd-fv3-dev/sun/my_hr3_fix" ;;
   "orion")    More_FIX="/work2/noaa/gsd-fv3-dev/Shan.Sun/my_hr3_fix" ;;
+  "hercules") More_FIX="/work2/noaa/gsd-fv3-dev/Shan.Sun/my_hr3_fix" ;;
   *)
     echo "FATAL: Unknown target machine ${machine}, couldn't set More_FIX"
     exit 1

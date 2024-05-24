@@ -262,8 +262,7 @@ EOF
 
   if [ $machine = HERA ]; then
     co2dir=/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix/fix_co2_proj
-  fi
-  if [ $machine = ORION ]; then
+  else
     co2dir=/work2/noaa/wrfruc/Shan.Sun/p8_more_fix/fix_co2_proj
   fi
 
@@ -790,17 +789,17 @@ MOM6_postdet() {
 
   # Link ocean restarts from DATA to COM
   # Coarser than 1/2 degree has a single MOM restart
-  ${NLN} "${COM_OCEAN_RESTART}/${forecast_end_cycle:0:8}.${forecast_end_cycle:8:2}0000.MOM.res.nc" "${DATA}/MOM6_RESTART/"
+#ssun  ${NLN} "${COM_OCEAN_RESTART}/${forecast_end_cycle:0:8}.${forecast_end_cycle:8:2}0000.MOM.res.nc" "${DATA}/MOM6_RESTART/"
   # 1/4 degree resolution has 4 additional restarts
-  case ${OCNRES} in
-    "025")
-      for nn in $(seq 1 4); do
-        ${NLN} "${COM_OCEAN_RESTART}/${forecast_end_cycle:0:8}.${forecast_end_cycle:8:2}0000.MOM.res_${nn}.nc" "${DATA}/MOM6_RESTART/"
-      done
-      ;;
-    *)
-    ;;
-  esac
+#ssun  case ${OCNRES} in
+#ssun    "025")
+#ssun      for nn in $(seq 1 4); do
+#ssun        ${NLN} "${COM_OCEAN_RESTART}/${forecast_end_cycle:0:8}.${forecast_end_cycle:8:2}0000.MOM.res_${nn}.nc" "${DATA}/MOM6_RESTART/"
+#ssun      done
+#ssun      ;;
+#ssun    *)
+#ssun    ;;
+#ssun  esac
 
   if [[ "${RUN}" =~ "gdas" ]]; then
     local interval idate
