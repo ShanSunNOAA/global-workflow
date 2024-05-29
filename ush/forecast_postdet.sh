@@ -692,7 +692,12 @@ MOM6_postdet() {
 
   # Copy MOM6 ICs
  #ss ${NLN} "${COM_OCEAN_RESTART_PREV}/${sPDY}.${scyc}0000.MOM.res.nc" "${DATA}/INPUT/MOM.res.nc"
-  ${NLN} "${COM_OCEAN_RESTART_PREV}/ORAS5.mx${OCNRES}.ic.nc" "${DATA}/INPUT/"
+  if [[ $ocn_ic = "2" ]]; then
+    ${NLN} "${COM_OCEAN_RESTART_PREV}/ORAS5.mx${OCNRES}.ic.nc" "${DATA}/INPUT/"
+  fi
+  if [[ $ocn_ic = "3" ]]; then
+    ${NLN} "${COM_OCEAN_RESTART_PREV}/MOM.res.nc" "${DATA}/INPUT/"
+  fi
   case ${OCNRES} in
     "025")
       local nn
@@ -770,6 +775,8 @@ MOM6_postdet() {
         source_file="ocn_daily_${vdate:0:4}_${vdate:4:2}_${vdate:6:2}.nc"
         dest_file="${RUN}.ocean.t${cyc}z.daily.f${fhr4}.nc"
         ${NLN} "${COM_OCEAN_HISTORY}/${dest_file}" "${DATA}/${source_file}"
+#ssun: saving restart files
+        ${NLN} "${COM_OCEAN_HISTORY}/../restart/${vdate:0:4}${vdate:4:2}${vdate:6:2}.MOM.res.nc" "${DATA}/MOM6_RESTART/${vdate:0:4}${vdate:4:2}${vdate:6:2}.000000.MOM.res.nc"
       fi
 
       last_fhr=${fhr}

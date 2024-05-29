@@ -30,8 +30,10 @@ error_message() {
   echo "LEVS= $LEVS"
   atm_ic=2 #cfsr,  1=default
   ocn_ic=2 #oras5, 1=default
+  ocn_ic=3 #GLORe, 1=default
   if [[ $CASE = 'C96' ]]; then
     ice_ic=2
+    ice_ic=3
   else
     ice_ic=1
   fi
@@ -149,10 +151,20 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
       if [[ ${machine} = 'HERA' ]]; then
         src="/scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
       else
-       src="/work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+        src="/work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
       fi
       tgt="${COM_OCEAN_RESTART_PREV}/"
     fi
+
+    if [[ $ocn_ic -eq 3 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch1/BMC/gsd-fv3-dev/sun/GLORe/$PDY/MOM.res.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/GLORe/$PDY/MOM.res.nc"
+      fi
+      tgt="${COM_OCEAN_RESTART_PREV}/"
+    fi
+
     ${NCP} "${src}" "${tgt}"
     rc=$?
     ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
@@ -206,6 +218,13 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
         src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
       else
         src="/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+      fi
+    fi
+    if [[ $ice_ic -eq 3 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch1/BMC/gsd-fv3-dev/sun/GLORe/${PDY}/iced.${PDY}_mx${OCNRES}.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/GLORe/${PDY}/iced.${PDY}_mx${OCNRES}.nc"
       fi
     fi
     tgt="${COM_ICE_RESTART_PREV}/${PDY}.${cyc}0000.cice_model.res.nc"
