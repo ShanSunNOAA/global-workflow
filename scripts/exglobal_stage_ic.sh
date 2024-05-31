@@ -29,11 +29,11 @@ error_message() {
   echo "CASE= $CASE"
   echo "LEVS= $LEVS"
   atm_ic=2 #cfsr,  1=default
-  ocn_ic=2 #oras5, 1=default
   ocn_ic=3 #GLORe, 1=default
+  ocn_ic=2 #oras5, 1=default
   if [[ $CASE = 'C96' ]]; then
-    ice_ic=2
     ice_ic=3
+    ice_ic=2
   else
     ice_ic=1
   fi
