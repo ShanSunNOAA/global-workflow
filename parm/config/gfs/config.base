@@ -12,8 +12,8 @@ export machine="@MACHINE@"
 export RUN_ENVIR="emc"
 
 # Account, queue, etc.
-export ACCOUNT="@ACCOUNT@"
-export ACCOUNT_SERVICE="@ACCOUNT_SERVICE@"
+export ACCOUNT="gsd-fv3-dev"
+export ACCOUNT_SERVICE="gsd-fv3-dev"
 export QUEUE="@QUEUE@"
 export QUEUE_SERVICE="@QUEUE_SERVICE@"
 export PARTITION_BATCH="@PARTITION_BATCH@"
@@ -58,9 +58,9 @@ export COMINnam=@COMINnam@
 export COMINukmet=@COMINukmet@
 
 # USER specific paths
-export HOMEDIR="@HOMEDIR@"
-export STMP="@STMP@"
-export PTMP="@PTMP@"
+export HOMEDIR="@HOMEgfs@"
+export STMP="/scratch1/BMC/gsd-fv3-dev/NCEPDEV/global/Shan.Sun/stmp2"
+export PTMP="/scratch1/BMC/gsd-fv3-dev/NCEPDEV/global/Shan.Sun/stmp4"
 export NOSCRUB="@NOSCRUB@"
 
 # Base directories for various builds
@@ -287,7 +287,7 @@ export gfs_cyc=@gfs_cyc@ # 0: no GFS cycle, 1: 00Z only, 2: 00Z and 12Z only, 4:
 # GFS output and frequency
 export FHMIN_GFS=0
 export FHMAX_GFS=@FHMAX_GFS@
-export FHOUT_GFS=3 # Must be 6 for S2S until #1629 is addressed; 3 for ops
+export FHOUT_GFS=6 # Must be 6 for S2S until #1629 is addressed; 3 for ops
 export FHMAX_HF_GFS=0
 export FHOUT_HF_GFS=1
 export FHOUT_OCNICE_GFS=6
@@ -309,7 +309,7 @@ if (( FHMAX_HF_GFS < 120 )); then
 fi
 
 # GFS restart interval in hours
-export restart_interval_gfs=12
+export restart_interval_gfs=$FHMAX_GFS
 # NOTE: Do not set this to zero.  Instead set it to $FHMAX_GFS
 # TODO: Remove this variable from config.base and reference from config.fcst
 # TODO: rework logic in config.wave and push it to parsing_nameslist_WW3.sh where it is actually used

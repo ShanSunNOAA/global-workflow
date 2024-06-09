@@ -460,9 +460,17 @@ FV3_predet(){
   if [[ "${reforecast:-}" == "YES" ]]; then
     co2dir="co2dat_4a"
   fi
+
+  if [ $machine = HERA ]; then
+    co2dir=/scratch2/BMC/gsd-fv3-dev/sun/p8_more_fix/fix/fix_co2_proj
+  else
+    co2dir=/work2/noaa/wrfruc/Shan.Sun/p8_more_fix/fix_co2_proj
+  fi
+
   if (( ICO2 > 0 )); then
     local file
-    for file in "${FIXgfs}/am/${co2dir}/global_co2historicaldata"* ; do
+#ss    for file in "${FIXgfs}/am/${co2dir}/global_co2historicaldata"* ; do
+    for file in "${co2dir}/global_co2historicaldata"* ; do
       ${NCP} "${file}" "${DATA}/$(basename "${file//global_}")"
     done
   fi

@@ -15,6 +15,7 @@ export rCDUMP
 ##########################################
 # Remove the Temporary working directory
 ##########################################
+mkdir -p ${DATAROOT}
 cd "${DATAROOT}" || (echo "${DATAROOT} does not exist. ABORT!"; exit 1)
 [[ ${KEEPDATA} = "NO" ]] && rm -rf "${DATA}"
 

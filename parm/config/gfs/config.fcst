@@ -71,7 +71,8 @@ export FCSTEXEC="ufs_model.x"
 
 #######################################################################
 # Model configuration
-export TYPE="nh"
+#ssun export TYPE="nh"
+export TYPE="hydro"
 export MONO="non-mono"
 
 # Use stratosphere h2o physics
