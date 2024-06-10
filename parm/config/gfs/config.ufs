@@ -129,7 +129,7 @@ case "${fv3_res}" in
           export WRITE_GROUP_GFS=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=2
         else
-          export DELTIM=600
+          export DELTIM=900
           export layout_x=6
           export layout_y=8
           export layout_x_gfs=6
@@ -143,7 +143,7 @@ case "${fv3_res}" in
           export cdmbgwd_gsl="20.0,2.5,1.0,1.0"   # settings for GSL drag suite
           export knob_ugwp_tauamp=3.0e-3      # setting for UGWPv1 non-stationary GWD
           export k_split=1
-          export n_split=4
+          export n_split=6
           export tau=8.0
           export rf_cutoff=100.0
           export fv_sg_adj=1800
