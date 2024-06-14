@@ -150,7 +150,7 @@ case "${fv3_res}" in
           export fast_tau_w_sec=0.2
           export WRITE_GROUP=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE=1
-          export WRITE_GROUP_GFS=1
+          export WRITE_GROUP_GFS=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=1
         fi
         ;;
