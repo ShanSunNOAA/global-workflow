@@ -129,11 +129,12 @@ case "${fv3_res}" in
           export WRITE_GROUP_GFS=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=2
         else
-          export DELTIM=600
-          export layout_x_gdas=2
-          export layout_y_gdas=2
-          export layout_x_gfs=2
-          export layout_y_gfs=2
+          export DELTIM=900
+          export layout_x=6
+          export layout_y=8
+          export layout_x_gfs=6
+          export layout_y_gfs=8
+          export nthreads_fv3=1
           export nthreads_fv3_gdas=1
           export nthreads_fv3_gfs=1
           export nthreads_ufs_gdas=1
@@ -143,13 +144,14 @@ case "${fv3_res}" in
           export cdmbgwd_gsl="20.0,2.5,1.0,1.0"   # settings for GSL drag suite
           export knob_ugwp_tauamp=3.0e-3      # setting for UGWPv1 non-stationary GWD
           export k_split=1
-          export n_split=4
+          export n_split=6
           export tau=8.0
           export rf_cutoff=100.0
           export fv_sg_adj=1800
-          export WRITE_GROUP_GDAS=1
+          export fast_tau_w_sec=0.2
+          export WRITE_GROUP_GDAS=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GDAS=1
-          export WRITE_GROUP_GFS=1
+          export WRITE_GROUP_GFS=2
           export WRTTASK_PER_GROUP_PER_THREAD_PER_TILE_GFS=1
         fi
         ;;
@@ -383,7 +385,7 @@ export cplwav2atm=".false."
 if [[ "${DO_NEST:-NO}" == "YES" ]] ; then
   export CCPP_SUITE="${CCPP_SUITE:-FV3_global_nest_v1}"
 else
-  export CCPP_SUITE="${CCPP_SUITE:-FV3_GFS_v17_p8_ugwpv1}"
+  export CCPP_SUITE="${CCPP_SUITE:-FV3_GFS_v17_coupled_p8_ugwpv1}"
 fi
 model_list="atm"
 
@@ -424,7 +426,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       TOPOEDITS=""
       ;;
     "100")
-      ntasks_mom6=20
+      ntasks_mom6=40
       OCNTIM=3600
       NX_GLB=360
       NY_GLB=320
@@ -432,7 +434,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       DT_THERM_MOM6='3600'
       FRUNOFF="runoff.daitren.clim.1deg.nc"
       CHLCLIM="seawifs_1998-2006_smoothed_2X.nc"
-      MOM6_RESTART_SETTING='r'
+      MOM6_RESTART_SETTING='n'
       MOM6_RIVER_RUNOFF='False'
       eps_imesh="2.5e-1"
       TOPOEDITS="ufs.topo_edits_011818.nc"
@@ -477,7 +479,7 @@ if [[ "${skip_mom6}" == "false" ]]; then
       FRUNOFF="runoff.daitren.clim.${NX_GLB}x${NY_GLB}.v20180328.nc"
       CHLCLIM="seawifs-clim-1997-2010.${NX_GLB}x${NY_GLB}.v20180328.nc"
       MOM6_RIVER_RUNOFF='True'
-      MOM6_RESTART_SETTING="r"
+      MOM6_RESTART_SETTING="n"
       eps_imesh="1.0e-1"
       if [[ ${RUN} == "gfs" || "${RUN}" == "gefs" ]]; then
         MOM6_DIAG_COORD_DEF_Z_FILE="interpolate_zgrid_40L.nc"

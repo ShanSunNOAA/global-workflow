@@ -2,6 +2,7 @@
 
 echo "BEGIN: config.ocn"
 
+export ocnic=2
 export MESH_OCN="mesh.mx${OCNRES}.nc"
 
 export DO_OCN_SPPT="NO"  # In MOM_input, this variable is determines OCN_SPPT (OCN_SPPT = True|False)
@@ -23,6 +24,7 @@ if [[ "${DOIAU}" == "YES" ]]; then
 else
   export ODA_INCUPD_NHOURS="3.0"
 fi
+export MOM6_RESTART_SETTING=n
 
 
 

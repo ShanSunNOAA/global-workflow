@@ -29,6 +29,11 @@ error_message() {
 }
 
 ###############################################################
+  atmic=2           # 1=default, 2=CFSR
+  ocnic=${ocnic:-2} # 1=default, 2=ORAS5, 3=GLORe
+  iceic=${iceic:-2}
+  echo "CASE= $CASE LEVS= $LEVS ocnic= $ocnic iceic= $iceic"
+
 for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
 
   # Stage atmosphere initial conditions to ROTDIR
@@ -63,7 +68,16 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     # Stage the FV3 cold-start initial conditions to ROTDIR
     YMD=${PDY} HH=${cyc} declare_from_tmpl COM_ATMOS_INPUT
     [[ ! -d "${COM_ATMOS_INPUT}" ]] && mkdir -p "${COM_ATMOS_INPUT}"
-    src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+    if [[ $atmic -eq 1 ]] ; then
+      src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/gfs_ctrl.nc"
+    fi
+    if [[ $atmic -eq 2 ]] ; then
+     if [[ ${machine} = 'HERA' ]]; then
+       src="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/gfs_ctrl.nc"
+     else
+       src="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/gfs_ctrl.nc"
+     fi
+    fi
     tgt="${COM_ATMOS_INPUT}/gfs_ctrl.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?
@@ -71,7 +85,26 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
     err=$((err + rc))
     for ftype in gfs_data sfc_data; do
       for ((tt = 1; tt <= ntiles; tt++)); do
-        src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/${ftype}.tile${tt}.nc"
+        if [[ $atmic -eq 1 ]] ; then
+          if [[ $CASE = 'C384' ]]; then
+            src="${BASE_CPLIC}/${CPL_ATMIC:-}/${PDY}${cyc}/${MEMDIR}/atmos/${ftype}.tile${tt}.nc"
+            src="/scratch1/NCEPDEV/climate/role.ufscpara/IC/GEFS-NoahMP-aerosols-p8c/$CDATE/$CDUMP/${CASE}/INPUT/${ftype}.tile${tt}.nc"
+          fi
+        fi
+        if [[ $atmic -eq 2 ]] ; then
+          if [[ ${machine} = 'HERA' ]]; then
+            src1="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L128/INPUT/${ftype}.tile${tt}.nc"
+            src2="/scratch1/BMC/gsd-fv3-dev/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/${ftype}.tile${tt}.nc"
+          else
+            src1="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L128/INPUT/${ftype}.tile${tt}.nc"
+            src2="/work2/noaa/wrfruc/Shan.Sun/fv3ic/$CDATE/$CDUMP/${CASE}L${LEVS}/INPUT/${ftype}.tile${tt}.nc"
+          fi
+        fi
+        if [[ ${ftype} = 'sfc_data' ]]; then
+          src=$src1
+        else
+          src=$src2
+        fi
         tgt="${COM_ATMOS_INPUT}/${ftype}.tile${tt}.nc"
         ${NCP} "${src}" "${tgt}"
         rc=$?
@@ -101,12 +134,57 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_OCN:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} declare_from_tmpl COM_OCEAN_RESTART_PREV:COM_OCEAN_RESTART_TMPL
     [[ ! -d "${COM_OCEAN_RESTART_PREV}" ]] && mkdir -p "${COM_OCEAN_RESTART_PREV}"
+   if [[ $ocnic -eq 1 ]] ; then
     src="${BASE_CPLIC}/${CPL_OCNIC:-}/${PDY}${cyc}/${MEMDIR}/ocean/${DTG_PREFIX}.MOM.res.nc"
     tgt="${COM_OCEAN_RESTART_PREV}/${DTG_PREFIX}.MOM.res.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?
     ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
     err=$((err + rc))
+    case "${OCNRES}" in
+      "500" | "100")
+        # Nothing more to do for these resolutions
+        ;;
+      "025" )
+        for nn in $(seq 1 3); do
+          src="${BASE_CPLIC}/${CPL_OCNIC:-}/${PDY}${cyc}/${MEMDIR}/ocean/${DTG_PREFIX}.MOM.res_${nn}.nc"
+          tgt="${COM_OCEAN_RESTART_PREV}/${DTG_PREFIX}.MOM.res_${nn}.nc"
+          ${NCP} "${src}" "${tgt}"
+          rc=$?
+          ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
+          err=$((err + rc))
+        done
+        ;;
+      *)
+        echo "FATAL ERROR: Unsupported ocean resolution ${OCNRES}"
+        rc=1
+        err=$((err + rc))
+        ;;
+     esac
+   fi
+    if [[ $ocnic -eq 2 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch2/BMC/gsd-fv3-test/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/oras5/$PDY/ORAS5.mx$OCNRES.ic.nc"
+      fi
+      tgt="${COM_OCEAN_RESTART_PREV}/"
+    fi
+
+    if [[ $ocnic -eq 3 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch1/BMC/gsd-fv3-dev/sun/GLORe/$PDY/MOM.res.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/GLORe/$PDY/MOM.res.nc"
+      fi
+      tgt="${COM_OCEAN_RESTART_PREV}/"
+    fi
+
+    ${NCP} "${src}" "${tgt}"
+    rc=$?
+    ((rc != 0)) && error_message "${src}" "${tgt}" "${rc}"
+    err=$((err + rc))
+##ss this section is new
     case "${OCNRES}" in
       "500" | "100")
         # Nothing more to do for these resolutions
@@ -165,7 +243,28 @@ for MEMDIR in "${MEMDIR_ARRAY[@]}"; do
   if [[ "${DO_ICE:-}" = "YES" ]]; then
     RUN=${rCDUMP} YMD=${gPDY} HH=${gcyc} declare_from_tmpl COM_ICE_RESTART_PREV:COM_ICE_RESTART_TMPL
     [[ ! -d "${COM_ICE_RESTART_PREV}" ]] && mkdir -p "${COM_ICE_RESTART_PREV}"
-    src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${DTG_PREFIX}.cice_model.res.nc"
+    if [[ $iceic -eq 1 ]] ; then
+      if [[ $CASE = 'C96' ]]; then
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_1.00.cpc.res_${PDY}00.nc"
+      else
+        src="${BASE_CPLIC}/${CPL_ICEIC:-}/${PDY}${cyc}/${MEMDIR}/ice/${DTG_PREFIX}.cice_model.res.nc"
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/CICE_ICs/cice5_model_0.25.res_${PDY}00.nc"
+      fi
+    fi
+    if [[ $iceic -eq 2 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch2/BMC/gsd-fv3-dev/FV3-MOM6-CICE5/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/oras5b_ice/oras5b_ice_${PDY}_mx${OCNRES}.nc"
+      fi
+    fi
+    if [[ $iceic -eq 3 ]] ; then
+      if [[ ${machine} = 'HERA' ]]; then
+        src="/scratch1/BMC/gsd-fv3-dev/sun/GLORe/${PDY}/iced.${PDY}_mx${OCNRES}.nc"
+      else
+        src="/work2/noaa/wrfruc/Shan.Sun/GLORe/${PDY}/iced.${PDY}_mx${OCNRES}.nc"
+      fi
+    fi
     tgt="${COM_ICE_RESTART_PREV}/${DTG_PREFIX}.cice_model.res.nc"
     ${NCP} "${src}" "${tgt}"
     rc=$?

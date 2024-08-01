@@ -72,7 +72,8 @@ export FCSTEXEC="ufs_model.x"
 
 #######################################################################
 # Model configuration
-export TYPE="nh"
+#ssun export TYPE="nh"
+export TYPE="hydro"
 export MONO="non-mono"
 
 # Use stratosphere h2o physics
@@ -147,6 +148,8 @@ if [[ "${satmedmf}" == ".true." ]]; then tbf="_satmedmf" ; fi
 #Convection schemes
 export progsigma=".true."
 tbp=""
+#GFSv17 settins
+IOPT_DIAG=2
 if [[ "${progsigma}" == ".true." ]]; then tbp="_progsigma" ; fi
 
 # Radiation options

@@ -364,6 +364,7 @@ cat >> input.nml <<EOF
   imfshalcnv   = ${imfshalcnv:-"2"}
   imfdeepcnv   = ${imfdeepcnv:-"2"}
   progsigma    = ${progsigma:-".true."}
+  IOPT_DIAG    = ${IOPT_DIAG:-"2"}
   betascu      = ${betascu:-"8.0"}
   betamcu      = ${betamcu:-"1.0"}
   betadcu      = ${betadcu:-"2.0"}
