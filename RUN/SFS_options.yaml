@@ -4,7 +4,7 @@ base:
   DO_JEDIOCNVAR: "NO"
   DO_JEDISNOWDA: "NO"
   DO_MERGENSST: "NO"
-  FHMAX_GFS: 2976
+  FHMAX_GFS: 8760
   FHMAX_HF_GFS: 0
   KEEPDATA: "NO"
   REPLAY_ICS: "YES"
@@ -12,7 +12,7 @@ base:
   FLTFILEGFS: "postxconfig-NT-SFS.txt"
   FLTFILEGFSF00: "postxconfig-NT-SFS.txt"
   ACCOUNT: {{ 'HPC_ACCOUNT' | getenv }} 
-  HPSS_PROJECT: "emc-marine"
+  HPSS_PROJECT: "fim"
   BASE_CPLIC: {{ 'TOPICDIR' | getenv }}/REPLAY_ICs/C96mx100
 fcst:
   TYPE: "hydro"

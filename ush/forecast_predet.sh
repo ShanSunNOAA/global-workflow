@@ -471,15 +471,50 @@ FV3_predet(){
 
   # Aerosol options
   IAER=${IAER:-1011}
+  IAER_mon=${IAER_mon:-0}
 
   ## merra2 aerosol climo
   if (( IAER == 1011 )); then
+   if (( IAER_mon == 0 )); then  
     local month mm
     for (( month = 1; month <=12; month++ )); do
       mm=$(printf %02d "${month}")
       ${NCP} "${FIXgfs}/aer/merra2.aerclim.2003-2014.m${mm}.nc" "aeroclim.m${mm}.nc"
     done
-  fi
+   fi
+   year=$(echo $current_cycle | cut -c1-4)
+   yyp1=$(($year+1))
+
+  ## merra2 aerosol monthly
+   if (( IAER_mon == 5 )); then  ## May ICs
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}05.nc4" "aeroclim.m05.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}06.nc4" "aeroclim.m06.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}07.nc4" "aeroclim.m07.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}08.nc4" "aeroclim.m08.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}09.nc4" "aeroclim.m09.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}10.nc4" "aeroclim.m10.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}11.nc4" "aeroclim.m11.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}12.nc4" "aeroclim.m12.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}01.nc4" "aeroclim.m01.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}02.nc4" "aeroclim.m02.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}03.nc4" "aeroclim.m03.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}04.nc4" "aeroclim.m04.nc"
+   fi
+   if (( IAER_mon == 11 )); then  ## Nov ICs
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}11.nc4" "aeroclim.m11.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${year}12.nc4" "aeroclim.m12.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}01.nc4" "aeroclim.m01.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}02.nc4" "aeroclim.m02.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}03.nc4" "aeroclim.m03.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}04.nc4" "aeroclim.m04.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}05.nc4" "aeroclim.m05.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}06.nc4" "aeroclim.m06.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}07.nc4" "aeroclim.m07.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}08.nc4" "aeroclim.m08.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}09.nc4" "aeroclim.m09.nc"
+      ${NCP} "/scratch1/BMC/gsd-fv3-dev/data_others/merra2/MERRA2_400.mon3_3d_aer_Nv.${yyp1}10.nc4" "aeroclim.m10.nc"
+   fi
+  fi  # IAER == 1011
 
   ${NCP} "${FIXgfs}/am/global_climaeropac_global.txt" "${DATA}/aerosol.dat"
   if (( IAER > 0 )) ; then
