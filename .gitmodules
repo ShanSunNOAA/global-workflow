@@ -1,7 +1,7 @@
 [submodule "sorc/ufs_model.fd"]
   path = sorc/ufs_model.fd
-  url = https://github.com/ufs-community/ufs-weather-model
-  branch = skeb_fix
+  url = https://github.com/ShanSunNOAA/ufs-weather-model
+  branch = skinsst_20240724
   #url = https://github.com/ufs-community/ufs-weather-model
   #ignore = dirty
 [submodule "sorc/wxflow"]

@@ -5,21 +5,21 @@ set -u
 # CI yamls can be found at ${HOMEgfs}/ci/cases/{pr/weekly}/
 ####################################
 # Code
-export IDATE=1994050100
+export IDATE=2018050100
 HOMEgfs=${1:-${PWD}/../}
 YAML=${2:-${HOMEgfs}/RUN/SFS.yaml}
-FULL_BASELINE=T # Run all forecasts
+FULL_BASELINE=F # Run all forecasts
 
 ########################
 # Machine Specific and Personallized options
 machine=$(uname -n)
-ACCOUNT=marine-cpu
+ACCOUNT=gsd-fv3-dev
 if [[ ${machine:0:3} == hfe ]]; then
     export TOPICDIR=/scratch2/NCEPDEV/stmp3/Neil.Barton/ICs
-    export RUNTESTS=/scratch2/NCEPDEV/stmp3/${USER}/RUNS
+    export RUNTESTS=${HOMEgfs}
 elif [[ ${machine} == hercules* ]]; then 
     export TOPICDIR=/work/noaa/marine/nbarton/ICs
-    export RUNTESTS=/work/noaa/marine/${USER}/RUNS
+    export RUNTESTS=${HOMEgfs}
 fi
 
 ########################
@@ -28,7 +28,7 @@ fi
 [[ ! -f ${YAML} ]] && echo "yaml file not at ${YAML}" &&  exit 1
 echo "HOMEgfs: ${HOMEgfs}"
 echo "YAML: ${YAML}"
-export pslot=$(basename ${YAML/.yaml*})
+export pslot=c192mx025
 
 ########################
 # Set Up Experiment
@@ -37,8 +37,8 @@ export HPC_ACCOUNT=${ACCOUNT}
 ${HOMEgfs}/workflow/create_experiment.py --yaml "${YAML}" 
 
 ################################################
-# Soft link items into EXPDIR for easier development
-TOPEXPDIR=${RUNTESTS}/EXPDIR/${pslot}
+# Soft link items into expdir for easier development
+TOPEXPDIR=${RUNTESTS}/expdir/${pslot}
 set +u
 source ${TOPEXPDIR}/config.base
 cd ${TOPEXPDIR}
@@ -71,8 +71,8 @@ fi
 ################################################
 # start rocotorun and add crontab
 xml_file=${PWD}/${pslot}.xml && db_file=${PWD}/${pslot}.db && cron_file=${PWD}/${pslot}.crontab
-rocotorun -d ${db_file} -w ${xml_file}
-crontab -l | cat - ${cron_file} | crontab -
+## rocotorun -d ${db_file} -w ${xml_file}
+## crontab -l | cat - ${cron_file} | crontab -
 # echo crontab file
-echo "db=${db_file}"
-echo "xml=${xml_file}"
+## echo "db=${db_file}"
+## echo "xml=${xml_file}"

@@ -455,7 +455,8 @@ MOM6_postdet() {
       vdate_mid=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${midpoint} hours" +%Y%m%d%H)
 
       # Native model output uses window midpoint in the filename, but we are mapping that to the end of the period for COM
-      source_file="ocn_${vdate_mid:0:4}_${vdate_mid:4:2}_${vdate_mid:6:2}_${vdate_mid:8:2}.nc"
+      # source_file="ocn_${vdate_mid:0:4}_${vdate_mid:4:2}_${vdate_mid:6:2}_${vdate_mid:8:2}.nc"
+      source_file="ocn_${vdate:0:4}_${vdate:4:2}_${vdate:6:2}_${vdate:8:2}.nc"
       dest_file="${RUN}.ocean.t${cyc}z.${interval}hr_avg.f${fhr3}.nc"
       ${NLN} "${COMOUT_OCEAN_HISTORY}/${dest_file}" "${DATA}/MOM6_OUTPUT/${source_file}"
 
@@ -558,6 +559,7 @@ CICE_postdet() {
   seconds=$(to_seconds "${model_start_date_current_cycle:8:2}0000")  # convert HHMMSS to seconds
   vdatestr="${model_start_date_current_cycle:0:4}-${model_start_date_current_cycle:4:2}-${model_start_date_current_cycle:6:2}-${seconds}"
   ${NLN} "${COMOUT_ICE_HISTORY}/${RUN}.ice.t${cyc}z.ic.nc" "${DATA}/CICE_OUTPUT/iceh_ic.${vdatestr}.nc"
+  ${NLN} "${COMOUT_ICE_HISTORY}/ice_diag.d" "${DATA}/ice_diag.d"
 
   # Link CICE forecast output files from DATA/CICE_OUTPUT to COM
   local source_file dest_file
@@ -586,6 +588,9 @@ CICE_postdet() {
 
     last_fhr=${fhr}
   done
+
+#ss: reset FV3_OUTPUT_FH after all links are made
+   FV3_OUTPUT_FH=" $FHOUT -1 "
 
 }
 
