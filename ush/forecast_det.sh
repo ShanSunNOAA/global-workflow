@@ -114,6 +114,7 @@ UFS_det(){
       RERUN="YES"
       RERUN_DATE="${rdate}"
       warm_start=".true."
+      warm_start=".false."
       echo "All restarts found for '${RERUN_DATE}', RERUN='${RERUN}', warm_start='${warm_start}'"
       break
     fi
