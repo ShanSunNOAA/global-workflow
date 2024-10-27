@@ -220,34 +220,34 @@ EOF
 
   #============================================================================
   if [[ "${QUILTING}" = ".true." ]] && [[ "${OUTPUT_GRID}" = "gaussian_grid" ]]; then
-    local FH2 FH3
+    local FH2 FH4
     for fhr in ${FV3_OUTPUT_FH}; do
-      FH3=$(printf %03i "${fhr}")
+      FH4=$(printf %04i "${fhr}")
       FH2=$(printf %02i "${fhr}")
       # When replaying, the time format outputted by model in filename is HH-MM-SS
       # because first fhr is a decimal number
       if [[ ${REPLAY_ICS:-NO} == "YES" ]] && (( fhr >= OFFSET_START_HOUR )); then
-        local hhmmss_substring=${FV3_OUTPUT_FH_hhmmss/" ${FH3}-"*/} # Extract substring that contains all lead times up to the one space before target lead HHH-MM-SS
+        local hhmmss_substring=${FV3_OUTPUT_FH_hhmmss/" ${FH4}-"*/} # Extract substring that contains all lead times up to the one space before target lead HHH-MM-SS
         local hhmmss_substring_len=$(( ${#hhmmss_substring} + 1 )) # Get the size of the substring and add 1 to account for space
         local f_hhmmss=${FV3_OUTPUT_FH_hhmmss:${hhmmss_substring_len}:9} # extract HHH-MM-SS for target lead time
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH3}.nc" "atmf${f_hhmmss}.nc"
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH3}.nc" "sfcf${f_hhmmss}.nc"
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH3}.txt" "log.atm.f${f_hhmmss}"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH4}.nc" "atmf${f_hhmmss}.nc"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH4}.nc" "sfcf${f_hhmmss}.nc"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH4}.txt" "log.atm.f${f_hhmmss}"
       else
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH3}.nc" "atmf${FH3}.nc"
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH3}.nc" "sfcf${FH3}.nc"
-        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH3}.txt" "log.atm.f${FH3}"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atmf${FH4}.nc" "atmf${FH4}.nc"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.sfcf${FH4}.nc" "sfcf${FH4}.nc"
+        ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.atm.logf${FH4}.txt" "log.atm.f${FH4}"
         if [[ "${DO_JEDIATMVAR:-}" == "YES" ]]; then
-          ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.cubed_sphere_grid_atmf${FH3}.nc" "cubed_sphere_grid_atmf${FH3}.nc"
-          ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.cubed_sphere_grid_sfcf${FH3}.nc" "cubed_sphere_grid_sfcf${FH3}.nc"
+          ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.cubed_sphere_grid_atmf${FH4}.nc" "cubed_sphere_grid_atmf${FH4}.nc"
+          ${NLN} "${COMOUT_ATMOS_HISTORY}/${RUN}.t${cyc}z.cubed_sphere_grid_sfcf${FH4}.nc" "cubed_sphere_grid_sfcf${FH4}.nc"
         fi
       fi
       if [[ "${WRITE_DOPOST}" == ".true." ]]; then
-        ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH3}" "GFSPRS.GrbF${FH2}"
-        ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH3}.grib2" "GFSFLX.GrbF${FH2}"
+        ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.master.grb2f${FH4}" "GFSPRS.GrbF${FH2}"
+        ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.sfluxgrbf${FH4}.grib2" "GFSFLX.GrbF${FH2}"
         if [[ "${DO_NEST:-NO}" == "YES" ]] ; then
-          ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.nest.grb2f${FH3}" "GFSPRS.GrbF${FH2}.nest02"
-          ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.nest.sfluxgrbf${FH3}.grib2" "GFSFLX.GrbF${FH2}.nest02"
+          ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.nest.grb2f${FH4}" "GFSPRS.GrbF${FH2}.nest02"
+          ${NLN} "${COMOUT_ATMOS_MASTER}/${RUN}.t${cyc}z.nest.sfluxgrbf${FH4}.grib2" "GFSFLX.GrbF${FH2}.nest02"
         fi
       fi
     done
@@ -472,9 +472,9 @@ MOM6_postdet() {
   if [[ "${RUN}" =~ "gfs" || "${RUN}" == "gefs" ]]; then  # Link output files for RUN=gfs|enkfgfs|gefs
 
     # Looping over MOM6 output hours
-    local fhr fhr3 last_fhr interval midpoint vdate vdate_mid source_file dest_file
+    local fhr fhr4 last_fhr interval midpoint vdate vdate_mid source_file dest_file
     for fhr in ${MOM6_OUTPUT_FH}; do
-      fhr3=$(printf %03i "${fhr}")
+      fhr4=$(printf %04i "${fhr}")
 
       if [[ -z ${last_fhr:-} ]]; then
         last_fhr=${fhr}
@@ -498,7 +498,7 @@ MOM6_postdet() {
       else
         source_file="ocn_${vdate_mid:0:4}_${vdate_mid:4:2}_${vdate_mid:6:2}_${vdate_mid:8:2}.nc"
       fi
-      dest_file="${RUN}.ocean.t${cyc}z.${interval}hr_avg.f${fhr3}.nc"
+      dest_file="${RUN}.ocean.t${cyc}z.${interval}hr_avg.f${fhr4}.nc"
       ${NLN} "${COMOUT_OCEAN_HISTORY}/${dest_file}" "${DATA}/MOM6_OUTPUT/${source_file}"
 
       last_fhr=${fhr}
@@ -508,11 +508,11 @@ MOM6_postdet() {
   elif [[ "${RUN}" =~ "gdas" ]]; then  # Link output files for RUN=gdas|enkfgdas
 
     # Save (instantaneous) MOM6 backgrounds
-    local fhr3 vdatestr
+    local fhr4 vdatestr
     for fhr in ${MOM6_OUTPUT_FH}; do
-      fhr3=$(printf %03i "${fhr}")
+      fhr4=$(printf %04i "${fhr}")
       vdatestr=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y_%m_%d_%H)
-      ${NLN} "${COMOUT_OCEAN_HISTORY}/${RUN}.ocean.t${cyc}z.inst.f${fhr3}.nc" "${DATA}/MOM6_OUTPUT/ocn_da_${vdatestr}.nc"
+      ${NLN} "${COMOUT_OCEAN_HISTORY}/${RUN}.ocean.t${cyc}z.inst.f${fhr4}.nc" "${DATA}/MOM6_OUTPUT/ocn_da_${vdatestr}.nc"
     done
   fi
 
@@ -596,10 +596,11 @@ CICE_postdet() {
 
   # Link iceh_ic file to COM.  This is the initial condition file from CICE (f000)
   # TODO: Is this file needed in COM? Is this going to be used for generating any products?
-  local vdate seconds vdatestr fhr fhr3 interval last_fhr
+  local vdate seconds vdatestr fhr fhr4 interval last_fhr
   seconds=$(to_seconds "${model_start_date_current_cycle:8:2}0000")  # convert HHMMSS to seconds
   vdatestr="${model_start_date_current_cycle:0:4}-${model_start_date_current_cycle:4:2}-${model_start_date_current_cycle:6:2}-${seconds}"
   ${NLN} "${COMOUT_ICE_HISTORY}/${RUN}.ice.t${cyc}z.ic.nc" "${DATA}/CICE_OUTPUT/iceh_ic.${vdatestr}.nc"
+  ${NLN} "${COMOUT_ICE_HISTORY}/ice_diag.d" "${DATA}/ice_diag.d"
 
   # Link CICE forecast output files from DATA/CICE_OUTPUT to COM
   local source_file dest_file
@@ -610,7 +611,7 @@ CICE_postdet() {
       continue
     fi
 
-    fhr3=$(printf %03i "${fhr}")
+    fhr4=$(printf %04i "${fhr}")
     (( interval = fhr - last_fhr ))
 
     vdate=$(date --utc -d "${current_cycle:0:8} ${current_cycle:8:2} + ${fhr} hours" +%Y%m%d%H)
@@ -619,16 +620,19 @@ CICE_postdet() {
 
     if [[ "${RUN}" =~ "gfs" || "${RUN}" =~ "gefs" ]]; then
       source_file="iceh_$(printf "%0.2d" "${FHOUT_ICE}")h.${vdatestr}.nc"
-      dest_file="${RUN}.ice.t${cyc}z.${interval}hr_avg.f${fhr3}.nc"
+      dest_file="${RUN}.ice.t${cyc}z.${interval}hr_avg.f${fhr4}.nc"
     elif [[ "${RUN}" =~ "gdas" ]]; then
       source_file="iceh_inst.${vdatestr}.nc"
-      dest_file="${RUN}.ice.t${cyc}z.inst.f${fhr3}.nc"
+      dest_file="${RUN}.ice.t${cyc}z.inst.f${fhr4}.nc"
     fi
     ${NLN} "${COMOUT_ICE_HISTORY}/${dest_file}" "${DATA}/CICE_OUTPUT/${source_file}"
 
     last_fhr=${fhr}
   done
 
+#ss: reset FV3_OUTPUT_FH after all links are made
+   FV3_OUTPUT_FH=" $FHOUT -1 "
+   FV3_OUTPUT_FH_NML=" $FHOUT -1 "
 }
 
 CICE_nml() {
