@@ -4,8 +4,8 @@ set -eux
 cwd=$(pwd)
 
 # Default settings
-APP="S2SWA"
-CCPP_SUITES="FV3_GFS_v17_p8_ugwpv1,FV3_GFS_v17_coupled_p8_ugwpv1,FV3_global_nest_v1"  # TODO: does the g-w need to build with all these CCPP_SUITES?
+APP="S2SW"
+CCPP_SUITES="FV3_GFS_v17_coupled_p8_ugwpv1,FV3_GFS_v17_coupled_p8_ugwpv1_sfcocn,FV3_GFS_v17_coupled_p8_ugwpv1_skinsst"  # TODO: does the g-w need to build with all these CCPP_SUITES?
 PDLIB="ON"
 HYDRO="OFF"
 EXEC_NAME="gfs_model.x"
