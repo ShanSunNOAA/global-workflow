@@ -1,0 +1,15 @@
+experiment:
+  system: gefs
+  mode: forecast-only
+arguments:
+  idate: 2019050200
+  edate: 2019050200
+  pslot: "orig"
+  resdetatmos: 384
+  resensatmos: 384
+  start: 'warm'
+  interval: 168
+  nens: 5
+  comroot: "/scratch1/BMC/gsd-hpcs/Shan.Sun/gefs_ww/comrot"
+  expdir: "/scratch1/BMC/gsd-hpcs/Shan.Sun/gefs_ww/expdir"
+  yaml: GEFS_options.yaml

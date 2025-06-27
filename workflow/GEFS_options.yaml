@@ -1,0 +1,16 @@
+defaults:
+ !INC {{ HOMEgfs }}/parm/config/gefs/yaml/defaults.yaml
+base:
+  FHMAX_GFS: 840
+  KEEPDATA: "NO"
+  REPLAY_ICS: "YES"
+  ACCOUNT: "gsd-fv3-dev"
+  BASE_CPLIC: "/scratch1/BMC/gsd-fv3-dev/data_others/hr4_IC"
+  FCST_BREAKPOINTS: ""
+  DO_EXTRACTVARS: "NO"
+  APP: "S2SW"
+  LOCALARCH: "NO"
+  FHOUT_HF_GFS: 3
+  FHMAX_HF_GFS: 0
+  FHOUT_OCN_GFS: 24
+  FHOUT_ICE_GFS: 24
