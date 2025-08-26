@@ -6,9 +6,10 @@ readonly HOMEgfs_=$(cd "$(dirname "$(readlink -f -n "${BASH_SOURCE[0]}")")/.." &
 
 # Default settings
 APP="S2SWA"
-CCPP_SUITES="FV3_GFS_v17_p8_ugwpv1,FV3_GFS_v17_coupled_p8_ugwpv1,FV3_global_nest_v1"  # TODO: does the g-w need to build with all these CCPP_SUITES?
+CCPP_SUITES="FV3_GFS_v17_coupled_p8_ugwpv1,FV3_GFS_v17_coupled_p8_ugwpv1_sfcocn,FV3_GFS_v17_coupled_p8_ugwpv1_skinsst"  # TODO: does the g-w need to build with all these CCPP_SUITES?
 PDLIB="ON"
 HYDRO="OFF"
+HYDRO="ON"
 EXEC_NAME="gfs_model.x"
 # Valid only for WCOSS2; enable parallel restart I/O
 # TODO: Remove this option when ufs-weather-model#2716 is fixed
